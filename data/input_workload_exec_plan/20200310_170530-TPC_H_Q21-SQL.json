@@ -1,0 +1,4422 @@
+{
+	"netRunTime": -1,
+	"executionPlan": {
+	"nodes": [
+
+	{
+		"id": 23,
+		"type": "source",
+		"pact": "Data Source",
+		"contents": "at TPC_H_Jobs.Q21_Job$.run_sql(Q21_Job.scala:253) (org.apache.flink.api.java.io.TupleCsvInputFormat)",
+		"parallelism": "8",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "1.40 M" },
+			{ "name": "Est. Cardinality", "value": "9.03 K" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "1.40 M" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "0.0" },
+			{ "name": "Cumulative Disk I/O", "value": "1.40 M" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 22,
+		"type": "pact",
+		"pact": "Map",
+		"contents": "from: (S_SUPPKEY, S_NAME, S_ADDRESS, S_NATIONKEY, S_PHONE, S_ACCTBAL, S_COMMENT)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 23, "ship_strategy": "Forward", "exchange_mode": "BATCH"}
+		],
+		"driver_strategy": "Map",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "9.03 K" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "0.0" },
+			{ "name": "Cumulative Disk I/O", "value": "349.80 K" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 21,
+		"type": "pact",
+		"pact": "FlatMap",
+		"contents": "select: (S_SUPPKEY, S_NAME, S_NATIONKEY)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 22, "ship_strategy": "Forward", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "FlatMap",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "45.17 K" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "0.0" },
+			{ "name": "Cumulative Disk I/O", "value": "349.80 K" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 26,
+		"type": "source",
+		"pact": "Data Source",
+		"contents": "at TPC_H_Jobs.Q21_Job$.run_sql(Q21_Job.scala:250) (org.apache.flink.api.java.io.TupleCsvInputFormat)",
+		"parallelism": "8",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "753.86 M" },
+			{ "name": "Est. Cardinality", "value": "5.91 M" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "753.86 M" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "0.0" },
+			{ "name": "Cumulative Disk I/O", "value": "753.86 M" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 25,
+		"type": "pact",
+		"pact": "Map",
+		"contents": "from: (L_ORDERKEY, L_PARTKEY, L_SUPPKEY, L_LINENUMBER, L_QUANTITY, L_EXTENDEDPRICE, L_DISCOUNT, L_TAX, L_RETURNFLAG, L_LINESTATUS, L_SHIPDATE, L_COMMITDATE, L_RECEIPTDATE, L_SHIPINSTRUCT, L_SHIPMODE, L_COMMENT)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 26, "ship_strategy": "Forward", "exchange_mode": "BATCH"}
+		],
+		"driver_strategy": "Map",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "5.91 M" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "0.0" },
+			{ "name": "Cumulative Disk I/O", "value": "107.69 M" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 24,
+		"type": "pact",
+		"pact": "FlatMap",
+		"contents": "where: (>(L_RECEIPTDATE, L_COMMITDATE)), select: (L_ORDERKEY, L_SUPPKEY)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 25, "ship_strategy": "Forward", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "FlatMap",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "29.54 M" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "0.0" },
+			{ "name": "Cumulative Disk I/O", "value": "107.69 M" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 20,
+		"type": "pact",
+		"pact": "Join",
+		"contents": "where: (=(S_SUPPKEY, L_SUPPKEY)), join: (S_SUPPKEY, S_NAME, S_NATIONKEY, L_ORDERKEY, L_SUPPKEY)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 21, "side": "first", "ship_strategy": "Hash Partition on [0]", "exchange_mode": "PIPELINED"},
+			{"id": 24, "side": "second", "ship_strategy": "Hash Partition on [1]", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "Hybrid Hash (build: where: (>(L_RECEIPTDATE, L_COMMITDATE)), select: (L_ORDERKEY, L_SUPPKEY) (id: 24))",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "29.54 M" }		],
+		"costs": [
+			{ "name": "Network", "value": "(unknown)" },
+			{ "name": "Disk I/O", "value": "(unknown)" },
+			{ "name": "CPU", "value": "(unknown)" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "(unknown)" },
+			{ "name": "Cumulative CPU", "value": "(unknown)" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 19,
+		"type": "pact",
+		"pact": "FlatMap",
+		"contents": "select: (S_NAME, S_NATIONKEY, L_ORDERKEY, L_SUPPKEY)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 20, "ship_strategy": "Forward", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "FlatMap",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "147.70 M" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "(unknown)" },
+			{ "name": "Cumulative CPU", "value": "(unknown)" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 29,
+		"type": "source",
+		"pact": "Data Source",
+		"contents": "at TPC_H_Jobs.Q21_Job$.run_sql(Q21_Job.scala:259) (org.apache.flink.api.java.io.TupleCsvInputFormat)",
+		"parallelism": "8",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "170.45 M" },
+			{ "name": "Est. Cardinality", "value": "1.59 M" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "170.45 M" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "0.0" },
+			{ "name": "Cumulative Disk I/O", "value": "170.45 M" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 28,
+		"type": "pact",
+		"pact": "Map",
+		"contents": "from: (O_ORDERKEY, O_CUSTKEY, O_ORDERSTATUS, O_TOTALPRICE, O_ORDERDATE, O_ORDERPRIORITY, O_CLERK, O_SHIPPRIORITY, O_COMMENT)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 29, "ship_strategy": "Forward", "exchange_mode": "BATCH"}
+		],
+		"driver_strategy": "Map",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "1.59 M" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "0.0" },
+			{ "name": "Cumulative Disk I/O", "value": "42.61 M" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 27,
+		"type": "pact",
+		"pact": "FlatMap",
+		"contents": "where: (=(O_ORDERSTATUS, _UTF-16LE'F':VARCHAR(65536) CHARACTER SET "UTF-16LE")), select: (O_ORDERKEY)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 28, "ship_strategy": "Forward", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "FlatMap",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "7.96 M" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "0.0" },
+			{ "name": "Cumulative Disk I/O", "value": "42.61 M" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 18,
+		"type": "pact",
+		"pact": "Join",
+		"contents": "where: (=(O_ORDERKEY, L_ORDERKEY)), join: (S_NAME, S_NATIONKEY, L_ORDERKEY, L_SUPPKEY, O_ORDERKEY)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 19, "side": "first", "ship_strategy": "Hash Partition on [2]", "exchange_mode": "PIPELINED"},
+			{"id": 27, "side": "second", "ship_strategy": "Hash Partition on [0]", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "Hybrid Hash (build: where: (=(O_ORDERSTATUS, _UTF-16LE'F':VARCHAR(65536) CHARACTER SET "UTF-16LE")), select: (O_ORDERKEY) (id: 27))",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "147.70 M" }		],
+		"costs": [
+			{ "name": "Network", "value": "(unknown)" },
+			{ "name": "Disk I/O", "value": "(unknown)" },
+			{ "name": "CPU", "value": "(unknown)" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "(unknown)" },
+			{ "name": "Cumulative CPU", "value": "(unknown)" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 17,
+		"type": "pact",
+		"pact": "FlatMap",
+		"contents": "select: (S_NAME, S_NATIONKEY, L_ORDERKEY, L_SUPPKEY)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 18, "ship_strategy": "Forward", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "FlatMap",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "738.50 M" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "(unknown)" },
+			{ "name": "Cumulative CPU", "value": "(unknown)" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 32,
+		"type": "source",
+		"pact": "Data Source",
+		"contents": "at TPC_H_Jobs.Q21_Job$.run_sql(Q21_Job.scala:256) (org.apache.flink.api.java.io.TupleCsvInputFormat)",
+		"parallelism": "8",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "2.20 K" },
+			{ "name": "Est. Cardinality", "value": "27.00" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "2.20 K" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "0.0" },
+			{ "name": "Cumulative Disk I/O", "value": "2.20 K" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 31,
+		"type": "pact",
+		"pact": "Map",
+		"contents": "from: (N_NATIONKEY, N_NAME, N_REGIONKEY, N_COMMENT)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 32, "ship_strategy": "Forward", "exchange_mode": "BATCH"}
+		],
+		"driver_strategy": "Map",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "27.00" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "0.0" },
+			{ "name": "Cumulative Disk I/O", "value": "549.75" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 30,
+		"type": "pact",
+		"pact": "FlatMap",
+		"contents": "where: (=(N_NAME, _UTF-16LE'SAUDI ARABIA':VARCHAR(65536) CHARACTER SET "UTF-16LE")), select: (N_NATIONKEY)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 31, "ship_strategy": "Forward", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "FlatMap",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "135.00" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "0.0" },
+			{ "name": "Cumulative Disk I/O", "value": "549.75" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 16,
+		"type": "pact",
+		"pact": "Join",
+		"contents": "where: (=(S_NATIONKEY, N_NATIONKEY)), join: (S_NAME, S_NATIONKEY, L_ORDERKEY, L_SUPPKEY, N_NATIONKEY)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 17, "side": "first", "ship_strategy": "Hash Partition on [1]", "exchange_mode": "PIPELINED"},
+			{"id": 30, "side": "second", "ship_strategy": "Hash Partition on [0]", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "Hybrid Hash (build: where: (=(N_NAME, _UTF-16LE'SAUDI ARABIA':VARCHAR(65536) CHARACTER SET "UTF-16LE")), select: (N_NATIONKEY) (id: 30))",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "738.50 M" }		],
+		"costs": [
+			{ "name": "Network", "value": "(unknown)" },
+			{ "name": "Disk I/O", "value": "(unknown)" },
+			{ "name": "CPU", "value": "(unknown)" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "(unknown)" },
+			{ "name": "Cumulative CPU", "value": "(unknown)" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 15,
+		"type": "pact",
+		"pact": "FlatMap",
+		"contents": "select: (S_NAME, L_ORDERKEY, L_SUPPKEY)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 16, "ship_strategy": "Forward", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "FlatMap",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "3.69 G" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "(unknown)" },
+			{ "name": "Cumulative CPU", "value": "(unknown)" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 39,
+		"type": "pact",
+		"pact": "Map",
+		"contents": "from: (L_ORDERKEY, L_PARTKEY, L_SUPPKEY, L_LINENUMBER, L_QUANTITY, L_EXTENDEDPRICE, L_DISCOUNT, L_TAX, L_RETURNFLAG, L_LINESTATUS, L_SHIPDATE, L_COMMITDATE, L_RECEIPTDATE, L_SHIPINSTRUCT, L_SHIPMODE, L_COMMENT)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 26, "ship_strategy": "Forward", "exchange_mode": "BATCH"}
+		],
+		"driver_strategy": "Map",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "5.91 M" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "0.0" },
+			{ "name": "Cumulative Disk I/O", "value": "107.69 M" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 38,
+		"type": "pact",
+		"pact": "FlatMap",
+		"contents": "select: (L_ORDERKEY, L_SUPPKEY)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 39, "ship_strategy": "Forward", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "FlatMap",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "29.54 M" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "0.0" },
+			{ "name": "Cumulative Disk I/O", "value": "107.69 M" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 46,
+		"type": "pact",
+		"pact": "Map",
+		"contents": "from: (L_ORDERKEY, L_PARTKEY, L_SUPPKEY, L_LINENUMBER, L_QUANTITY, L_EXTENDEDPRICE, L_DISCOUNT, L_TAX, L_RETURNFLAG, L_LINESTATUS, L_SHIPDATE, L_COMMITDATE, L_RECEIPTDATE, L_SHIPINSTRUCT, L_SHIPMODE, L_COMMENT)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 26, "ship_strategy": "Forward", "exchange_mode": "BATCH"}
+		],
+		"driver_strategy": "Map",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "5.91 M" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "0.0" },
+			{ "name": "Cumulative Disk I/O", "value": "107.69 M" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 45,
+		"type": "pact",
+		"pact": "FlatMap",
+		"contents": "select: (L_ORDERKEY, L_SUPPKEY)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 46, "ship_strategy": "Forward", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "FlatMap",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "29.54 M" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "0.0" },
+			{ "name": "Cumulative Disk I/O", "value": "107.69 M" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 44,
+		"type": "pact",
+		"pact": "Reduce",
+		"contents": "distinct",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 45, "ship_strategy": "Forward", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "HASHED_PARTIAL_REDUCE",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "29.54 M" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "0.0" },
+			{ "name": "Cumulative Disk I/O", "value": "107.69 M" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 43,
+		"type": "pact",
+		"pact": "Reduce",
+		"contents": "distinct",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 44, "ship_strategy": "Hash Partition on [0, 1]", "local_strategy": "Sort on [0:ASC,1:ASC]", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "Sorted Reduce",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "(unknown)" },
+			{ "name": "Disk I/O", "value": "(unknown)" },
+			{ "name": "CPU", "value": "(unknown)" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "(unknown)" },
+			{ "name": "Cumulative CPU", "value": "(unknown)" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 50,
+		"type": "pact",
+		"pact": "Map",
+		"contents": "from: (S_SUPPKEY, S_NAME, S_ADDRESS, S_NATIONKEY, S_PHONE, S_ACCTBAL, S_COMMENT)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 23, "ship_strategy": "Forward", "exchange_mode": "BATCH"}
+		],
+		"driver_strategy": "Map",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "9.03 K" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "0.0" },
+			{ "name": "Cumulative Disk I/O", "value": "349.80 K" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 49,
+		"type": "pact",
+		"pact": "FlatMap",
+		"contents": "select: (S_SUPPKEY)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 50, "ship_strategy": "Forward", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "FlatMap",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "45.17 K" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "0.0" },
+			{ "name": "Cumulative Disk I/O", "value": "349.80 K" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 48,
+		"type": "pact",
+		"pact": "MapPartition",
+		"contents": "select:()",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 49, "ship_strategy": "Forward", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "Map Partition",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "0.0" },
+			{ "name": "Cumulative Disk I/O", "value": "349.80 K" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 47,
+		"type": "pact",
+		"pact": "GroupReduce",
+		"contents": "select:()",
+		"parallelism": "1",
+		"predecessors": [
+			{"id": 48, "ship_strategy": "Redistribute", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "Group Reduce All",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "(unknown)" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "349.80 K" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 42,
+		"type": "pact",
+		"pact": "FlatMap",
+		"contents": "where: (true), join: (L_ORDERKEY, L_SUPPKEY)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 43, "side": "first", "ship_strategy": "Forward", "exchange_mode": "PIPELINED"},
+			{"id": 47, "side": "second", "ship_strategy": "Broadcast", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "FlatMap",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "(unknown)" },
+			{ "name": "Cumulative CPU", "value": "(unknown)" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 54,
+		"type": "pact",
+		"pact": "Map",
+		"contents": "from: (O_ORDERKEY, O_CUSTKEY, O_ORDERSTATUS, O_TOTALPRICE, O_ORDERDATE, O_ORDERPRIORITY, O_CLERK, O_SHIPPRIORITY, O_COMMENT)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 29, "ship_strategy": "Forward", "exchange_mode": "BATCH"}
+		],
+		"driver_strategy": "Map",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "1.59 M" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "0.0" },
+			{ "name": "Cumulative Disk I/O", "value": "42.61 M" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 53,
+		"type": "pact",
+		"pact": "FlatMap",
+		"contents": "select: (O_ORDERKEY)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 54, "ship_strategy": "Forward", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "FlatMap",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "7.96 M" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "0.0" },
+			{ "name": "Cumulative Disk I/O", "value": "42.61 M" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 52,
+		"type": "pact",
+		"pact": "MapPartition",
+		"contents": "select:()",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 53, "ship_strategy": "Forward", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "Map Partition",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "0.0" },
+			{ "name": "Cumulative Disk I/O", "value": "42.61 M" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 51,
+		"type": "pact",
+		"pact": "GroupReduce",
+		"contents": "select:()",
+		"parallelism": "1",
+		"predecessors": [
+			{"id": 52, "ship_strategy": "Redistribute", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "Group Reduce All",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "(unknown)" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "42.61 M" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 41,
+		"type": "pact",
+		"pact": "FlatMap",
+		"contents": "where: (true), join: (L_ORDERKEY, L_SUPPKEY)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 42, "side": "first", "ship_strategy": "Forward", "exchange_mode": "PIPELINED"},
+			{"id": 51, "side": "second", "ship_strategy": "Broadcast", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "FlatMap",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "(unknown)" },
+			{ "name": "Cumulative CPU", "value": "(unknown)" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 58,
+		"type": "pact",
+		"pact": "Map",
+		"contents": "from: (N_NATIONKEY, N_NAME, N_REGIONKEY, N_COMMENT)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 32, "ship_strategy": "Forward", "exchange_mode": "BATCH"}
+		],
+		"driver_strategy": "Map",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "27.00" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "0.0" },
+			{ "name": "Cumulative Disk I/O", "value": "549.75" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 57,
+		"type": "pact",
+		"pact": "FlatMap",
+		"contents": "select: (N_NATIONKEY)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 58, "ship_strategy": "Forward", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "FlatMap",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "135.00" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "0.0" },
+			{ "name": "Cumulative Disk I/O", "value": "549.75" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 56,
+		"type": "pact",
+		"pact": "MapPartition",
+		"contents": "select:()",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 57, "ship_strategy": "Forward", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "Map Partition",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "0.0" },
+			{ "name": "Cumulative Disk I/O", "value": "549.75" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 55,
+		"type": "pact",
+		"pact": "GroupReduce",
+		"contents": "select:()",
+		"parallelism": "1",
+		"predecessors": [
+			{"id": 56, "ship_strategy": "Redistribute", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "Group Reduce All",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "(unknown)" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "549.75" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 40,
+		"type": "pact",
+		"pact": "FlatMap",
+		"contents": "where: (true), join: (L_ORDERKEY, L_SUPPKEY)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 41, "side": "first", "ship_strategy": "Forward", "exchange_mode": "PIPELINED"},
+			{"id": 55, "side": "second", "ship_strategy": "Broadcast", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "FlatMap",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "(unknown)" },
+			{ "name": "Cumulative CPU", "value": "(unknown)" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 37,
+		"type": "pact",
+		"pact": "Join",
+		"contents": "where: (AND(=(L_ORDERKEY, L_ORDERKEY0), <>(L_SUPPKEY, L_SUPPKEY0))), join: (L_ORDERKEY, L_SUPPKEY, L_ORDERKEY0, L_SUPPKEY0)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 38, "side": "first", "ship_strategy": "Hash Partition on [0]", "exchange_mode": "PIPELINED"},
+			{"id": 40, "side": "second", "ship_strategy": "Hash Partition on [0]", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "Hybrid Hash (build: where: (true), join: (L_ORDERKEY, L_SUPPKEY) (id: 40))",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "(unknown)" },
+			{ "name": "Disk I/O", "value": "(unknown)" },
+			{ "name": "CPU", "value": "(unknown)" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "(unknown)" },
+			{ "name": "Cumulative CPU", "value": "(unknown)" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 36,
+		"type": "pact",
+		"pact": "FlatMap",
+		"contents": "select: (L_ORDERKEY0, L_SUPPKEY0, true AS $f0)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 37, "ship_strategy": "Forward", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "FlatMap",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "(unknown)" },
+			{ "name": "Cumulative CPU", "value": "(unknown)" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 35,
+		"type": "pact",
+		"pact": "GroupCombine",
+		"contents": "groupBy: (L_ORDERKEY0, L_SUPPKEY0), select: (L_ORDERKEY0, L_SUPPKEY0, MIN($f0) AS $f2)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 36, "ship_strategy": "Forward", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "Sorted Combine",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "(unknown)" },
+			{ "name": "Cumulative CPU", "value": "(unknown)" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 34,
+		"type": "pact",
+		"pact": "GroupReduce",
+		"contents": "groupBy: (L_ORDERKEY0, L_SUPPKEY0), select: (L_ORDERKEY0, L_SUPPKEY0, MIN($f0) AS $f2)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 35, "ship_strategy": "Hash Partition on [0, 1]", "local_strategy": "Sort on [0:ASC,1:ASC]", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "Sorted Group Reduce",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "(unknown)" },
+			{ "name": "Disk I/O", "value": "(unknown)" },
+			{ "name": "CPU", "value": "(unknown)" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "(unknown)" },
+			{ "name": "Cumulative CPU", "value": "(unknown)" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 33,
+		"type": "pact",
+		"pact": "FlatMap",
+		"contents": "select: (L_ORDERKEY0, L_SUPPKEY0)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 34, "ship_strategy": "Forward", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "FlatMap",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "(unknown)" },
+			{ "name": "Cumulative CPU", "value": "(unknown)" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 14,
+		"type": "pact",
+		"pact": "Join",
+		"contents": "where: (AND(=(L_ORDERKEY, L_ORDERKEY0), =(L_SUPPKEY, L_SUPPKEY0))), join: (S_NAME, L_ORDERKEY, L_SUPPKEY, L_ORDERKEY0, L_SUPPKEY0)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 15, "side": "first", "ship_strategy": "Hash Partition on [1, 2]", "exchange_mode": "PIPELINED"},
+			{"id": 33, "side": "second", "ship_strategy": "Hash Partition on [0, 1]", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "Hybrid Hash (build: select: (L_ORDERKEY0, L_SUPPKEY0) (id: 33))",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "(unknown)" },
+			{ "name": "Disk I/O", "value": "(unknown)" },
+			{ "name": "CPU", "value": "(unknown)" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "(unknown)" },
+			{ "name": "Cumulative CPU", "value": "(unknown)" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 13,
+		"type": "pact",
+		"pact": "FlatMap",
+		"contents": "select: (S_NAME, L_ORDERKEY, L_SUPPKEY)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 14, "ship_strategy": "Forward", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "FlatMap",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "(unknown)" },
+			{ "name": "Cumulative CPU", "value": "(unknown)" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 12,
+		"type": "pact",
+		"pact": "Partition",
+		"contents": "Partition at partitionAndSort(DataSetJoin.scala:467)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 13, "ship_strategy": "Hash Partition on [1, 2]", "local_strategy": "Sort on [1:ASC,2:ASC,0:ASC]", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "No-Op",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "HASH_PARTITIONED" },
+			{ "name": "Partitioned on", "value": "[1, 2]" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "[1:ASC,2:ASC,0:ASC]" },
+			{ "name": "Grouped on", "value": "[1, 2, 0]" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "(unknown)" },
+			{ "name": "Disk I/O", "value": "(unknown)" },
+			{ "name": "CPU", "value": "(unknown)" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "(unknown)" },
+			{ "name": "Cumulative CPU", "value": "(unknown)" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 11,
+		"type": "pact",
+		"pact": "Sort-Partition",
+		"contents": "Sort at apply(DataSetJoin.scala:470)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 12, "ship_strategy": "Forward", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "No-Op",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "HASH_PARTITIONED" },
+			{ "name": "Partitioned on", "value": "[1, 2]" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "[1:ASC,2:ASC,0:ASC]" },
+			{ "name": "Grouped on", "value": "[1, 2, 0]" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "(unknown)" },
+			{ "name": "Cumulative CPU", "value": "(unknown)" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 10,
+		"type": "pact",
+		"pact": "GroupReduce",
+		"contents": "fold identical rows",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 11, "ship_strategy": "Forward", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "Sorted Group Reduce",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "HASH_PARTITIONED" },
+			{ "name": "Partitioned on", "value": "[1, 2]" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "[1:ASC,2:ASC,0:ASC]" },
+			{ "name": "Grouped on", "value": "[1, 2, 0]" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "(unknown)" },
+			{ "name": "Cumulative CPU", "value": "(unknown)" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 64,
+		"type": "pact",
+		"pact": "Map",
+		"contents": "from: (L_ORDERKEY, L_PARTKEY, L_SUPPKEY, L_LINENUMBER, L_QUANTITY, L_EXTENDEDPRICE, L_DISCOUNT, L_TAX, L_RETURNFLAG, L_LINESTATUS, L_SHIPDATE, L_COMMITDATE, L_RECEIPTDATE, L_SHIPINSTRUCT, L_SHIPMODE, L_COMMENT)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 26, "ship_strategy": "Forward", "exchange_mode": "BATCH"}
+		],
+		"driver_strategy": "Map",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "5.91 M" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "0.0" },
+			{ "name": "Cumulative Disk I/O", "value": "107.69 M" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 63,
+		"type": "pact",
+		"pact": "FlatMap",
+		"contents": "where: (>(L_RECEIPTDATE, L_COMMITDATE)), select: (L_ORDERKEY, L_SUPPKEY)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 64, "ship_strategy": "Forward", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "FlatMap",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "29.54 M" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "0.0" },
+			{ "name": "Cumulative Disk I/O", "value": "107.69 M" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 77,
+		"type": "pact",
+		"pact": "Map",
+		"contents": "from: (S_SUPPKEY, S_NAME, S_ADDRESS, S_NATIONKEY, S_PHONE, S_ACCTBAL, S_COMMENT)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 23, "ship_strategy": "Forward", "exchange_mode": "BATCH"}
+		],
+		"driver_strategy": "Map",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "9.03 K" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "0.0" },
+			{ "name": "Cumulative Disk I/O", "value": "349.80 K" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 76,
+		"type": "pact",
+		"pact": "FlatMap",
+		"contents": "select: (S_SUPPKEY, S_NATIONKEY)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 77, "ship_strategy": "Forward", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "FlatMap",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "45.17 K" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "0.0" },
+			{ "name": "Cumulative Disk I/O", "value": "349.80 K" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 75,
+		"type": "pact",
+		"pact": "Reduce",
+		"contents": "distinct",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 76, "ship_strategy": "Forward", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "HASHED_PARTIAL_REDUCE",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "45.17 K" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "0.0" },
+			{ "name": "Cumulative Disk I/O", "value": "349.80 K" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 74,
+		"type": "pact",
+		"pact": "Reduce",
+		"contents": "distinct",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 75, "ship_strategy": "Hash Partition on [0, 1]", "local_strategy": "Sort on [0:ASC,1:ASC]", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "Sorted Reduce",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "(unknown)" },
+			{ "name": "Disk I/O", "value": "(unknown)" },
+			{ "name": "CPU", "value": "(unknown)" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "(unknown)" },
+			{ "name": "Cumulative CPU", "value": "(unknown)" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 81,
+		"type": "pact",
+		"pact": "Map",
+		"contents": "from: (L_ORDERKEY, L_PARTKEY, L_SUPPKEY, L_LINENUMBER, L_QUANTITY, L_EXTENDEDPRICE, L_DISCOUNT, L_TAX, L_RETURNFLAG, L_LINESTATUS, L_SHIPDATE, L_COMMITDATE, L_RECEIPTDATE, L_SHIPINSTRUCT, L_SHIPMODE, L_COMMENT)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 26, "ship_strategy": "Forward", "exchange_mode": "BATCH"}
+		],
+		"driver_strategy": "Map",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "5.91 M" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "0.0" },
+			{ "name": "Cumulative Disk I/O", "value": "107.69 M" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 80,
+		"type": "pact",
+		"pact": "FlatMap",
+		"contents": "where: (>(L_RECEIPTDATE, L_COMMITDATE)), select: (L_ORDERKEY, L_SUPPKEY)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 81, "ship_strategy": "Forward", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "FlatMap",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "29.54 M" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "0.0" },
+			{ "name": "Cumulative Disk I/O", "value": "107.69 M" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 79,
+		"type": "pact",
+		"pact": "Reduce",
+		"contents": "distinct",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 80, "ship_strategy": "Forward", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "HASHED_PARTIAL_REDUCE",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "29.54 M" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "0.0" },
+			{ "name": "Cumulative Disk I/O", "value": "107.69 M" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 78,
+		"type": "pact",
+		"pact": "Reduce",
+		"contents": "distinct",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 79, "ship_strategy": "Hash Partition on [0, 1]", "local_strategy": "Sort on [0:ASC,1:ASC]", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "Sorted Reduce",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "(unknown)" },
+			{ "name": "Disk I/O", "value": "(unknown)" },
+			{ "name": "CPU", "value": "(unknown)" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "(unknown)" },
+			{ "name": "Cumulative CPU", "value": "(unknown)" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 73,
+		"type": "pact",
+		"pact": "Join",
+		"contents": "where: (=(S_SUPPKEY, L_SUPPKEY)), join: (S_SUPPKEY, S_NATIONKEY, L_ORDERKEY, L_SUPPKEY)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 74, "side": "first", "ship_strategy": "Hash Partition on [0]", "exchange_mode": "PIPELINED"},
+			{"id": 78, "side": "second", "ship_strategy": "Hash Partition on [1]", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "Hybrid Hash (build: distinct (id: 78))",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "(unknown)" },
+			{ "name": "Disk I/O", "value": "(unknown)" },
+			{ "name": "CPU", "value": "(unknown)" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "(unknown)" },
+			{ "name": "Cumulative CPU", "value": "(unknown)" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 72,
+		"type": "pact",
+		"pact": "FlatMap",
+		"contents": "select: (S_NATIONKEY, L_ORDERKEY, L_SUPPKEY)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 73, "ship_strategy": "Forward", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "FlatMap",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "(unknown)" },
+			{ "name": "Cumulative CPU", "value": "(unknown)" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 85,
+		"type": "pact",
+		"pact": "Map",
+		"contents": "from: (O_ORDERKEY, O_CUSTKEY, O_ORDERSTATUS, O_TOTALPRICE, O_ORDERDATE, O_ORDERPRIORITY, O_CLERK, O_SHIPPRIORITY, O_COMMENT)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 29, "ship_strategy": "Forward", "exchange_mode": "BATCH"}
+		],
+		"driver_strategy": "Map",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "1.59 M" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "0.0" },
+			{ "name": "Cumulative Disk I/O", "value": "42.61 M" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 84,
+		"type": "pact",
+		"pact": "FlatMap",
+		"contents": "where: (=(O_ORDERSTATUS, _UTF-16LE'F':VARCHAR(65536) CHARACTER SET "UTF-16LE")), select: (O_ORDERKEY)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 85, "ship_strategy": "Forward", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "FlatMap",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "7.96 M" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "0.0" },
+			{ "name": "Cumulative Disk I/O", "value": "42.61 M" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 83,
+		"type": "pact",
+		"pact": "Reduce",
+		"contents": "distinct",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 84, "ship_strategy": "Forward", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "HASHED_PARTIAL_REDUCE",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "7.96 M" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "0.0" },
+			{ "name": "Cumulative Disk I/O", "value": "42.61 M" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 82,
+		"type": "pact",
+		"pact": "Reduce",
+		"contents": "distinct",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 83, "ship_strategy": "Hash Partition on [0]", "local_strategy": "Sort on [0:ASC]", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "Sorted Reduce",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "(unknown)" },
+			{ "name": "Disk I/O", "value": "(unknown)" },
+			{ "name": "CPU", "value": "(unknown)" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "(unknown)" },
+			{ "name": "Cumulative CPU", "value": "(unknown)" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 71,
+		"type": "pact",
+		"pact": "Join",
+		"contents": "where: (=(O_ORDERKEY, L_ORDERKEY)), join: (S_NATIONKEY, L_ORDERKEY, L_SUPPKEY, O_ORDERKEY)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 72, "side": "first", "ship_strategy": "Hash Partition on [1]", "exchange_mode": "PIPELINED"},
+			{"id": 82, "side": "second", "ship_strategy": "Hash Partition on [0]", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "Hybrid Hash (build: distinct (id: 82))",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "(unknown)" },
+			{ "name": "Disk I/O", "value": "(unknown)" },
+			{ "name": "CPU", "value": "(unknown)" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "(unknown)" },
+			{ "name": "Cumulative CPU", "value": "(unknown)" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 70,
+		"type": "pact",
+		"pact": "FlatMap",
+		"contents": "select: (S_NATIONKEY, L_ORDERKEY, L_SUPPKEY)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 71, "ship_strategy": "Forward", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "FlatMap",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "(unknown)" },
+			{ "name": "Cumulative CPU", "value": "(unknown)" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 89,
+		"type": "pact",
+		"pact": "Map",
+		"contents": "from: (N_NATIONKEY, N_NAME, N_REGIONKEY, N_COMMENT)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 32, "ship_strategy": "Forward", "exchange_mode": "BATCH"}
+		],
+		"driver_strategy": "Map",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "27.00" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "0.0" },
+			{ "name": "Cumulative Disk I/O", "value": "549.75" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 88,
+		"type": "pact",
+		"pact": "FlatMap",
+		"contents": "where: (=(N_NAME, _UTF-16LE'SAUDI ARABIA':VARCHAR(65536) CHARACTER SET "UTF-16LE")), select: (N_NATIONKEY)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 89, "ship_strategy": "Forward", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "FlatMap",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "135.00" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "0.0" },
+			{ "name": "Cumulative Disk I/O", "value": "549.75" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 87,
+		"type": "pact",
+		"pact": "Reduce",
+		"contents": "distinct",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 88, "ship_strategy": "Forward", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "HASHED_PARTIAL_REDUCE",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "135.00" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "0.0" },
+			{ "name": "Cumulative Disk I/O", "value": "549.75" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 86,
+		"type": "pact",
+		"pact": "Reduce",
+		"contents": "distinct",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 87, "ship_strategy": "Hash Partition on [0]", "local_strategy": "Sort on [0:ASC]", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "Sorted Reduce",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "(unknown)" },
+			{ "name": "Disk I/O", "value": "(unknown)" },
+			{ "name": "CPU", "value": "(unknown)" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "(unknown)" },
+			{ "name": "Cumulative CPU", "value": "(unknown)" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 69,
+		"type": "pact",
+		"pact": "Join",
+		"contents": "where: (=(S_NATIONKEY, N_NATIONKEY)), join: (S_NATIONKEY, L_ORDERKEY, L_SUPPKEY, N_NATIONKEY)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 70, "side": "first", "ship_strategy": "Hash Partition on [0]", "exchange_mode": "PIPELINED"},
+			{"id": 86, "side": "second", "ship_strategy": "Hash Partition on [0]", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "Hybrid Hash (build: distinct (id: 86))",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "(unknown)" },
+			{ "name": "Disk I/O", "value": "(unknown)" },
+			{ "name": "CPU", "value": "(unknown)" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "(unknown)" },
+			{ "name": "Cumulative CPU", "value": "(unknown)" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 68,
+		"type": "pact",
+		"pact": "GroupCombine",
+		"contents": "groupBy: (L_ORDERKEY, L_SUPPKEY), select: (L_ORDERKEY, L_SUPPKEY)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 69, "ship_strategy": "Forward", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "Sorted Combine",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "(unknown)" },
+			{ "name": "Cumulative CPU", "value": "(unknown)" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 67,
+		"type": "pact",
+		"pact": "GroupReduce",
+		"contents": "groupBy: (L_ORDERKEY, L_SUPPKEY), select: (L_ORDERKEY, L_SUPPKEY)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 68, "ship_strategy": "Hash Partition on [0, 1]", "local_strategy": "Sort on [0:ASC,1:ASC]", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "Sorted Group Reduce",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "(unknown)" },
+			{ "name": "Disk I/O", "value": "(unknown)" },
+			{ "name": "CPU", "value": "(unknown)" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "(unknown)" },
+			{ "name": "Cumulative CPU", "value": "(unknown)" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 96,
+		"type": "pact",
+		"pact": "Map",
+		"contents": "from: (L_ORDERKEY, L_PARTKEY, L_SUPPKEY, L_LINENUMBER, L_QUANTITY, L_EXTENDEDPRICE, L_DISCOUNT, L_TAX, L_RETURNFLAG, L_LINESTATUS, L_SHIPDATE, L_COMMITDATE, L_RECEIPTDATE, L_SHIPINSTRUCT, L_SHIPMODE, L_COMMENT)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 26, "ship_strategy": "Forward", "exchange_mode": "BATCH"}
+		],
+		"driver_strategy": "Map",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "5.91 M" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "0.0" },
+			{ "name": "Cumulative Disk I/O", "value": "107.69 M" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 95,
+		"type": "pact",
+		"pact": "FlatMap",
+		"contents": "select: (L_ORDERKEY, L_SUPPKEY)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 96, "ship_strategy": "Forward", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "FlatMap",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "29.54 M" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "0.0" },
+			{ "name": "Cumulative Disk I/O", "value": "107.69 M" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 103,
+		"type": "pact",
+		"pact": "Map",
+		"contents": "from: (L_ORDERKEY, L_PARTKEY, L_SUPPKEY, L_LINENUMBER, L_QUANTITY, L_EXTENDEDPRICE, L_DISCOUNT, L_TAX, L_RETURNFLAG, L_LINESTATUS, L_SHIPDATE, L_COMMITDATE, L_RECEIPTDATE, L_SHIPINSTRUCT, L_SHIPMODE, L_COMMENT)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 26, "ship_strategy": "Forward", "exchange_mode": "BATCH"}
+		],
+		"driver_strategy": "Map",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "5.91 M" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "0.0" },
+			{ "name": "Cumulative Disk I/O", "value": "107.69 M" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 102,
+		"type": "pact",
+		"pact": "FlatMap",
+		"contents": "select: (L_ORDERKEY, L_SUPPKEY)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 103, "ship_strategy": "Forward", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "FlatMap",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "29.54 M" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "0.0" },
+			{ "name": "Cumulative Disk I/O", "value": "107.69 M" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 101,
+		"type": "pact",
+		"pact": "Reduce",
+		"contents": "distinct",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 102, "ship_strategy": "Forward", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "HASHED_PARTIAL_REDUCE",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "29.54 M" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "0.0" },
+			{ "name": "Cumulative Disk I/O", "value": "107.69 M" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 100,
+		"type": "pact",
+		"pact": "Reduce",
+		"contents": "distinct",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 101, "ship_strategy": "Hash Partition on [0, 1]", "local_strategy": "Sort on [0:ASC,1:ASC]", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "Sorted Reduce",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "(unknown)" },
+			{ "name": "Disk I/O", "value": "(unknown)" },
+			{ "name": "CPU", "value": "(unknown)" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "(unknown)" },
+			{ "name": "Cumulative CPU", "value": "(unknown)" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 107,
+		"type": "pact",
+		"pact": "Map",
+		"contents": "from: (S_SUPPKEY, S_NAME, S_ADDRESS, S_NATIONKEY, S_PHONE, S_ACCTBAL, S_COMMENT)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 23, "ship_strategy": "Forward", "exchange_mode": "BATCH"}
+		],
+		"driver_strategy": "Map",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "9.03 K" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "0.0" },
+			{ "name": "Cumulative Disk I/O", "value": "349.80 K" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 106,
+		"type": "pact",
+		"pact": "FlatMap",
+		"contents": "select: (S_SUPPKEY)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 107, "ship_strategy": "Forward", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "FlatMap",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "45.17 K" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "0.0" },
+			{ "name": "Cumulative Disk I/O", "value": "349.80 K" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 105,
+		"type": "pact",
+		"pact": "MapPartition",
+		"contents": "select:()",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 106, "ship_strategy": "Forward", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "Map Partition",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "0.0" },
+			{ "name": "Cumulative Disk I/O", "value": "349.80 K" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 104,
+		"type": "pact",
+		"pact": "GroupReduce",
+		"contents": "select:()",
+		"parallelism": "1",
+		"predecessors": [
+			{"id": 105, "ship_strategy": "Redistribute", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "Group Reduce All",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "(unknown)" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "349.80 K" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 99,
+		"type": "pact",
+		"pact": "FlatMap",
+		"contents": "where: (true), join: (L_ORDERKEY, L_SUPPKEY)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 100, "side": "first", "ship_strategy": "Forward", "exchange_mode": "PIPELINED"},
+			{"id": 104, "side": "second", "ship_strategy": "Broadcast", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "FlatMap",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "(unknown)" },
+			{ "name": "Cumulative CPU", "value": "(unknown)" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 111,
+		"type": "pact",
+		"pact": "Map",
+		"contents": "from: (O_ORDERKEY, O_CUSTKEY, O_ORDERSTATUS, O_TOTALPRICE, O_ORDERDATE, O_ORDERPRIORITY, O_CLERK, O_SHIPPRIORITY, O_COMMENT)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 29, "ship_strategy": "Forward", "exchange_mode": "BATCH"}
+		],
+		"driver_strategy": "Map",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "1.59 M" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "0.0" },
+			{ "name": "Cumulative Disk I/O", "value": "42.61 M" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 110,
+		"type": "pact",
+		"pact": "FlatMap",
+		"contents": "select: (O_ORDERKEY)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 111, "ship_strategy": "Forward", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "FlatMap",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "7.96 M" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "0.0" },
+			{ "name": "Cumulative Disk I/O", "value": "42.61 M" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 109,
+		"type": "pact",
+		"pact": "MapPartition",
+		"contents": "select:()",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 110, "ship_strategy": "Forward", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "Map Partition",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "0.0" },
+			{ "name": "Cumulative Disk I/O", "value": "42.61 M" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 108,
+		"type": "pact",
+		"pact": "GroupReduce",
+		"contents": "select:()",
+		"parallelism": "1",
+		"predecessors": [
+			{"id": 109, "ship_strategy": "Redistribute", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "Group Reduce All",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "(unknown)" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "42.61 M" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 98,
+		"type": "pact",
+		"pact": "FlatMap",
+		"contents": "where: (true), join: (L_ORDERKEY, L_SUPPKEY)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 99, "side": "first", "ship_strategy": "Forward", "exchange_mode": "PIPELINED"},
+			{"id": 108, "side": "second", "ship_strategy": "Broadcast", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "FlatMap",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "(unknown)" },
+			{ "name": "Cumulative CPU", "value": "(unknown)" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 115,
+		"type": "pact",
+		"pact": "Map",
+		"contents": "from: (N_NATIONKEY, N_NAME, N_REGIONKEY, N_COMMENT)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 32, "ship_strategy": "Forward", "exchange_mode": "BATCH"}
+		],
+		"driver_strategy": "Map",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "27.00" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "0.0" },
+			{ "name": "Cumulative Disk I/O", "value": "549.75" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 114,
+		"type": "pact",
+		"pact": "FlatMap",
+		"contents": "select: (N_NATIONKEY)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 115, "ship_strategy": "Forward", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "FlatMap",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "135.00" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "0.0" },
+			{ "name": "Cumulative Disk I/O", "value": "549.75" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 113,
+		"type": "pact",
+		"pact": "MapPartition",
+		"contents": "select:()",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 114, "ship_strategy": "Forward", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "Map Partition",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "0.0" },
+			{ "name": "Cumulative Disk I/O", "value": "549.75" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 112,
+		"type": "pact",
+		"pact": "GroupReduce",
+		"contents": "select:()",
+		"parallelism": "1",
+		"predecessors": [
+			{"id": 113, "ship_strategy": "Redistribute", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "Group Reduce All",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "(unknown)" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "549.75" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 97,
+		"type": "pact",
+		"pact": "FlatMap",
+		"contents": "where: (true), join: (L_ORDERKEY, L_SUPPKEY)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 98, "side": "first", "ship_strategy": "Forward", "exchange_mode": "PIPELINED"},
+			{"id": 112, "side": "second", "ship_strategy": "Broadcast", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "FlatMap",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "(unknown)" },
+			{ "name": "Cumulative CPU", "value": "(unknown)" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 94,
+		"type": "pact",
+		"pact": "Join",
+		"contents": "where: (AND(=(L_ORDERKEY, L_ORDERKEY0), <>(L_SUPPKEY, L_SUPPKEY0))), join: (L_ORDERKEY, L_SUPPKEY, L_ORDERKEY0, L_SUPPKEY0)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 95, "side": "first", "ship_strategy": "Hash Partition on [0]", "exchange_mode": "PIPELINED"},
+			{"id": 97, "side": "second", "ship_strategy": "Hash Partition on [0]", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "Hybrid Hash (build: where: (true), join: (L_ORDERKEY, L_SUPPKEY) (id: 97))",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "(unknown)" },
+			{ "name": "Disk I/O", "value": "(unknown)" },
+			{ "name": "CPU", "value": "(unknown)" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "(unknown)" },
+			{ "name": "Cumulative CPU", "value": "(unknown)" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 93,
+		"type": "pact",
+		"pact": "FlatMap",
+		"contents": "select: (L_ORDERKEY0, L_SUPPKEY0, true AS $f0)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 94, "ship_strategy": "Forward", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "FlatMap",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "(unknown)" },
+			{ "name": "Cumulative CPU", "value": "(unknown)" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 92,
+		"type": "pact",
+		"pact": "GroupCombine",
+		"contents": "groupBy: (L_ORDERKEY0, L_SUPPKEY0), select: (L_ORDERKEY0, L_SUPPKEY0, MIN($f0) AS $f2)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 93, "ship_strategy": "Forward", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "Sorted Combine",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "(unknown)" },
+			{ "name": "Cumulative CPU", "value": "(unknown)" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 91,
+		"type": "pact",
+		"pact": "GroupReduce",
+		"contents": "groupBy: (L_ORDERKEY0, L_SUPPKEY0), select: (L_ORDERKEY0, L_SUPPKEY0, MIN($f0) AS $f2)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 92, "ship_strategy": "Hash Partition on [0, 1]", "local_strategy": "Sort on [0:ASC,1:ASC]", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "Sorted Group Reduce",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "(unknown)" },
+			{ "name": "Disk I/O", "value": "(unknown)" },
+			{ "name": "CPU", "value": "(unknown)" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "(unknown)" },
+			{ "name": "Cumulative CPU", "value": "(unknown)" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 90,
+		"type": "pact",
+		"pact": "FlatMap",
+		"contents": "select: (L_ORDERKEY0, L_SUPPKEY0)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 91, "ship_strategy": "Forward", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "FlatMap",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "(unknown)" },
+			{ "name": "Cumulative CPU", "value": "(unknown)" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 66,
+		"type": "pact",
+		"pact": "Join",
+		"contents": "where: (AND(=(L_ORDERKEY, L_ORDERKEY0), =(L_SUPPKEY, L_SUPPKEY0))), join: (L_ORDERKEY, L_SUPPKEY, L_ORDERKEY0, L_SUPPKEY0)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 67, "side": "first", "ship_strategy": "Hash Partition on [0, 1]", "exchange_mode": "PIPELINED"},
+			{"id": 90, "side": "second", "ship_strategy": "Hash Partition on [0, 1]", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "Hybrid Hash (build: select: (L_ORDERKEY0, L_SUPPKEY0) (id: 90))",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "(unknown)" },
+			{ "name": "Disk I/O", "value": "(unknown)" },
+			{ "name": "CPU", "value": "(unknown)" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "(unknown)" },
+			{ "name": "Cumulative CPU", "value": "(unknown)" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 65,
+		"type": "pact",
+		"pact": "FlatMap",
+		"contents": "select: (L_ORDERKEY, L_SUPPKEY)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 66, "ship_strategy": "Forward", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "FlatMap",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "(unknown)" },
+			{ "name": "Cumulative CPU", "value": "(unknown)" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 62,
+		"type": "pact",
+		"pact": "Join",
+		"contents": "where: (AND(=(L_ORDERKEY, L_ORDERKEY0), <>(L_SUPPKEY, L_SUPPKEY0))), join: (L_ORDERKEY, L_SUPPKEY, L_ORDERKEY0, L_SUPPKEY0)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 63, "side": "first", "ship_strategy": "Hash Partition on [0]", "exchange_mode": "PIPELINED"},
+			{"id": 65, "side": "second", "ship_strategy": "Hash Partition on [0]", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "Hybrid Hash (build: select: (L_ORDERKEY, L_SUPPKEY) (id: 65))",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "(unknown)" },
+			{ "name": "Disk I/O", "value": "(unknown)" },
+			{ "name": "CPU", "value": "(unknown)" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "(unknown)" },
+			{ "name": "Cumulative CPU", "value": "(unknown)" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 61,
+		"type": "pact",
+		"pact": "FlatMap",
+		"contents": "select: (L_ORDERKEY0, L_SUPPKEY0, true AS $f0)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 62, "ship_strategy": "Forward", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "FlatMap",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "(unknown)" },
+			{ "name": "Cumulative CPU", "value": "(unknown)" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 60,
+		"type": "pact",
+		"pact": "GroupCombine",
+		"contents": "groupBy: (L_ORDERKEY0, L_SUPPKEY0), select: (L_ORDERKEY0, L_SUPPKEY0, MIN($f0) AS $f2)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 61, "ship_strategy": "Forward", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "Sorted Combine",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "(unknown)" },
+			{ "name": "Cumulative CPU", "value": "(unknown)" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 59,
+		"type": "pact",
+		"pact": "GroupReduce",
+		"contents": "groupBy: (L_ORDERKEY0, L_SUPPKEY0), select: (L_ORDERKEY0, L_SUPPKEY0, MIN($f0) AS $f2)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 60, "ship_strategy": "Hash Partition on [0, 1]", "local_strategy": "Sort on [0:ASC,1:ASC]", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "Sorted Group Reduce",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "(unknown)" },
+			{ "name": "Disk I/O", "value": "(unknown)" },
+			{ "name": "CPU", "value": "(unknown)" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "(unknown)" },
+			{ "name": "Cumulative CPU", "value": "(unknown)" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 9,
+		"type": "pact",
+		"pact": "Outer Join",
+		"contents": "where: (AND(=(L_ORDERKEY, L_ORDERKEY0), =(L_SUPPKEY, L_SUPPKEY0))), join: (S_NAME, L_ORDERKEY, L_SUPPKEY, L_ORDERKEY0, L_SUPPKEY0, $f2)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 10, "side": "first", "ship_strategy": "Forward", "exchange_mode": "PIPELINED"},
+			{"id": 59, "side": "second", "ship_strategy": "Hash Partition on [0, 1]", "local_strategy": "Sort on [0:ASC,1:ASC]", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "LEFT_OUTER_MERGE",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "HASH_PARTITIONED" },
+			{ "name": "Partitioned on", "value": "[1, 2]" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "[1:ASC,2:ASC,0:ASC]" },
+			{ "name": "Grouped on", "value": "[1, 2, 0]" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "(unknown)" },
+			{ "name": "Disk I/O", "value": "(unknown)" },
+			{ "name": "CPU", "value": "(unknown)" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "(unknown)" },
+			{ "name": "Cumulative CPU", "value": "(unknown)" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 8,
+		"type": "pact",
+		"pact": "GroupReduce",
+		"contents": "where: (AND(=(L_ORDERKEY, L_ORDERKEY0), =(L_SUPPKEY, L_SUPPKEY0))), join: (S_NAME, L_ORDERKEY, L_SUPPKEY, L_ORDERKEY0, L_SUPPKEY0, $f2)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 9, "ship_strategy": "Forward", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "Sorted Group Reduce",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "(unknown)" },
+			{ "name": "Cumulative CPU", "value": "(unknown)" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 7,
+		"type": "pact",
+		"pact": "FlatMap",
+		"contents": "where: (IS NULL($f2)), select: (S_NAME)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 8, "ship_strategy": "Forward", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "FlatMap",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "(unknown)" },
+			{ "name": "Cumulative CPU", "value": "(unknown)" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 6,
+		"type": "pact",
+		"pact": "GroupCombine",
+		"contents": "groupBy: (S_NAME), select: (S_NAME, COUNT(*) AS NUMWAIT)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 7, "ship_strategy": "Forward", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "Sorted Combine",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "(unknown)" },
+			{ "name": "Cumulative CPU", "value": "(unknown)" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 5,
+		"type": "pact",
+		"pact": "GroupReduce",
+		"contents": "groupBy: (S_NAME), select: (S_NAME, COUNT(*) AS NUMWAIT)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 6, "ship_strategy": "Hash Partition on [0]", "local_strategy": "Sort on [0:ASC]", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "Sorted Group Reduce",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "(unknown)" },
+			{ "name": "Disk I/O", "value": "(unknown)" },
+			{ "name": "CPU", "value": "(unknown)" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "(unknown)" },
+			{ "name": "Cumulative CPU", "value": "(unknown)" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 118,
+		"type": "pact",
+		"pact": "MapPartition",
+		"contents": "RangePartition: LocalSample",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 5, "ship_strategy": "Forward", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "Map Partition",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "(unknown)" },
+			{ "name": "Cumulative CPU", "value": "(unknown)" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 117,
+		"type": "pact",
+		"pact": "GroupReduce",
+		"contents": "RangePartition: GlobalSample",
+		"parallelism": "1",
+		"predecessors": [
+			{"id": 118, "ship_strategy": "Forward", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "Group Reduce All",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "(unknown)" },
+			{ "name": "Cumulative CPU", "value": "(unknown)" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 116,
+		"type": "pact",
+		"pact": "MapPartition",
+		"contents": "RangePartition: Histogram",
+		"parallelism": "1",
+		"predecessors": [
+			{"id": 117, "ship_strategy": "Forward", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "Map Partition",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "(unknown)" },
+			{ "name": "Cumulative CPU", "value": "(unknown)" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 4,
+		"type": "pact",
+		"pact": "MapPartition",
+		"contents": "RangePartition: PreparePartition",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 5, "side": "first", "ship_strategy": "Forward", "exchange_mode": "BATCH"},
+			{"id": 116, "side": "second", "ship_strategy": "Broadcast", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "Map Partition",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "(unknown)" },
+			{ "name": "Cumulative CPU", "value": "(unknown)" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 3,
+		"type": "pact",
+		"pact": "Map",
+		"contents": "RangePartition: Partition",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 4, "ship_strategy": "Custom Partition on [0]", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "Map",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANGE_PARTITIONED" },
+			{ "name": "Partitioned on", "value": "[0]" },
+			{ "name": "Partitioning Order", "value": "[0:ASC]" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "(unknown)" },
+			{ "name": "Cumulative CPU", "value": "(unknown)" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 2,
+		"type": "pact",
+		"pact": "Partition",
+		"contents": "Partition at translateToPlan(DataSetSort.scala:100)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 3, "ship_strategy": "Forward", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "No-Op",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANGE_PARTITIONED" },
+			{ "name": "Partitioned on", "value": "[1, 0]" },
+			{ "name": "Partitioning Order", "value": "[1:DESC,0:ASC]" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "(unknown)" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "(unknown)" },
+			{ "name": "Cumulative CPU", "value": "(unknown)" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 1,
+		"type": "pact",
+		"pact": "Sort-Partition",
+		"contents": "Sort at apply(DataSetSort.scala:105)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 2, "ship_strategy": "Forward", "local_strategy": "Sort on [1:DESC,0:ASC]", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "No-Op",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANGE_PARTITIONED" },
+			{ "name": "Partitioned on", "value": "[1, 0]" },
+			{ "name": "Partitioning Order", "value": "[1:DESC,0:ASC]" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "[1:DESC,0:ASC]" },
+			{ "name": "Grouped on", "value": "[1, 0]" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "(unknown)" },
+			{ "name": "CPU", "value": "(unknown)" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "(unknown)" },
+			{ "name": "Cumulative CPU", "value": "(unknown)" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 0,
+		"type": "sink",
+		"pact": "Data Sink",
+		"contents": "org.apache.flink.api.java.io.DiscardingOutputFormat@1e11d73c",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 1, "ship_strategy": "Forward", "exchange_mode": "PIPELINED"}
+		],
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANGE_PARTITIONED" },
+			{ "name": "Partitioned on", "value": "[1, 0]" },
+			{ "name": "Partitioning Order", "value": "[1:DESC,0:ASC]" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "[1:DESC,0:ASC]" },
+			{ "name": "Grouped on", "value": "[1, 0]" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "(unknown)" },
+			{ "name": "Cumulative CPU", "value": "(unknown)" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	}
+	]
+}
+
+}

@@ -1,0 +1,337 @@
+{
+	"netRunTime": -1,
+	"executionPlan": {
+	"nodes": [
+
+	{
+		"id": 8,
+		"type": "source",
+		"pact": "Data Source",
+		"contents": "at TPC_H_Jobs.Q1_Job$.run(Q1_Job.scala:67) (org.apache.flink.api.java.io.TupleCsvInputFormat)",
+		"parallelism": "8",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "753.86 M" },
+			{ "name": "Est. Cardinality", "value": "5.91 M" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "753.86 M" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "0.0" },
+			{ "name": "Cumulative Disk I/O", "value": "753.86 M" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 7,
+		"type": "pact",
+		"pact": "Map",
+		"contents": "Map at TPC_H_Jobs.Q1_Job$.run(Q1_Job.scala:68)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 8, "ship_strategy": "Forward", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "Map",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "5.91 M" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "0.0" },
+			{ "name": "Cumulative Disk I/O", "value": "753.86 M" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 6,
+		"type": "pact",
+		"pact": "Filter",
+		"contents": "Filter at TPC_H_Jobs.Q1_Job$.run(Q1_Job.scala:73)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 7, "ship_strategy": "Forward", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "FlatMap",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "0.0" },
+			{ "name": "Est. Cardinality", "value": "2.95 M" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "0.0" },
+			{ "name": "Cumulative Disk I/O", "value": "753.86 M" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 5,
+		"type": "pact",
+		"pact": "Map",
+		"contents": "Map at TPC_H_Jobs.Q1_Job$.run(Q1_Job.scala:79)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 6, "ship_strategy": "Forward", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "Map",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "2.95 M" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "0.0" },
+			{ "name": "Cumulative Disk I/O", "value": "753.86 M" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 4,
+		"type": "pact",
+		"pact": "Reduce",
+		"contents": "Reduce at TPC_H_Jobs.Q1_Job$.run(Q1_Job.scala:96)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 5, "ship_strategy": "Forward", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "Sorted Combine/Reduce",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "2.95 M" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "0.0" },
+			{ "name": "Cumulative Disk I/O", "value": "753.86 M" },
+			{ "name": "Cumulative CPU", "value": "0.0" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 3,
+		"type": "pact",
+		"pact": "Reduce",
+		"contents": "Reduce at TPC_H_Jobs.Q1_Job$.run(Q1_Job.scala:96)",
+		"parallelism": "8",
+		"predecessors": [
+			{"id": 4, "ship_strategy": "Hash Partition on [0, 1]", "local_strategy": "Sort on [0:ASC,1:ASC]", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "Sorted Reduce",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "(unknown)" },
+			{ "name": "Disk I/O", "value": "(unknown)" },
+			{ "name": "CPU", "value": "(unknown)" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "(unknown)" },
+			{ "name": "Cumulative CPU", "value": "(unknown)" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 2,
+		"type": "pact",
+		"pact": "Map",
+		"contents": "Map at TPC_H_Jobs.Q1_Job$.run(Q1_Job.scala:109)",
+		"parallelism": "1",
+		"predecessors": [
+			{"id": 3, "ship_strategy": "Redistribute", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "Map",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "(none)" },
+			{ "name": "Grouping", "value": "not grouped" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "(unknown)" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "(unknown)" },
+			{ "name": "Cumulative CPU", "value": "(unknown)" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 1,
+		"type": "pact",
+		"pact": "Sort-Partition",
+		"contents": "Sort at TPC_H_Jobs.Q1_Job$.run(Q1_Job.scala:117)",
+		"parallelism": "1",
+		"predecessors": [
+			{"id": 2, "ship_strategy": "Forward", "local_strategy": "Sort on [0:ASC,1:ASC]", "exchange_mode": "PIPELINED"}
+		],
+		"driver_strategy": "No-Op",
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "[0:ASC,1:ASC]" },
+			{ "name": "Grouped on", "value": "[0, 1]" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "(unknown)" },
+			{ "name": "CPU", "value": "(unknown)" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "(unknown)" },
+			{ "name": "Cumulative CPU", "value": "(unknown)" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	},
+	{
+		"id": 0,
+		"type": "sink",
+		"pact": "Data Sink",
+		"contents": "org.apache.flink.api.java.io.DiscardingOutputFormat@7b208b45",
+		"parallelism": "1",
+		"predecessors": [
+			{"id": 1, "ship_strategy": "Forward", "exchange_mode": "PIPELINED"}
+		],
+		"global_properties": [
+			{ "name": "Partitioning", "value": "RANDOM_PARTITIONED" },
+			{ "name": "Partitioning Order", "value": "(none)" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"local_properties": [
+			{ "name": "Order", "value": "[0:ASC,1:ASC]" },
+			{ "name": "Grouped on", "value": "[0, 1]" },
+			{ "name": "Uniqueness", "value": "not unique" }
+		],
+		"estimates": [
+			{ "name": "Est. Output Size", "value": "(unknown)" },
+			{ "name": "Est. Cardinality", "value": "(unknown)" }		],
+		"costs": [
+			{ "name": "Network", "value": "0.0" },
+			{ "name": "Disk I/O", "value": "0.0" },
+			{ "name": "CPU", "value": "0.0" },
+			{ "name": "Cumulative Network", "value": "(unknown)" },
+			{ "name": "Cumulative Disk I/O", "value": "(unknown)" },
+			{ "name": "Cumulative CPU", "value": "(unknown)" }
+		],
+		"compiler_hints": [
+			{ "name": "Output Size (bytes)", "value": "(none)" },
+			{ "name": "Output Cardinality", "value": "(none)" },
+			{ "name": "Avg. Output Record Size (bytes)", "value": "(none)" },
+			{ "name": "Filter Factor", "value": "(none)" }		]
+	}
+	]
+}
+
+}
