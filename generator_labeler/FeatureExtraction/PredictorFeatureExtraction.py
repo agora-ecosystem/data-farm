@@ -178,6 +178,7 @@ from generator_labeler.DatasetMetadata.TableMetaData import data_cardinality
 
 
 def preprocess_jobs_data_info(path):
+    print(path)
     df = pd.read_json(path)
 
     tmp_df = df.set_index("JobId")

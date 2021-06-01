@@ -168,6 +168,24 @@ def job_id_v(s):
     return int(ss[0]), int(ss[1])
 
 
+def run_jobs(job_projects):
+    if job_projects.__len__() == 0:
+        print("All jobs already executed, remove filter to re-execute everything and override results.")
+        sys.exit(0)
+    else:
+        if CONFIG.LOCAL == "local":
+            print("WARNING - Running locally!!!")
+            print(f"Running #{job_projects.__len__()} jobs:", job_projects)
+            compiled_jars = assembly(job_projects, run=CONFIG.RUN, flink_provided=False)
+            print("Compiled jars:", compiled_jars)
+        else:
+            print(f"Running #{job_projects.__len__()} jobs:", job_projects)
+            submit(job_projects)
+
+    return
+
+
+
 if __name__ == '__main__':
     exec_plans_path_already_computed = get_exec_plans_path()
     exec_plans_already_computed = {os.path.basename(ep).replace("$.json", "") for ep in
@@ -182,15 +200,4 @@ if __name__ == '__main__':
 
     # job_projects = [jp for jp in job_projects if jp in "Job2v1"]
 
-    if job_projects.__len__() == 0:
-        print("All jobs already executed, remove filter to re-execute everything and override results.")
-        sys.exit(0)
-    else:
-        if CONFIG.LOCAL == "local":
-            print("WARNING - Running locally!!!")
-            print(f"Running #{job_projects.__len__()} jobs:", job_projects)
-            compiled_jars = assembly(job_projects, run=CONFIG.RUN, flink_provided=False)
-            print("Compiled jars:", compiled_jars)
-        else:
-            print(f"Running #{job_projects.__len__()} jobs:", job_projects)
-            submit(job_projects)
+    run_jobs(job_projects)

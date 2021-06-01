@@ -27,13 +27,17 @@ def create_project_folders():
         CONFIG.GENERATED_JOB_EXEC_PLAN_FOLDER+"5GB",
         CONFIG.GENERATED_JOB_EXEC_PLAN_FOLDER+"10GB",
         CONFIG.GENERATED_JOB_EXEC_PLAN_FOLDER+"50GB",
-        CONFIG.GENERATED_JOB_TASK_MANAGER_DETAILS,
+        CONFIG.GENERATED_JOB_TASK_MANAGER_DETAILS+"1GB",
+        CONFIG.GENERATED_JOB_TASK_MANAGER_DETAILS+"5GB",
+        CONFIG.GENERATED_JOB_TASK_MANAGER_DETAILS+"10GB",
+        CONFIG.GENERATED_JOB_TASK_MANAGER_DETAILS+"50GB",
         #CONFIG.GENERATED_JOB_EXEC_PLAN_FOLDER+"3GB",
         #CONFIG.GENERATED_JOB_TASK_MANAGER_DETAILS+"3GB"
 
     ]
 
     for pj_f in project_folders:
+        pj_f = os.path.abspath(pj_f)
         if not os.path.exists(pj_f):
             print(f"|--> Creating project folder: {pj_f}")
             os.makedirs(pj_f)
