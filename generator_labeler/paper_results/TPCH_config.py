@@ -18,7 +18,7 @@ sample_col = "Log_sourceCardinalitySum"
 
 data_sizes = ["1GB"] # , "5GB", "10GB", "50GB"
 
-n_iter = 20
+n_iter = 5
 
 init_jobs = 10
 
