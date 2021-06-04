@@ -111,9 +111,9 @@ trait AbstractDatasetOperatorManager {
 
 object AbstractDatasetOperatorManager {
   def apply(s: String): AbstractDatasetOperatorManager = {
-    if (s == "TPC_H")
+    if (s == "TPCH")
       TPCHDatasetOperatorManager
-    else if (s == "IMDBK")
+    else if (s == "IMDB")
       IMDBKDatasetOperatorManager
     else
       throw new Exception(s"Can not find Dataset Operator Manger '$s'.")

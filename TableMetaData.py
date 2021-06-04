@@ -9,15 +9,15 @@ data_cardinality = {
         "supplier": 10000
     },
 
-    # TODO move to IMDB
-    "3GB": {
-        "title.principals": 36499704,
-        "title.akas": 19344171,
-        "title.ratings": 993821,
-        "title.basics": 6326545,
-        "name.basics": 9711022
-    },
-    ##################
+    # This is related to IMDB
+    # "3GB": {
+    #     "title.principals": 36499704,
+    #     "title.akas": 19344171,
+    #     "title.ratings": 993821,
+    #     "title.basics": 6326545,
+    #     "name.basics": 9711022
+    # },
+    # ##################
 
 
     "5GB":{

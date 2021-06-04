@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import sys
-from DatasetMetadata import TableMetaData
+import TableMetaData
 
 #data_source = "/Users/researchuser7/Desktop/tpc-test/sample_data/"
 data_source = "/Users/researchuser7/Desktop/tpc-test/db_out/"

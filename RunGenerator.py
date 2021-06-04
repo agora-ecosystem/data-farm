@@ -1,4 +1,4 @@
-import CONFIG
+from CONFIG import CONFIG
 import os
 
 
@@ -23,17 +23,12 @@ def create_project_folders():
         CONFIG.GENERATED_ABSTRACT_EXECUTION_PLAN_FOLDER,
         CONFIG.GENERATED_JOB_FOLDER,
         CONFIG.GENERATED_JOB_EXEC_PLAN_FOLDER,
-        CONFIG.GENERATED_JOB_EXEC_PLAN_FOLDER+"1GB",
-        CONFIG.GENERATED_JOB_EXEC_PLAN_FOLDER+"5GB",
-        CONFIG.GENERATED_JOB_EXEC_PLAN_FOLDER+"10GB",
-        CONFIG.GENERATED_JOB_EXEC_PLAN_FOLDER+"50GB",
-        CONFIG.GENERATED_JOB_TASK_MANAGER_DETAILS,
-        #CONFIG.GENERATED_JOB_EXEC_PLAN_FOLDER+"3GB",
-        #CONFIG.GENERATED_JOB_TASK_MANAGER_DETAILS+"3GB"
-
+        os.path.join(CONFIG.GENERATED_JOB_EXEC_PLAN_FOLDER, CONFIG.DATA_ID),
+        os.path.join(CONFIG.GENERATED_JOB_TASK_MANAGER_DETAILS, CONFIG.DATA_ID),
     ]
 
     for pj_f in project_folders:
+        pj_f = os.path.abspath(pj_f)
         if not os.path.exists(pj_f):
             print(f"|--> Creating project folder: {pj_f}")
             os.makedirs(pj_f)

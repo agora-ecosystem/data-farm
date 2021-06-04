@@ -1,49 +1,88 @@
-BUILD_SBT = "build.sbt"
+from datetime import datetime
+from os.path import join
 
-RUN = True
 
-# DATA GENERATORS HOME
-ABSTRACT_PLAN_GENERATOR = "./generator_labeler"
-JOB_GENERATOR = "./instantiator"
+class CONFIG:
+    BUILD_SBT = "build.sbt"
 
-# Path to original exec plans
-ORIG_EXEC_PLAN_FOLDER = "../data/input_workload_exec_plan/"
+    RUN = True
 
-# FLINK_TASK_MANAGER_URL
-FLINK_TASK_MANAGER_URL = "http://127.0.0.1:8081/"
+    PROJECT_PATH = "/Users/francescoventura/PycharmProjects/data-farm/" # <absolute_path_to_project>
 
-# Job generator conf
-N_JOBS = 10
-N_VERSIONS = 3
-JOB_SEED = -1  # -1 | 0
-DATA_MANAGER = "TPC_H" # "TPC_H" | "IMBDK"
+    # DATA GENERATORS HOME
+    ABSTRACT_PLAN_GENERATOR = join(PROJECT_PATH, "generator_labeler")
+    JOB_GENERATOR = join(PROJECT_PATH, "instantiator")
 
-# Path to generated data
-BASE_PATH = "../data/"
-EXPERIMENT_ID = "Experiment1/" #
+    # Path to original exec plans
+    ORIG_EXEC_PLAN_FOLDER = join(PROJECT_PATH, "data/input_workload_exec_plan/") # <absolute_path_to_input_workload>
 
-EXPERIMENT_PATH = BASE_PATH + EXPERIMENT_ID
+    # PATH TO INPUT DATA
+    GENERATED_JOB_INPUT_DATA_PATH = "/Users/francescoventura/data/tpc-h/" # <absolute_path_to_input_data>
 
-GENERATED_ABSTRACT_EXECUTION_PLAN_FOLDER = EXPERIMENT_PATH + "generated_abstract_exec_plans"
-GENERATED_JOB_FOLDER = EXPERIMENT_PATH + "generated_jobs"
-GENERATED_JOB_EXEC_PLAN_FOLDER = EXPERIMENT_PATH + "generated_jobs_exec_plans/"
+    # Path of generated data destination
+    BASE_PATH = join(PROJECT_PATH, "data/") # <absolute_path_to_input_data>
+    EXPERIMENT_ID = "Experiment2/"
+    EXPERIMENT_PATH = join(BASE_PATH, EXPERIMENT_ID)
 
-GENERATED_JOB_TASK_MANAGER_DETAILS = EXPERIMENT_PATH + "generated_jobs_task_manager_details/"
+    DATA_ID = "1GB"
 
-# SUBMIT CONF
-# Path where to store the execution plans of the generated jobs after their execution
-# GENERATED_JOB_OUTPUT_PLAN_PATH = GENERATED_JOB_EXEC_PLAN_FOLDER + "3GB/"
+    # Job generator conf
+    N_JOBS = 10
+    N_VERSIONS = 3
+    JOB_SEED = -1  # -1 | 0
+    DATA_MANAGER = "TPCH" # "TPCH" | "IMDB"
 
-# GENERATED_JOB_TASK_MANAGER_DETAILS_OUTPUT_PATH = GENERATED_JOB_TASK_MANAGER_DETAILS + "3GB/"
+    GENERATED_ABSTRACT_EXECUTION_PLAN_FOLDER = join(EXPERIMENT_PATH, "generated_abstract_exec_plans")
+    GENERATED_JOB_FOLDER = join(EXPERIMENT_PATH, "generated_jobs")
+    GENERATED_JOB_EXEC_PLAN_FOLDER = join(EXPERIMENT_PATH, "generated_jobs_exec_plans")
 
-# PATH TO DATA SOURCE
-# GENERATED_JOB_INPUT_DATA_PATH = ""
-# GENERATED_JOB_INPUT_DATA_PATH = ""
+    GENERATED_JOB_TASK_MANAGER_DETAILS = join(EXPERIMENT_PATH, "generated_jobs_task_manager_details")
+    print(GENERATED_JOB_TASK_MANAGER_DETAILS)
 
-# LOCAL config
-LOCAL = "nolocal"  # [local|nolocal]
-LOCAL_HEAP = "8GB"  # [8GB|none]
-PARALLELISM = "1"
+    # SUBMIT CONF
+    # Path where to store the execution plans of the generated jobs after their execution
+    GENERATED_JOB_OUTPUT_PLAN_PATH = join(GENERATED_JOB_EXEC_PLAN_FOLDER, DATA_ID+"/")
+    GENERATED_JOB_TASK_MANAGER_DETAILS_OUTPUT_PATH = join(GENERATED_JOB_TASK_MANAGER_DETAILS, DATA_ID+"/")
 
-# FLINK HOME
-FLINK_HOME = "./flink-1.10.0"
+
+    # Job Submission config
+    LOCAL = "nolocal"  # [local|nolocal]
+    LOCAL_HEAP = "8GB"  # [8GB|none]
+    PARALLELISM = "1"
+
+    # FLINK HOME
+    FLINK_HOME = "/Users/francescoventura/flink-1.10.0"
+
+    # FLINK_TASK_MANAGER_URL
+    FLINK_TASK_MANAGER_URL = "http://127.0.0.1:8081/"
+
+
+
+    ########################################################
+    ## Config Label Forecaster
+
+    exec_timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
+
+    LABEL_COL = "Log_netRunTime"
+
+    SAMPLE_COL = "Log_sourceCardinalitySum"
+
+    FEATURE_COLS = ["t_0", "t_1", "t_2", "t_3", "t_4", "t_5", "t_6",
+                    "joinOutCard_sum", "joinOutCard_mean", "joinOutCard_std", "joinOutCard_min", "joinOutCard_max",
+                    "filterOutCard_mean", "filterOutCard_std", "filterOutCard_min", "filterOutCard_max",
+                    "groupbyOutCard_mean", "groupbyOutCard_std", "groupbyOutCard_min", "groupbyOutCard_max",
+                    "outCardinality_mean", "outCardinality_std", "outCardinality_min", "outCardinality_max",
+                    "outCardinality_kurtosis", "outCardinality_skew",
+                    "sourceOutCard_mean", "sourceOutCard_std", "sourceOutCard_min", "sourceOutCard_max", "sourceCardinalitySum",
+                    "complexity_mean", "complexity_min", "complexity_max"
+                    ]
+
+    MAX_EARLY_STOP = 2
+    EARLY_STOP_TH = 0.1 # Float between 0 and 1
+    MAX_ITER = 5
+    INIT_JOBS = 10
+    RANDOM_INIT = False
+
+    GENERATED_METADATA_PATH = join(GENERATED_JOB_FOLDER, "generated_jobs_info.json")
+
+    LABEL_FORECASTER_OUT = join(EXPERIMENT_PATH, "label_forecaster_" + exec_timestamp)

@@ -1,9 +1,8 @@
 import os
-import sys
 import subprocess
 import re
 from glob import glob
-import CONFIG
+from CONFIG import CONFIG
 import requests
 import json
 
@@ -161,6 +160,19 @@ def submit(job_projects):
     print("jars_path:", jars_path)
     return jars_path
 
+def get_executed_plans():
+    executed_plans_path = glob(f'{CONFIG.GENERATED_JOB_OUTPUT_PLAN_PATH}/*.json')
+    data_id = os.path.dirname(CONFIG.GENERATED_JOB_OUTPUT_PLAN_PATH).split("/")[-1]
+    executed_plans = {}
+    for ep in executed_plans_path:
+        ep_id = os.path.basename(ep).replace("$.json", "")
+        with open(ep, "r") as f:
+            ep_j = json.load(f)
+
+        executed_plans[(ep_id, data_id)] = ep_j
+
+    return executed_plans
+
 
 def job_id_v(s):
     s = s.replace("Job", "")
@@ -168,23 +180,9 @@ def job_id_v(s):
     return int(ss[0]), int(ss[1])
 
 
-if __name__ == '__main__':
-    exec_plans_path_already_computed = get_exec_plans_path()
-    exec_plans_already_computed = {os.path.basename(ep).replace("$.json", "") for ep in
-                                   exec_plans_path_already_computed}
-
-    job_projects = get_job_projects()
-    job_projects = sorted(job_projects, key=job_id_v)
-    print(f"Found #{job_projects.__len__()} jobs:", job_projects)
-
-    # Filter jobs already executed
-    job_projects = [jp for jp in job_projects if jp not in exec_plans_already_computed]
-
-    # job_projects = [jp for jp in job_projects if jp in "Job2v1"]
-
+def run_jobs(job_projects):
     if job_projects.__len__() == 0:
         print("All jobs already executed, remove filter to re-execute everything and override results.")
-        sys.exit(0)
     else:
         if CONFIG.LOCAL == "local":
             print("WARNING - Running locally!!!")
@@ -194,3 +192,23 @@ if __name__ == '__main__':
         else:
             print(f"Running #{job_projects.__len__()} jobs:", job_projects)
             submit(job_projects)
+
+    return
+
+
+
+if __name__ == '__main__':
+    exec_plans_path_already_computed = get_exec_plans_path()
+    exec_plans_already_computed = {os.path.basename(ep).replace("$.json", "") for ep in
+                                   exec_plans_path_already_computed}
+
+    job_projects = get_job_projects()
+    job_projects = sorted(job_projects, key=job_id_v)
+    # print(f"Found #{job_projects.__len__()} jobs:", job_projects)
+
+    # Filter jobs already executed
+    job_projects = [jp for jp in job_projects if jp not in exec_plans_already_computed]
+    print(f"Submitting #{job_projects.__len__()} jobs:", job_projects)
+    # job_projects = [jp for jp in job_projects if jp in "Job2v1"]
+
+    run_jobs(job_projects)
