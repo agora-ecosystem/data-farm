@@ -13,7 +13,7 @@ from generator_labeler.FeatureExtraction.PredictorFeatureExtraction import compu
 from generator_labeler.JobExecutionSampler.unsupervised_sampler import UniformAgglomerativeSampler, RandomSampler
 from generator_labeler.ActiveModel.ActiveQuantileForest import QuantileForestModel
 import BuildAndSubmit
-import CONFIG
+from CONFIG import CONFIG
 
 
 def get_X_y(df, feature_cols, label_col):
@@ -142,7 +142,7 @@ def check_early_stop(iterations_results, th=0.1):
     return True
 
 
-def run_active_learning(features_df, feature_cols, label_col, n_iter=20, max_early_stop = 2, verbose=False, random_sampling=False):
+def run_active_learning(features_df, feature_cols, label_col, n_iter=20, max_early_stop = 2, early_stop_th=0.1, verbose=False, random_sampling=False):
     warnings.filterwarnings("ignore")
 
     data_size = []
@@ -182,7 +182,7 @@ def run_active_learning(features_df, feature_cols, label_col, n_iter=20, max_ear
             print("Max iteration reached!")
             break
 
-        if check_early_stop(iterations_results):
+        if check_early_stop(iterations_results, early_stop_th):
             early_stop_count += 1
             if early_stop_count >= max_early_stop:
                 print("Early stop reached!")
@@ -291,6 +291,7 @@ def run(config):
                                   label_col=config.LABEL_COL,
                                   n_iter=config.MAX_ITER,
                                   max_early_stop=config.MAX_EARLY_STOP,
+                                  early_stop_th=config.EARLY_STOP_TH,
                                   verbose=True)
 
     results["final_dataset"].to_csv(os.path.join(config.LABEL_FORECASTER_OUT, "final_dataset.csv"))

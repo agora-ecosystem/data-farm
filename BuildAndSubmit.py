@@ -1,9 +1,8 @@
 import os
-import sys
 import subprocess
 import re
 from glob import glob
-import CONFIG
+from CONFIG import CONFIG
 import requests
 import json
 
