@@ -13,6 +13,7 @@ from generator_labeler.FeatureExtraction.PredictorFeatureExtraction import compu
 from generator_labeler.JobExecutionSampler.unsupervised_sampler import UniformAgglomerativeSampler, RandomSampler
 from generator_labeler.ActiveModel.ActiveQuantileForest import QuantileForestModel
 import BuildAndSubmit
+import CONFIG
 
 
 def get_X_y(df, feature_cols, label_col):
@@ -121,12 +122,27 @@ def get_dataset(features_df, feature_cols, label_col):
     return X_train, y_train, ids_train, X_test, y_test, ids_test
 
 
-def check_early_stop(iterations_results):
-    # TODO complete early stop
-    return False
+def check_early_stop(iterations_results, th=0.1):
+    IQRs_RMSE = np.array([np.mean(np.exp(I["uncertainty_high"]) - np.exp(I["uncertainty_low"])) for I in iterations_results])
+    # IQRs_std = np.array([np.std(np.exp(I["uncertainty_high"]) - np.exp(I["uncertainty_low"])) for I in iterations_results])
+    print(">>> Uncertanties: ", IQRs_RMSE)
+    if len(IQRs_RMSE) < 2:
+        return False
+
+    min_u = IQRs_RMSE[-2]
+    min_local_u = IQRs_RMSE[-2]
+    r = IQRs_RMSE[-1] / min_local_u
+
+    if (r > 1) or (IQRs_RMSE[-1] > min_u):
+        return False
+
+    if (1 - r) < th:
+        return False
+
+    return True
 
 
-def run_active_learning(features_df, feature_cols, label_col, n_iter=20, verbose=False, random_sampling=False):
+def run_active_learning(features_df, feature_cols, label_col, n_iter=20, max_early_stop = 2, verbose=False, random_sampling=False):
     warnings.filterwarnings("ignore")
 
     data_size = []
@@ -136,6 +152,7 @@ def run_active_learning(features_df, feature_cols, label_col, n_iter=20, verbose
     cross_validation_scores_exp = []
     IQRs_mean = []
     iterations_results = []
+    early_stop_count = 0
 
     # Start Active-Learning
     X_train, y_train, ids_train, X_test, _, ids_test = get_dataset(features_df, feature_cols, label_col)
@@ -161,10 +178,17 @@ def run_active_learning(features_df, feature_cols, label_col, n_iter=20, verbose
         iter_res["model"] = str(iter_res["model"])
         iterations_results.append(iter_res)
 
-        # TODO check stop here
-        if (idx+1 >= n_iter) or check_early_stop(iterations_results):
-            print("Early stop reached!")
+        if (idx+1 >= n_iter):
+            print("Max iteration reached!")
             break
+
+        if check_early_stop(iterations_results):
+            early_stop_count += 1
+            if early_stop_count >= max_early_stop:
+                print("Early stop reached!")
+                break
+            else:
+                print(f">>> Skip early stop {early_stop_count}. Max early stop is set to {max_early_stop}.")
 
         # Prepare next iteration
         if random_sampling:
@@ -218,45 +242,38 @@ def run_active_learning(features_df, feature_cols, label_col, n_iter=20, verbose
     return results
 
 
-def load_data_and_preprocess(config, load_original_cards=False):
-    args_params = config.parse_args(sys.argv)
-
+def load_data_and_preprocess(config):
     # Load dataset
-    if config.plan_data_features_path is not None:
-        print("#####################################################")
-        print("## WARNING! Loading pre-existing features dataset! ##")
-        print("#####################################################")
-        plan_data_features = pd.read_csv(config.plan_data_features_path).set_index(["plan_id", "data_id"])
-    else:
-        plan_data_features = compute_cardinality_plan_features(args_params["generatedJobsInfo"],
-                                                               data_sizes=config.data_sizes)
-        plan_data_features = plan_data_features.sort_index()
 
-        sourceCardinalitySum = plan_data_features["sourceCardinalitySum"].copy()
-        sourceCardinalitySum[
-            sourceCardinalitySum == 0] = 1  # Solves a bug in uniform sampler, because log of 0 is minus inf
-        plan_data_features["Log_sourceCardinalitySum"] = np.log(sourceCardinalitySum)
+    plan_data_features = compute_cardinality_plan_features(config.GENERATED_METADATA_PATH,
+                                                           data_sizes=[config.DATA_ID])
+    plan_data_features = plan_data_features.sort_index()
+
+    sourceCardinalitySum = plan_data_features["sourceCardinalitySum"].copy()
+    sourceCardinalitySum[
+        sourceCardinalitySum == 0] = 1  # Solves a bug in uniform sampler, because log of 0 is minus inf
+    plan_data_features["Log_sourceCardinalitySum"] = np.log(sourceCardinalitySum)
 
     return plan_data_features
 
 
-def run(config, random_sampling=False):
+def run(config):
     # Load plan_data_features
     features_df = load_data_and_preprocess(config)
 
     # Persist features
-    features_df.to_csv(os.path.join(config.dest_folder, "plan_data_features.csv"))
+    features_df.to_csv(os.path.join(config.LABEL_FORECASTER_OUT, "plan_data_features.csv"))
 
-    if random_sampling:
+    if config.RANDOM_INIT:
         print("Random init sampling...")
-        sample_model = RandomSampler(config.init_jobs, config.feature_cols, config.label_col, seed=42)
+        sample_model = RandomSampler(config.init_jobs, config.FEATURE_COLS, config.LABEL_COL, seed=42)
     else:
-        sample_model = UniformAgglomerativeSampler(config.init_jobs, config.feature_cols, config.label_col,
-                                                   config.sample_col)
+        sample_model = UniformAgglomerativeSampler(config.INIT_JOBS, config.FEATURE_COLS, config.LABEL_COL,
+                                                   config.SAMPLE_COL)
 
     sample_model.fit(features_df, verbose=True)
     # save init_job_sample_ids
-    np.savetxt(os.path.join(config.dest_folder, "init_job_sample_ids.txt"), sample_model.sample_ids, fmt="%d")
+    np.savetxt(os.path.join(config.LABEL_FORECASTER_OUT, "init_job_sample_ids.txt"), sample_model.sample_ids, fmt="%d")
 
     init_jobs_to_run = features_df.iloc[sample_model.sample_ids].index.get_level_values(0)
 
@@ -267,47 +284,48 @@ def run(config, random_sampling=False):
     executed_jobs_runtime = get_executed_plans_exec_time(init_jobs_to_run)
 
     features_df = pd.merge(features_df, executed_jobs_runtime, left_index=True, right_index=True, how="left")
-    features_df[config.label_col] = np.log(features_df["netRunTime"])
+    features_df[config.LABEL_COL] = np.log(features_df["netRunTime"])
 
     results = run_active_learning(features_df,
-                                  feature_cols=config.feature_cols,
-                                  label_col=config.label_col,
-                                  n_iter=config.n_iter,
+                                  feature_cols=config.FEATURE_COLS,
+                                  label_col=config.LABEL_COL,
+                                  n_iter=config.MAX_ITER,
+                                  max_early_stop=config.MAX_EARLY_STOP,
                                   verbose=True)
 
-    results["final_dataset"].to_csv(os.path.join(config.dest_folder, "final_dataset.csv"))
-    with open(os.path.join(config.dest_folder, "learning_process.pkl"), "wb") as handle:
+    results["final_dataset"].to_csv(os.path.join(config.LABEL_FORECASTER_OUT, "final_dataset.csv"))
+    with open(os.path.join(config.LABEL_FORECASTER_OUT, "learning_process.pkl"), "wb") as handle:
         pickle.dump(results, handle)
 
 
-def get_cofing(exp_type):
-    if exp_type == "IMDB":
-        return IMDB_config
-    if exp_type == "TPCH":
-        return TPCH_config
-    else:
-        Exception(f"No experiment type '{exp_type}'")
+# def get_cofing(exp_type):
+#     if exp_type == "IMDB":
+#         return IMDB_config
+#     if exp_type == "TPCH":
+#         return TPCH_config
+#     else:
+#         Exception(f"No experiment type '{exp_type}'")
 
 
 def main():
-    exp_type = "TPCH"  # "TPCH" # "IMDB"
-    config = get_cofing(exp_type)
+    # exp_type = "TPCH"  # "TPCH" # "IMDB"
+    config = CONFIG
     random_sampling = False
 
-    if random_sampling:
+    if config.RANDOM_INIT:
         print("################################")
         print("## INFO! Random job sampling! ##")
         print("################################")
-        config.dest_folder = config.dest_folder + "_random_sample"
+        config.LABEL_FORECASTER_OUT = config.LABEL_FORECASTER_OUT + "_random_sample"
 
     ### Active Learning Process
     try:
-        os.mkdir(config.dest_folder)
+        os.mkdir(config.LABEL_FORECASTER_OUT)
     except Exception as ex:
-        print(f"Experiment '{config.dest_folder}' already exists!")
+        print(f"Experiment '{config.LABEL_FORECASTER_OUT}' already exists!")
         sys.exit(1)
     #
-    run(config, random_sampling=random_sampling)
+    run(config)
 
 
 if __name__ == '__main__':
