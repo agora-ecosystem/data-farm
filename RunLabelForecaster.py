@@ -87,8 +87,8 @@ def active_learning_iteration(X_train, y_train, ids_train, X_test, ids_test, fea
         #  plt.show()
         plt.close()
 
-        display(pd.DataFrame({"Feature": feature_cols, "F. Importance": qf_model.model.feature_importances_}) \
-                .sort_values("F. Importance", ascending=False).head(15).style.background_gradient())
+        # display(pd.DataFrame({"Feature": feature_cols, "F. Importance": qf_model.model.feature_importances_}) \
+        #        .sort_values("F. Importance", ascending=False).head(15).style.background_gradient())
 
     IQR_interval = qf_model.predict_model_uncertainty(X_test, verbose=True)
 
@@ -125,7 +125,7 @@ def get_dataset(features_df, feature_cols, label_col):
 def check_early_stop(iterations_results, th=0.1):
     IQRs_RMSE = np.array([np.mean(np.exp(I["uncertainty_high"]) - np.exp(I["uncertainty_low"])) for I in iterations_results])
     # IQRs_std = np.array([np.std(np.exp(I["uncertainty_high"]) - np.exp(I["uncertainty_low"])) for I in iterations_results])
-    print(">>> Uncertanties: ", IQRs_RMSE)
+    print(">>> Model's uncertanties: ", IQRs_RMSE)
     if len(IQRs_RMSE) < 2:
         return False
 
