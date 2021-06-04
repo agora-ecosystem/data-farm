@@ -7,7 +7,7 @@ class CONFIG:
 
     RUN = True
 
-    PROJECT_PATH = "/Users/francescoventura/PycharmProjects/data-farm/" # <absolute_path_to_project>
+    PROJECT_PATH = "<absolute_path_to_project>" # <absolute_path_to_project>
 
     # DATA GENERATORS HOME
     ABSTRACT_PLAN_GENERATOR = join(PROJECT_PATH, "generator_labeler")
@@ -17,7 +17,7 @@ class CONFIG:
     ORIG_EXEC_PLAN_FOLDER = join(PROJECT_PATH, "data/input_workload_exec_plan/") # <absolute_path_to_input_workload>
 
     # PATH TO INPUT DATA
-    GENERATED_JOB_INPUT_DATA_PATH = "/Users/francescoventura/data/tpc-h/" # <absolute_path_to_input_data>
+    GENERATED_JOB_INPUT_DATA_PATH = "<absolute_path_to_input_data>" # <absolute_path_to_input_data>
 
     # Path of generated data destination
     BASE_PATH = join(PROJECT_PATH, "data/") # <absolute_path_to_input_data>
@@ -51,7 +51,7 @@ class CONFIG:
     PARALLELISM = "1"
 
     # FLINK HOME
-    FLINK_HOME = "/Users/francescoventura/flink-1.10.0"
+    FLINK_HOME = "<path_to_flink>" # <path_to_flink>
 
     # FLINK_TASK_MANAGER_URL
     FLINK_TASK_MANAGER_URL = "http://127.0.0.1:8081/"
