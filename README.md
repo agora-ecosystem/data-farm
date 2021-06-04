@@ -16,9 +16,9 @@ Thus, DataFarm allows users to produce a large heterogeneous set of realistic jo
 ## Quick-start
 
 1. Update `CONFIG.py`
-2. Update `TableMetaData.py (if needed)
+2. Update `TableMetaData.py` (if needed)
 3. Run `RunGenerator.py`
-4. Run `RunLabelForecaster.py``
+4. Run `RunLabelForecaster.py`
 
 ## Configuration
 TODO
