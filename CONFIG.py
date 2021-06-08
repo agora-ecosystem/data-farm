@@ -3,11 +3,28 @@ from os.path import join
 
 
 class CONFIG:
-    BUILD_SBT = "build.sbt"
 
-    RUN = True
+    # PATH TO DATA-FARM PROJECT
+    PROJECT_PATH = "/absolute/path/to/DataFarm/project" # <absolute_path_to_project>
 
-    PROJECT_PATH = "<absolute_path_to_project>" # <absolute_path_to_project>
+    # PATH TO INPUT DATA
+    GENERATED_JOB_INPUT_DATA_PATH = "/absolute/path/to/input/data" # <absolute_path_to_input_data>
+
+    # FLINK HOME
+    FLINK_HOME = "/absolute/path/to/flink" # <path_to_flink>
+
+    # EXPERIMENT ID
+    EXPERIMENT_ID = "Experiment1"
+    # DATA ID
+    DATA_ID = "1GB"
+
+    # Job generator conf
+    N_JOBS = 10
+    N_VERSIONS = 3
+    JOB_SEED = -1  # -1 | 0
+    DATA_MANAGER = "TPCH" # "TPCH" | "IMDB"
+
+    #################################################################
 
     # DATA GENERATORS HOME
     ABSTRACT_PLAN_GENERATOR = join(PROJECT_PATH, "generator_labeler")
@@ -16,21 +33,10 @@ class CONFIG:
     # Path to original exec plans
     ORIG_EXEC_PLAN_FOLDER = join(PROJECT_PATH, "data/input_workload_exec_plan/") # <absolute_path_to_input_workload>
 
-    # PATH TO INPUT DATA
-    GENERATED_JOB_INPUT_DATA_PATH = "<absolute_path_to_input_data>" # <absolute_path_to_input_data>
-
     # Path of generated data destination
     BASE_PATH = join(PROJECT_PATH, "data/") # <absolute_path_to_input_data>
-    EXPERIMENT_ID = "Experiment2/"
-    EXPERIMENT_PATH = join(BASE_PATH, EXPERIMENT_ID)
 
-    DATA_ID = "1GB"
-
-    # Job generator conf
-    N_JOBS = 10
-    N_VERSIONS = 3
-    JOB_SEED = -1  # -1 | 0
-    DATA_MANAGER = "TPCH" # "TPCH" | "IMDB"
+    EXPERIMENT_PATH = join(BASE_PATH, EXPERIMENT_ID+"/")
 
     GENERATED_ABSTRACT_EXECUTION_PLAN_FOLDER = join(EXPERIMENT_PATH, "generated_abstract_exec_plans")
     GENERATED_JOB_FOLDER = join(EXPERIMENT_PATH, "generated_jobs")
@@ -50,16 +56,16 @@ class CONFIG:
     LOCAL_HEAP = "8GB"  # [8GB|none]
     PARALLELISM = "1"
 
-    # FLINK HOME
-    FLINK_HOME = "<path_to_flink>" # <path_to_flink>
-
     # FLINK_TASK_MANAGER_URL
     FLINK_TASK_MANAGER_URL = "http://127.0.0.1:8081/"
 
+    BUILD_SBT = "build.sbt"
 
+    RUN = True
 
     ########################################################
-    ## Config Label Forecaster
+    ## Config Label Forecaster #############################
+    ########################################################
 
     exec_timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
 
