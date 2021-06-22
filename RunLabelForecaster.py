@@ -13,6 +13,7 @@ from generator_labeler.FeatureExtraction.PredictorFeatureExtraction import compu
 from generator_labeler.JobExecutionSampler.unsupervised_sampler import UniformAgglomerativeSampler, RandomSampler
 from generator_labeler.ActiveModel.ActiveQuantileForest import QuantileForestModel
 import BuildAndSubmit
+from generator_labeler.CustomActiveLearning import CustomActiveLearning
 from CONFIG import CONFIG
 
 
@@ -197,9 +198,10 @@ def run_active_learning(features_df, feature_cols, label_col, n_iter=20, max_ear
             sampling_idx = np.random.randint(0, len(X_test), len_new_X_train)
             new_ids_train = ids_test.iloc[sampling_idx].copy()
 
-        else:  # Sampling based on uncertainty threshold
+        else: # Sampling based on uncertainty threshold
             IRQ_th = np.quantile(iter_res["uncertainty_interval"], 0.95)
             new_ids_train = ids_test.iloc[iter_res["uncertainty_interval"] > IRQ_th].copy()
+
 
         if len(new_ids_train) == 0:
             print("No more jobs to run, Early Stop!")
@@ -286,14 +288,22 @@ def run(config):
     features_df = pd.merge(features_df, executed_jobs_runtime, left_index=True, right_index=True, how="left")
     features_df[config.LABEL_COL] = np.log(features_df["netRunTime"])
 
-    results = run_active_learning(features_df,
+    # results = run_active_learning(features_df,
+    #                               feature_cols=config.FEATURE_COLS,
+    #                               label_col=config.LABEL_COL,
+    #                               n_iter=config.MAX_ITER,
+    #                               max_early_stop=config.MAX_EARLY_STOP,
+    #                               early_stop_th=config.EARLY_STOP_TH,
+    #                               verbose=True)
+
+    custom_active_learning = CustomActiveLearning.CustomActiveLearning()
+    results = custom_active_learning.run_active_learning(features_df,
                                   feature_cols=config.FEATURE_COLS,
                                   label_col=config.LABEL_COL,
                                   n_iter=config.MAX_ITER,
                                   max_early_stop=config.MAX_EARLY_STOP,
                                   early_stop_th=config.EARLY_STOP_TH,
                                   verbose=True)
-
     results["final_dataset"].to_csv(os.path.join(config.LABEL_FORECASTER_OUT, "final_dataset.csv"))
     with open(os.path.join(config.LABEL_FORECASTER_OUT, "learning_process.pkl"), "wb") as handle:
         pickle.dump(results, handle)
