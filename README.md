@@ -13,6 +13,8 @@ Thus, DataFarm allows users to produce a large heterogeneous set of realistic jo
 - Flink == 1.10.0
 - Python == 3.6
 
+Install all the python requirements specified in `requirements.txt`
+
 ## Quick-start
 
 1. Update `CONFIG.py`

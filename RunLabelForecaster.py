@@ -292,7 +292,8 @@ def run(config):
                                   n_iter=config.MAX_ITER,
                                   max_early_stop=config.MAX_EARLY_STOP,
                                   early_stop_th=config.EARLY_STOP_TH,
-                                  verbose=True)
+                                  verbose=True,
+                                  random_sampling=config.RANDOM_SAMPLING)
 
     results["final_dataset"].to_csv(os.path.join(config.LABEL_FORECASTER_OUT, "final_dataset.csv"))
     with open(os.path.join(config.LABEL_FORECASTER_OUT, "learning_process.pkl"), "wb") as handle:

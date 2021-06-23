@@ -88,6 +88,7 @@ class CONFIG:
     MAX_ITER = 5
     INIT_JOBS = 10
     RANDOM_INIT = False
+    RANDOM_SAMPLING = False
 
     GENERATED_METADATA_PATH = join(GENERATED_JOB_FOLDER, "generated_jobs_info.json")
 
