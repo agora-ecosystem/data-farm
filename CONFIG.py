@@ -4,14 +4,14 @@ from os.path import join
 
 class CONFIG:
 
-    # PATH TO DATA-FARM PROJECT
-    PROJECT_PATH = "/absolute/path/to/DataFarm/project" # <absolute_path_to_project>
+    # PATH TO DATA-FARM
+    PROJECT_PATH = "/Users/francescoventura/PycharmProjects/data-farm/" # <absolute_path_to_project>
 
     # PATH TO INPUT DATA
-    GENERATED_JOB_INPUT_DATA_PATH = "/absolute/path/to/input/data" # <absolute_path_to_input_data>
+    GENERATED_JOB_INPUT_DATA_PATH = "/Users/francescoventura/data/tpc-h/"  # <absolute_path_to_input_data>
 
     # FLINK HOME
-    FLINK_HOME = "/absolute/path/to/flink" # <path_to_flink>
+    FLINK_HOME = "/Users/francescoventura/flink-1.10.0" # <absolute_path_to_flink>
 
     # EXPERIMENT ID
     EXPERIMENT_ID = "Experiment1"
