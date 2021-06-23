@@ -4,9 +4,11 @@ import warnings
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
-from generator_labeler.ActiveModel.ActiveQuantileForest import QuantileForestModel
-from generator_labeler.CustomActiveLearning.ActiveLearningUtility import ActiveLearningUtility, JobExecutionSampler
+from simple_term_menu import TerminalMenu
 
+from generator_labeler.ActiveModel.ActiveQuantileForest import QuantileForestModel
+from generator_labeler.CustomActiveLearning.ActiveLearningUtility import ActiveLearningUtility, JobExecutionSampler, UserSampling
+from generator_labeler.JobExecutionSampler.supervised_sampler import UserSampler
 
 class CustomActiveLearning:
 
@@ -14,7 +16,7 @@ class CustomActiveLearning:
         print("Initiating Custom Active Learning")
 
     def run_active_learning(self, features_df, feature_cols, label_col, n_iter=20, max_early_stop=2, early_stop_th=0.1,
-                            verbose=False, sampler = JobExecutionSampler.RANDOM_SAMPLER):
+                            verbose=False, user_prompt=False, sampler=JobExecutionSampler.USER_SPECIFIED):
         warnings.filterwarnings("ignore")
 
         data_size = []
@@ -34,7 +36,13 @@ class CustomActiveLearning:
         # -> next iteration
 
         for idx in range(n_iter):
+            if(user_prompt):
+                val = input("Enter x to stop AL process, press any other key to continue: ")
+                if(val.strip() == "x"):
+                    break
+
             print("======= Iteration", idx)
+
             data_size.append(X_train.shape[0])
             print("Train:", X_train.shape)
             print("Test:", X_test.shape)
@@ -61,7 +69,7 @@ class CustomActiveLearning:
                     break
                 else:
                     print(f">>> Skip early stop {early_stop_count}. Max early stop is set to {max_early_stop}.")
-            uncertainty = False
+
 
             # Prepare next iteration
             if sampler is JobExecutionSampler.RANDOM_SAMPLER:
@@ -76,17 +84,15 @@ class CustomActiveLearning:
 
             elif sampler is JobExecutionSampler.USER_SPECIFIED:
                 # Custom job sampling; sample jobs inputted by user
-                print("Custom sampling")
-                IRQ_th = np.quantile(iter_res["uncertainty_interval"], 0.95)
-                len_new_X_train = len(X_test[iter_res["uncertainty_interval"] > IRQ_th])
-                sampling_idx = np.random.randint(0, len(X_test), len_new_X_train)
-                new_ids_train = ids_test.iloc[sampling_idx].copy()
+                user_sampling = UserSampling()
+                new_ids_train = user_sampling.user_specified_sampling(X_test, iter_res, ids_test)
 
             if len(new_ids_train) == 0:
                 print("No more jobs to run, Early Stop!")
                 break
 
             print("Candidates to run:\n", new_ids_train)
+
             # -> RUN Jobs
             new_jobs_to_run = new_ids_train.iloc[:, 0].values
             ActiveLearningUtility.submit_jobs(new_jobs_to_run)

@@ -5,13 +5,13 @@ from os.path import join
 class CONFIG:
 
     # PATH TO DATA-FARM PROJECT
-    PROJECT_PATH = "/absolute/path/to/DataFarm/project" # <absolute_path_to_project>
+    PROJECT_PATH = "/mnt/c/Users/Robin/Documents/Git/Datafarm/data-farm" # <absolute_path_to_project>
 
     # PATH TO INPUT DATA
-    GENERATED_JOB_INPUT_DATA_PATH = "/absolute/path/to/input/data" # <absolute_path_to_input_data>
+    GENERATED_JOB_INPUT_DATA_PATH = "/mnt/c/Users/Robin/Documents/experimentdata/1GB/" #"/mnt/c/Users/Robin/Documents/Git/Datafarm/Dataplans/misc/20200829163549_good" # <absolute_path_to_input_data>
 
     # FLINK HOME
-    FLINK_HOME = "/absolute/path/to/flink" # <path_to_flink>
+    FLINK_HOME = "/mnt/c/Users/Robin/Documents/Flink/flink-1.10.0" # <path_to_flink>
 
     # EXPERIMENT ID
     EXPERIMENT_ID = "Experiment1"
@@ -20,7 +20,7 @@ class CONFIG:
 
     # Job generator conf
     N_JOBS = 10
-    N_VERSIONS = 3
+    N_VERSIONS = 5
     JOB_SEED = -1  # -1 | 0
     DATA_MANAGER = "TPCH" # "TPCH" | "IMDB"
 
@@ -88,6 +88,9 @@ class CONFIG:
     MAX_ITER = 5
     INIT_JOBS = 10
     RANDOM_INIT = False
+
+    USER_INIT = True
+    USER_PROMPT = False
 
     GENERATED_METADATA_PATH = join(GENERATED_JOB_FOLDER, "generated_jobs_info.json")
 

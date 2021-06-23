@@ -1,10 +1,16 @@
 import os
 from enum import Enum
 
+import numpy as np
 import pandas as pd
+from pprint import pprint
+
+from PyInquirer import prompt, Separator
+from examples import custom_style_2
 
 import BuildAndSubmit
-
+from consolemenu import MultiSelectMenu, SelectionMenu, items
+import argparse
 
 class ActiveLearningUtility:
 
@@ -50,6 +56,46 @@ class ActiveLearningUtility:
         print("Test data:", X_test.shape)
         return X_train, y_train, ids_train, X_test, y_test, ids_test
 
+
+class UserSampling:
+
+    def __init__(self):
+        print("Initiating user specified sampling")
+
+    def user_specified_sampling(self, X_test, iter_res, ids_test):
+        a_list = ["red", "blue", "green"]
+        # selection = MultiSelectMenu(title="Select Jobs to execute")
+        # uncertainty_intervals = iter_res["uncertainty_interval"]
+        # for i in range(0,len(k_sample)):
+        #     selection.append_item(items.SelectionItem(f"Job {i} Uncertainty Interval: {uncertainty_intervals[i]}",index=i))
+        # selection.show()
+        # processed = selection.process_user_input()
+        # test = selection.selected_item
+        # print("Jobs selected:" + str(selection.current_item.index))
+        joboptions = []
+        uncertainty_intervals = iter_res["uncertainty_interval"]
+        job_names = ids_test["plan_id"]
+        job_data_ids = ids_test["data_id"]
+        for i in range(0,len(X_test)):
+            joboptions.append(f"{i}: Job \"{job_names[i]}\", Data ID: {job_data_ids[i]}, Uncertainty Interval: {uncertainty_intervals[i]}")
+        sampling_idx = self.options_list("Which jobs would you like to run?", "Type numbers, separated by commas: ", joboptions)
+
+        return ids_test.iloc[sampling_idx].copy()
+
+    def options_list(self,title, query, options):
+        print(title)
+        for option in options:
+            print(option)
+
+        while True:
+            try:
+                val = input(query)
+                print()
+                value = list(map(int, val.strip().split(',')))
+                print(value)
+                return value
+            except:
+                print("Invalid input, please try again")
 
 class JobExecutionSampler(Enum):
     RANDOM_SAMPLER = 1

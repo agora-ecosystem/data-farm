@@ -2,7 +2,7 @@ import os
 import sys
 import warnings
 import pickle
-from IPython.core.display import display
+# from IPython.core.display import display
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -11,6 +11,7 @@ import seaborn as sns
 from generator_labeler.paper_results import IMDB_config, TPCH_config
 from generator_labeler.FeatureExtraction.PredictorFeatureExtraction import compute_cardinality_plan_features
 from generator_labeler.JobExecutionSampler.unsupervised_sampler import UniformAgglomerativeSampler, RandomSampler
+from generator_labeler.JobExecutionSampler.supervised_sampler import UserSampler
 from generator_labeler.ActiveModel.ActiveQuantileForest import QuantileForestModel
 import BuildAndSubmit
 from generator_labeler.CustomActiveLearning import CustomActiveLearning
@@ -268,7 +269,9 @@ def run(config):
 
     if config.RANDOM_INIT:
         print("Random init sampling...")
-        sample_model = RandomSampler(config.init_jobs, config.FEATURE_COLS, config.LABEL_COL, seed=42)
+        sample_model = RandomSampler(config.INIT_JOBS, config.FEATURE_COLS, config.LABEL_COL, seed=42)
+    elif config.USER_INIT:
+        sample_model = UserSampler(config.INIT_JOBS, config.FEATURE_COLS, config.LABEL_COL, seed=42)
     else:
         sample_model = UniformAgglomerativeSampler(config.INIT_JOBS, config.FEATURE_COLS, config.LABEL_COL,
                                                    config.SAMPLE_COL)
@@ -303,7 +306,8 @@ def run(config):
                                   n_iter=config.MAX_ITER,
                                   max_early_stop=config.MAX_EARLY_STOP,
                                   early_stop_th=config.EARLY_STOP_TH,
-                                  verbose=True)
+                                  verbose=True,
+                                  user_prompt = config.USER_PROMPT)
     results["final_dataset"].to_csv(os.path.join(config.LABEL_FORECASTER_OUT, "final_dataset.csv"))
     with open(os.path.join(config.LABEL_FORECASTER_OUT, "learning_process.pkl"), "wb") as handle:
         pickle.dump(results, handle)
