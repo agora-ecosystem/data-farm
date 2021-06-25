@@ -1,0 +1,369 @@
+{% if status["apg_run"] == true %}
+    {#    <div class="row mb-4">#}
+    {#        <h2>Synthetic Job Instantiator</h2>#}
+    {#        <p></p>#}
+    {#    </div>#}
+
+    {#        status["apg_plans"].append(#}
+    {#            {"id": apg_plan_id,#}
+    {#             "path": apg_plan_path,#}
+    {#             "plan": s1,#}
+    {#             "selected": True#}
+    {#             })#}
+    <div class="row mb-4" style="margin-top: 50px;">
+        <hr/>
+
+        <h2>Synthetic Job Instantiator</h2>
+        <p>Configure the Synthetic Job Instantiator.</p>
+
+
+    </div>
+    <div class="row mb-2 g-3  mb-4">
+        <div class="col-12">
+            <h5>Generated Abstract Plans</h5>
+            <p>Below you can inspect the generated Abstract Plans and you can select
+                the ones that you want to exploit for the instantiation.</p>
+        </div>
+
+        <div class="row row-cols-md-3 flex-row flex-nowrap overflow-scroll border rounded">
+
+            {% for p_id, apg_plans in status["apg_plans"].items() %}
+                <div class="col-3 img-check">
+                    <input type="checkbox" id="img-cb{{ loop.index }}" checked/>
+                    <label class="img-check-label" for="img-cb{{ loop.index }}">
+                        <img src="{{ url_for('apg_plan_plot', exp_id=status["exp_folder"], plan_id=p_id) }}"
+                             class="img-thumbnail">
+                        <a href="{{ url_for('apg_plan_plot', exp_id=status["exp_folder"], plan_id=p_id) }}"
+                           target="_blank">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                 class="bi bi-zoom-in" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd"
+                                      d="M6.5 12a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11zM13 6.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0z"/>
+                                <path d="M10.344 11.742c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1 6.538 6.538 0 0 1-1.398 1.4z"/>
+                                <path fill-rule="evenodd"
+                                      d="M6.5 3a.5.5 0 0 1 .5.5V6h2.5a.5.5 0 0 1 0 1H7v2.5a.5.5 0 0 1-1 0V7H3.5a.5.5 0 0 1 0-1H6V3.5a.5.5 0 0 1 .5-.5z"/>
+                            </svg>
+                        </a>
+                    </label>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col">
+            <p>Select the number of instances you desire to instantiate for each Abstract Plan and provide the Meta-Data
+                about your Input Data.</p>
+            <form class="" action="/sji_run" method="post" id="sjiFormId">
+                <div class="row mb-3">
+                    <label class="col-sm-2 col-form-label" for="nSjiJobsId"># Instances per Plan</label>
+                    <div class="col-sm-10">
+                        <input type="number" class="form-control" id="nSjiJobsId" name="nSjiJobs"
+                               value="10">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <label class="col-sm-2 col-form-label" for="iDataMetaDataId">Input-Data<br>Meta-Data</label>
+                    <div class="col-sm-10">
+                        <input type="file" class="form-control" id="iDataMetaDataId" name="iDataMetaData"
+                               value="">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <label class="col-sm-2 col-form-label" for="targetPlatformId">Target Platform</label>
+                    <div class="col-sm-10">
+                        <select class="form-select" id="targetPlatformId" name="targetPlatform">
+                            <option>Apache Flink</option>
+                            <option disabled>Apache Spark</option>
+                            <option disabled>Apache Wayang</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row mb-3 text-center">
+                    <div class="col">
+                        <button id="sji_submit" type="submit" class="btn btn-lg btn-primary">Instantiate Jobs</button>
+                    </div>
+                </div>
+
+            </form>
+            <a id="sji"></a>
+            <script>
+                $("#sjiFormId").submit(function (e) {
+
+                    e.preventDefault(); // avoid to execute the actual submit of the form.
+                    setVisible('#loading', true);
+
+                    var form = $(this);
+                    var url = form.attr('action');
+
+                    $.ajax({
+                        type: "POST",
+                        url: url,
+                        data: form.serialize(), // serializes the form's elements.
+                        success: function (data) {
+                            setVisible('#loading', false);
+                            window.location.replace("/#generated_jobs_profile"); // show response from the php script.
+                            window.location.reload();
+                        }
+                    });
+                });
+            </script>
+        </div>
+    </div>
+
+    {% if status["sji_run"] == true %}
+        <div class="row mb-4">
+            <div class="col-12">
+                <a id="generated_jobs_profile"></a>
+                <h2>Generated DataFlow Profile</h2>
+                <p>Below you can inspect some useful statistics about the generated workload.</p>
+            </div>
+            <div class="col-lg-4">
+                <div class="card text-white card-counter bg-primary shadow">
+                    <div class="card-body">
+                        <h5 class="card-title">N° Generated Jobs</h5>
+                        {#                        <i class="fa fa-arrow-circle-up"></i>#}
+                        <span class="count-numbers">{{ status["sji"]["stats"]["n_gen_jobs"] }}</span>
+                        <p class="card-text mt-3" style="color: #DDDDDD!important;">
+                            {{ status["sji"]["stats"]["n_abs_plans"] }} Abstract Plans &#215;
+                            {{ status["sji"]["stats"]["n_versions"] }} Instances
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card text-white card-counter bg-primary shadow">
+                    <div class="card-body">
+                        <h5 class="card-title">AVG N° Operators per Job</h5>
+                        {#                        <i class="fa fa-arrow-circle-up"></i>#}
+                        <span class="count-numbers"><var>{{ (status["sji"]["stats"]["avg_op"])|int }}</var> </span>
+                        <p class="card-text mt-3" style="color: #DDDDDD!important;">
+                            STD: <var>{{ (status["sji"]["stats"]["std_op"])|int }}</var>
+                            <br/>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card text-white card-counter bg-primary shadow">
+                    <div class="card-body">
+                        <h5 class="card-title">AVG Out. Cardinality</h5>
+                        {#                        <i class="fa fa-arrow-circle-up"></i>#}
+                        <span class="count-numbers"><var>{{ (status["sji"]["stats"]["avg_est_sink_card"]/1000)|int }}&#215;10<sup>3</sup></var></span>
+                        <p class="card-text mt-3" style="color: #DDDDDD!important;">
+                            (estimated)
+                            STD:
+                            <var>{{ (status["sji"]["stats"]["std_est_sink_card"]/1000)|int }}&#215;10<sup>3</sup></var>
+                            <br/>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            {#            {{ status["sji"]["data_plan_features"] | safe }}#}
+        </div>
+        <div class="row mb-4">
+            <div class="col-12 justify-content-center">
+
+                {#                <div id="sji-results"></div>#}
+                {#                <div id="sji-results"></div>#}
+                <div class="card card-counter shadow">
+                    <div class="card-body">
+                        <p>&#9660; Here you can compare the distribution of operators in the input workload and in the
+                            generated one.</p>
+                        <div class="col-lg" id="sji-op-dist"></div>
+                    </div>
+                </div>
+                <script>
+                    var x = {{ status["sji"]["pact_size"] | safe }};
+                    var y_gen = {{ status["sji"]["pact_size"] | safe }};
+                    var y_original = {{ status["apg_upload_details"]["op_stats"] | safe }};
+
+                    x = x["index"];
+                    y_gen = y_gen["data"].map(x => x[0]);
+                    y_original = y_original["data"].map(x => x[0]);
+
+                    var data = [
+                        {
+                            y: y_original,
+                            x: x,
+                            type: "bar",
+                            name: "Input Workload"
+                        },
+                        {
+                            y: y_gen,
+                            x: x,
+                            type: "bar",
+                            name: "Generated Workload"
+                        }
+                    ]
+                    var layout = {
+                        title: 'Generated Jobs Op. Distribution',
+                        xaxis: {
+                            title: 'Operator',
+                            side: 'bottom'
+                        },
+                        yaxis: {
+                            title: 'Freq. [%]',
+                        }
+                    };
+
+                    Plotly.newPlot('sji-op-dist', data, layout)
+                </script>
+            </div>
+        </div>
+        <div class="row mb-4">
+            <div class="col-8 justify-content-center">
+                <div class="card card-counter shadow">
+                    <div class="card-body">
+                        <p>&#9660; The graph shows how the generated jobs are distributed concerning their estimated input/output
+                            cardinalities. Also, the plots on the axis show the density of the generated jobs by input and output cardinality bins respectively.</p>
+
+                        <div id="card-density"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4 justify-content-center">
+                <h5>Estimated Cardinality Stats</h5>
+                <div class="col-12 mb-2">
+                    <div class="card card-counter">
+                        <div class="card-body">
+                            <h5 class="card-title">AVG Input Cardinality</h5>
+                            {#                        <i class="fa fa-arrow-circle-up"></i>#}
+                            <span class="count-numbers"><var>{{ (status["sji"]["stats"]["avg_est_source_card"]/1000)|int }}&#215;10<sup>3</sup></var> </span>
+                            <p class="card-text mt-3" style="color: #444444!important;">
+                                STD:
+                                <var>{{ (status["sji"]["stats"]["std_est_source_card"]/1000)|int }}&#215;10<sup>3</sup></var>
+                                <br/>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 mb-2">
+                    <div class="card card-counter">
+                        <div class="card-body">
+                            <h5 class="card-title">AVG Out Cardinality</h5>
+                            {#                        <i class="fa fa-arrow-circle-up"></i>#}
+                            <span class="count-numbers"><var>{{ (status["sji"]["stats"]["avg_est_sink_card"]/1000)|int }}&#215;10<sup>3</sup></var></span>
+                            <p class="card-text mt-3" style="color: #444444!important;">
+                                STD:
+                                <var>{{ (status["sji"]["stats"]["std_est_sink_card"]/1000)|int }}&#215;10<sup>3</sup></var>
+                                <br/>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 mb-2">
+                    <div class="card card-counter">
+                        <div class="card-body">
+                            <h5 class="card-title">AVG Out. Carinality <br> per Operator</h5>
+                            {#                        <i class="fa fa-arrow-circle-up"></i>#}
+                            <span class="count-numbers"><var>{{ (status["sji"]["stats"]["avg_op_est_out_card"]/1000)|int }}&#215;10<sup>3</sup></var></span>
+                            <p class="card-text mt-3" style="color: #444444!important;">
+                                STD:
+                                <var>{{ (status["sji"]["stats"]["std_op_est_out_card"]/1000)|int }}&#215;10<sup>3</sup></var>
+                                <br/>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                x = {{ status["sji"]["stats"]["est_source_card"] | safe }};
+                y =
+                {{ status["sji"]["stats"]["est_sink_card"] | safe }}
+                var trace1 = {
+                    x: x,
+                    y: y,
+                    mode: 'markers',
+                    name: 'points',
+                    marker: {
+                        color: 'rgb(255,0,0)',
+                        size: 8,
+                        opacity: 0.8
+                    },
+                    type: 'scatter',
+                    name: "",
+                    hovertemplate:
+                        '<i>Out. Card.</i>: %{y:.3e}' +
+                        '<br><i>In. Card.</i>: %{x:.3e}<br>',
+                };
+                var trace2 = {
+                    x: x,
+                    y: y,
+                    name: 'density',
+                    ncontours: 20,
+                    colorscale: 'Hot',
+                    reversescale: true,
+                    showscale: false,
+                    type: 'histogram2dcontour',
+                    hoverinfo:'none',
+                    histnorm: "count"
+                };
+                var trace3 = {
+                    x: x,
+                    name: 'In. Density',
+                    marker: {color: 'rgb(220,0,0)'},
+                    yaxis: 'y2',
+                    type: 'histogram',
+                    histnorm: "count"
+                };
+                var trace4 = {
+                    y: y,
+                    name: 'Out. density',
+                    marker: {color: 'rgb(220,0,0)'},
+                    xaxis: 'x2',
+                    type: 'histogram',
+                    histnorm: "count"
+                };
+                var data = [ trace2, trace3, trace4, trace1];
+                var layout = {
+                    title: "Jobs Distribution by In/Out Cardinality",
+                    showlegend: false,
+                    autosize: false,
+                    width: 650,
+                    height: 450,
+                    margin: {t: 50},
+                    hovermode: 'closest',
+                    bargap: 0,
+                    xaxis: {
+                        domain: [0, 0.82],
+                        showgrid: true,
+                        zeroline: false,
+                        title: 'Input Cardinality'
+                    },
+                    yaxis: {
+                        domain: [0, 0.82],
+                        showgrid: true,
+                        zeroline: false,
+                        title: 'Est. Output Cardinality'
+                    },
+                    xaxis2: {
+                        domain: [0.85, 1],
+                        showgrid: true,
+                        zeroline: true,
+
+                    },
+                    yaxis2: {
+                        domain: [0.85, 1],
+                        showgrid: true,
+                        zeroline: true,
+                        title:"Density"
+                    }
+                };
+                Plotly.newPlot('card-density', data, layout);
+            </script>
+        </div>
+        <div class="row mb-4">
+            <div class="col"><a href="/download_generated_jobs" role="button" class="btn btn-primary btn-lg"><i
+                    class="fa fa-download"></i> Download Generated Jobs</a></div>
+            <div class="col"><a href="/lf_run" role="button" class="btn btn-success btn-lg">Proceed with Labeling</a>
+            </div>
+        </div>
+
+
+    {% endif %}
+
+
+
+{% endif %}

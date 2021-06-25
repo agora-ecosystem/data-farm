@@ -1,0 +1,21 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+
+    <div class="row">
+        <div class="col-lg-1"></div>
+        <div class="col-lg-10 align-items-center text-center">
+        <h1 class="mb-4"></h1>
+            {% if not status["lf_run"] %}
+                {% include 'apg.html' %}
+
+                {% include 'sji.html' %}
+            {% else %}
+                {% include 'lf.html' %}
+            {% endif %}
+        </div>
+        <div class="col-lg-1"></div>
+    </div>
+
+
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+
+    <div class="card text-white bg-danger mt-5">
+        <div class="card-header">Error</div>
+        <div class="card-body">
+                <p class="card-text">{{ error_message }}</p>
+                <a href="/" class="btn btn-primary">Go back</a>
+        </div>
+    </div>
+
+{% endblock %}

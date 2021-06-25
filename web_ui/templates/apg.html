@@ -1,0 +1,355 @@
+<div class="row">
+    <a id="input_query_workload"></a>
+    <h2>Input Query Workload</h2>
+    <p> Start generating from your existing workload!</p>
+</div>
+{% if status["apg_upload"] == False %}
+    <div class="row mb-4">
+        <form action="/upload_plans"
+              class="dropzone"
+              id="my-awesome-dropzone" method="POST" enctype="multipart/form-data">
+            <div class="dz-message needsclick">
+                <button type="button" class="dz-button">Drop here your dataflow jobs (.zip)
+                </button>
+            </div>
+        </form>
+    </div>
+{% elif status["apg_analyze_plans"] == False %}
+    <div class="row mb-4">
+        <p>Upload complete!</p>
+        <form action="analyze_plans" method="GET">
+            <button type="submit" class="btn btn-primary btn-lg btn-block">Analyze DataFlows</button>
+        </form>
+    </div>
+
+{% else %}
+    <div class="row mb-4 text-right">
+        <div class="col-lg-4">
+            <div class="card card-counter justify-content-center shadow">
+                <div class="card-body">
+                    <h5 class="card-title">Uploaded DataFlow Jobs &#9658;</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">Select the plans you want to analyze</h6>
+                    <p class="card-text">Each bubble represents a workload. </p>
+                    <p class="card-text"> The <b>radius</b> of the bubbles represents the size in terms of operators.</p>
+                    <p class="card-text"> The <b>color</b> of the bubbles represents clusters of similar jobs.</p>
+                    <p class="card-text"> You can filter by operator type using the buttons below. </p>
+                    <p class="card-text"> Click on the bubbles to select the jobs you want to exclude from the
+                        analysis. </p>
+
+                </div>
+            </div>
+            <form action="/analyze_plans" method="POST" class="mt-4">
+                <div class="row row-cols-1 row-cols-md-2 g-2 mb-2 overflow-scroll border rounded"
+                     style="max-height: 400px; display: none;">
+                    {% for v in status["apg_upload_details"]["uploaded_plans"] %}
+                        <div class="col" id="item_{{ v["plan_id"] }}">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" name="check_{{ v["plan_id"] }}"
+                                               value="{{ v["plan_id"] }}"
+                                               id="check_{{ v["plan_id"] }}" {{ "checked" if v["selected"] else "" }}>
+                                        <label class="form-check-label" for="{{ v["plan_id"] }}">
+                                            <a class="btn btn-link"
+                                               href="/input_plan/{{ v["plan_id"] }}">{{ v["plan_id"] }}
+                                                ></a>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <button type="submit" class="btn btn-primary btn-lg">Update Workload Profile</button>
+            </form>
+        </div>
+        <div class="col-lg-8">
+            <div class="card justify-content-center shadow">
+                <div class="card-body">
+                    <h5 class="card-title">Input DataFlow Jobs</h5>
+                    <div id="bubbleChart"></div>
+                    <div id="overallRatings" class="btn-group top-btn">
+                        <label class="btn btn-outline-secondary ratingBtn" id="n_op">
+                            <input type="radio" name="options" autocomplete="off" checked>Number Op.</label>
+                        <label class="btn btn-outline-secondary ratingBtn" id="Map">
+                            <input type="radio" name="options" autocomplete="off">Map</label>
+                        <label class="btn btn-outline-secondary ratingBtn" id="Join">
+                            <input type="radio" name="options" autocomplete="off">Join</label>
+                        <label class="btn btn-outline-secondary ratingBtn" id="Group by">
+                            <input type="radio" name="options" autocomplete="off">Group by</label>
+                        <label class="btn btn-outline-secondary ratingBtn" id="Bulk Iteration">
+                            <input type="radio" name="options" autocomplete="off">Bulk Iteration</label>
+                    </div>
+
+
+                    {% include 'input_workload_bubble.html' %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-4 text-right">
+        <a id="input_workload_profile"></a>
+        <h2>Input Workload Profile &#9660;</h2>
+        <p>Below, statistics about your input DataFlow are reported.</p>
+
+        {#        <form action="/analyze_plans" method="POST">#}
+        {#            <div class="row row-cols-1 row-cols-md-2 g-2 mb-2 overflow-scroll border rounded"#}
+        {#                 style="max-height: 400px; display: none;">#}
+        {#                {% for v in status["apg_upload_details"]["uploaded_plans"] %}#}
+        {#                    <div class="col" id="item_{{ v["plan_id"] }}">#}
+        {#                        <div class="card">#}
+        {#                            <div class="card-body">#}
+        {#                                <div class="form-check form-switch">#}
+        {#                                    <input class="form-check-input" type="checkbox" name="check_{{ v["plan_id"] }}"#}
+        {#                                           value="{{ v["plan_id"] }}"#}
+        {#                                           id="check_{{ v["plan_id"] }}" {{ "checked" if v["selected"] else "" }}>#}
+        {#                                    <label class="form-check-label" for="{{ v["plan_id"] }}">#}
+        {#                                        <a class="btn btn-link" href="/input_plan/{{ v["plan_id"] }}">{{ v["plan_id"] }}#}
+        {#                                            ></a>#}
+        {#                                    </label>#}
+        {#                                </div>#}
+        {#                            </div>#}
+        {#                        </div>#}
+        {#                    </div>#}
+        {#                {% endfor %}#}
+        {#            </div>#}
+        {#            <button type="submit" class="btn btn-primary btn-lg">Update DataFlow Analysis &#9660;</button>#}
+        {#        </form>#}
+    </div>
+
+    <div class="row mb-2">
+        <div class="col">
+            <div class="card card-counter shadow">
+                <div class="card-body">
+                    <h5 class="card-title"># Input Plans</h5>
+                    {#                    <i class="fa fa-bar-chart">&#xf080;</i>#}
+                    <span class="count-numbers">{{ status["apg_upload_details"]["n_plans"] | safe }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card card-counter shadow">
+                <div class="card-body">
+                    <h5 class="card-title">AVG # Op. per Plan</h5>
+                    {#                    <i class="fa fa-bar-chart">&#xf080;</i>#}
+                    <span class="count-numbers">{{ status["apg_upload_details"]["mean_op"] | safe }}</span>
+
+                    <span class="card-text mt-3" style="color: #444444!important;">
+                        STD:<var>{{ status["apg_upload_details"]["std_op"]|int }}</var>
+                        <br/>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-2">
+        <div class="card card-counter justify-content-center shadow">
+            <div class="card-body">
+                <h5 class="card-title">Learned Input Operator Distribution</h5>
+                    <p class="card-body">&#9660; The plot shows the distribution of the input DataFlow jobs' operators grouped by type.</p>
+                <div class="col-lg" id="op_stats"></div>
+            </div>
+        </div>
+
+        <script>
+            var config = {responsive: true}
+            var op_stats =
+            {{ status["apg_upload_details"]["op_stats"] | safe }}
+            var data = [
+                {
+                    x: op_stats["index"],
+                    y: op_stats["data"].map(x => x[0]),
+                    type: 'bar'
+                }
+            ];
+            var layout = {
+                title: 'Input Jobs Op. Distribution',
+                xaxis: {
+                    title: 'Operator',
+                    side: 'bottom'
+                },
+                yaxis: {
+                    title: 'Count [%]',
+                }
+            };
+
+            Plotly.newPlot('op_stats', data, layout, config);</script>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-lg-12 justify-content-center">
+            <div class="card card-counter shadow">
+                <div class="card-body row">
+                    <h5 class="card-title">Learned Transition Matrices</h5>
+                    <p class="card-body">&#9660; These are the parent/children transition probabilities learned from
+                        the input DataFlows.</p>
+                    <div class="col-lg-6" id="ctm"></div>
+                    <div class="col-lg-6" id="ptm"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row mb-4" style="margin-top: 50px;">
+        <hr/>
+        <a id="apg"></a>
+        <h2 class="mb-2">Abstract Plan Generator</h2>
+        <div class="col-12">
+            <div class="card justify-content-center shadow">
+                <div class="card-body">
+                    <h5 class="card-title">Configure the Abstract Plan Generator</h5>
+                    {#                    <h6 class="card-subtitle mb-2 text-muted">Select the plans you want to analyze</h6>#}
+                    <p class="card-text">Select the number of abstract plans you want to generate. <br>
+                        Also, you can limit the length of the operator sequences and set the maximum number of joins per
+                        plan.</p>
+
+
+                    <form class="" action="/apg_run" method="post" id="apgFormId">
+                        <div class="row mb-3">
+                            <label class="col-sm-2 col-form-label" for="nAbsPlansId"># Abs. Plans</label>
+                            <div class="col-sm-10">
+                                <input type="number" class="form-control" id="nAbsPlansId" name="nAbsPlans"
+                                       value="10"> {# {{ status['apg_upload_details']['n_plans'] | safe }} #}
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label class="col-sm-2 col-form-label" for="maxOpSeqLenId">Max. Op. sequence len.</label>
+                            <div class="col-sm-10">
+                                <input type="number" class="form-control" id="maxOpSeqLenId" name="maxOpSeqLen"
+                                       value="{{ status['apg_upload_details']['mean_op'] | safe }}">
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label class="col-sm-2 col-form-label" for="maxJoinOpId">Max. Join Op.</label>
+                            <div class="col-sm-10">
+                                <input type="number" class="form-control" id="maxJoinOpId" name="maxJoinOp" value="3">
+                            </div>
+                        </div>
+                        <div class="row mb-3 text-center">
+                            <div class="col">
+                                <button type="submit" class="btn btn-lg btn-primary">Generate Abstract Plans</button>
+                            </div>
+                        </div>
+
+                    </form>
+                    <script>
+                $("#apgFormId").submit(function (e) {
+
+                    e.preventDefault(); // avoid to execute the actual submit of the form.
+                    setVisible('#loading', true);
+
+                    var form = $(this);
+                    var url = form.attr('action');
+
+                    $.ajax({
+                        type: "POST",
+                        url: url,
+                        data: form.serialize(), // serializes the form's elements.
+                        success: function (data) {
+                            setVisible('#loading', false);
+                            window.location.replace("/#sji"); // show response from the php script.
+                            window.location.reload();
+                        }
+                    });
+
+
+                });
+            </script>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {#    </div>#}
+
+
+    <script>
+        var config = {responsive: true}
+        var ctm =
+        {{ status["apg_children_tm"]|safe }}
+        var ptm =
+        {{ status["apg_parent_tm"]|safe }}
+        var data_ctm = [
+            {
+                z: ctm["data"],
+                x: ctm["columns"],
+                y: ctm["index"],
+                type: 'heatmap',
+                showscale: true
+            }
+        ];
+        var layout_ctm = {
+            title: 'Children Transition Matrix',
+            width: 500,
+            height: 500,
+            autosize: false,
+            annotations: [],
+            xaxis: {
+                title: 'Operator t+1',
+                side: 'bottom',
+                tickangle: 30
+            },
+            yaxis: {
+                title: 'Operator t',
+                ticksuffix: ' ',
+
+                tickangle: -60
+            }
+        };
+        annotate_heatmap(layout_ctm, ctm["columns"], ctm["index"], ctm["data"])
+
+        var data_ptm = [
+            {
+                z: ptm["data"],
+                x: ptm["columns"],
+                y: ptm["index"],
+                type: 'heatmap',
+                text: ptm["data"],
+                showscale: true
+            }
+        ];
+        var layout_ptm = {
+            title: 'Parent Transition Matrix',
+            width: 500,
+            height: 500,
+            autosize: false,
+            annotations: [],
+            xaxis: {
+                title: 'Operator t-1',
+                side: 'bottom',
+                tickangle: 30
+            },
+            yaxis: {
+                title: 'Operator t',
+                ticksuffix: ' ',
+
+                tickangle: -60
+            }
+        };
+        annotate_heatmap(layout_ptm, ptm["columns"], ptm["index"], ptm["data"])
+
+        Plotly.newPlot('ctm', data_ctm, layout_ctm, config);
+        Plotly.newPlot('ptm', data_ptm, layout_ptm, config);
+    </script>
+{% endif %}
+
+{#        <div class="row">#}
+{#            <div class="progress">#}
+{#                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"#}
+{#                     aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 75%"></div>#}
+{#            </div>#}
+{#        </div>#}
+
+
+<script>
+    Dropzone.options.myAwesomeDropzone = {
+        init: function () {
+            this.on("complete", function (file) {
+                location.reload();
+            });
+        }
+    };
+</script>

@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js" charset="utf-8"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+
+    <style>
+        circle {
+            fill: #3498DB;
+            stroke: black;
+            stroke-width: 2px;
+            opacity: .8;
+        }
+
+        circle:hover {
+            stroke: #22A7F0;
+        }
+
+
+    </style>
+</head>
+<body>
+<div id="overallRatings" class="btn-group btn-info top-btn" data-toggle="buttons">
+    <label class="btn active ratingBtn" id="n_op">
+        <input type="radio" name="options" checked>Number Op.</label>
+    <label class="btn ratingBtn" id="Map">
+        <input type="radio" name="options">Map</label>
+    <label class="btn ratingBtn" id="Join">
+        <input type="radio" name="options">Join</label>
+    <label class="btn ratingBtn" id="Group by">
+        <input type="radio" name="options">Group by</label>
+    <label class="btn ratingBtn" id="Bulk Iteration">
+        <input type="radio" name="options">Bulk Iteration</label>
+</div>
+
+<div id="bubbleChart"></div>
+<p></p>
+
+<script>
+    var width = 900;
+    var height = 600;
+
+    var tooltip = d3.select("body")
+        .append("div")
+        .style("position", "absolute")
+        .style("z-index", "10")
+        .style("visibility", "hidden")
+        .style("background", "#FFF")
+        .text("a simple tooltip");
+
+    d3.select("#bubbleChart").append("svg")
+        .attr("width", width)
+        .attr("height", height)
+        .attr("id", "primarySVG");
+
+    var div = d3.select("body").append("div")
+        .attr("class", "tooltip")
+        .style("opacity", 0);
+
+    d3.json("../misc/input_workload_data.json", function (error, data) {
+        data.sort(function (a, b) {
+            return b.stats.n_op;
+        });
+        var svg = d3.select("#primarySVG");
+
+        var padding = 25;
+        var scaleFactor = 90;
+
+        var maxVar = d3.max(data.map(x => x.stats.n_op))
+        for (var j = 0; j < data.length; j++) {
+            data[j].x = Math.random() * width;
+            data[j].y = Math.random() * height;
+            for(var k in data[j].stats) data[j][k]=data[j].stats[k];
+            data[j].radius = Math.log(scaleFactor+Math.exp(scaleFactor * data[j].n_op/maxVar)); //10 * Math.sqrt(data[j].stats.n_op);
+
+        }
+
+
+        var getCenters = function (vname, size) {
+            var centers, map;
+            centers = _.uniq(_.pluck(data, vname)).map(function (d) {
+                return {
+                    name: d,
+                    value: 1
+                };
+            });
+            map = d3.layout.pack().size(size);
+            map.nodes({children: centers});
+            return centers;
+        };
+
+        var nodes = svg.selectAll("circle").data(data);
+        nodes.enter().append("circle")
+            .attr("cx", function (d) {
+                return d.x;
+            })
+            .attr("cy", function (d) {
+                return d.y;
+            })
+            .attr("r", 2)
+            .attr("id", function (d) {
+                return d.plan_id;
+            })
+            .on("mouseover", function (d) {
+                tooltip.text(d.plan_id);
+                return tooltip.style("visibility", "visible");
+            })
+            .on("mousemove", function () {
+                return tooltip.style("top", (d3.event.pageY - 10) + "px").style("left", (d3.event.pageX + 10) + "px");
+            })
+            .on("mouseout", function (d) {
+                return tooltip.style("visibility", "hidden");
+            });
+
+        nodes.transition()
+            .duration(500)
+            .attr("r", function (d) {
+                return d.radius;
+            });
+
+        var text = nodes.append("text")
+            .attr("dx", 12)
+            .attr("dy", ".35em")
+            .text(function (d) {
+                return d.plan_id;
+            });
+
+
+
+        var force = d3.layout.force();
+        draw('n_op');
+
+
+        function draw(varname) {
+            var maxVar = d3.max(data.map(x => x[varname]))
+            d3.selectAll("circle").attr("r", function (d) {
+                d.radius = Math.log(scaleFactor+Math.exp(scaleFactor * d[varname]/maxVar));
+                return d.radius;
+            });
+            var centers = getCenters(varname, [width, height]);
+            force.on("tick", tick(centers, varname));
+            labels(centers);
+            nodes.attr("class", function (d) {
+                return d.stats[varname];
+            });
+            force.start();
+            makeClickable();
+        }
+
+        function tick(centers, varname) {
+            var foci = {};
+            for (var i = 0; i < centers.length; i++) {
+                foci[centers[i].name] = centers[i];
+            }
+            return function (e) {
+                for (var i = 0; i < data.length; i++) {
+                    var o = data[i];
+                    var f = foci[o[varname]];
+                    o.y += (f.y - o.y) * e.alpha;
+                    o.x += (f.x - o.x) * e.alpha;
+                }
+                nodes.each(collide(.2))
+                    .attr("cx", function (d) {
+                        return d.x;
+                    })
+                    .attr("cy", function (d) {
+                        return d.y;
+                    });
+            }
+        }
+
+        function labels(centers) {
+            svg.selectAll(".label").remove();
+
+            svg.selectAll(".label")
+                .data(centers).enter().append("text")
+                .attr("class", "label")
+                .text(function (d) {
+                    return d.plan_id;
+                })
+                .attr("transform", function (d) {
+                    return "translate(" + (d.x - ((d.plan_id) * 3)) + ", " + (d.y + 15 - d.r) + ")";
+                });
+
+
+        }
+
+        function collide(alpha) {
+            var maxRadius = d3.max(_.pluck(data, 'radius'));
+            var quadtree = d3.geom.quadtree(data);
+            return function (d) {
+                var r = d.radius + maxRadius + padding,
+                    nx1 = d.x - r,
+                    nx2 = d.x + r,
+                    ny1 = d.y - r,
+                    ny2 = d.y + r;
+                quadtree.visit(function (quad, x1, y1, x2, y2) {
+                    if (quad.point && (quad.point !== d)) {
+                        var x = d.x - quad.point.x,
+                            y = d.y - quad.point.y,
+                            l = Math.sqrt(x * x + y * y),
+                            r = d.radius + quad.point.radius + padding;
+                        if (l < r) {
+                            l = (l - r) / l * alpha;
+                            d.x -= x *= l;
+                            d.y -= y *= l;
+                            quad.point.x += x;
+                            quad.point.y += y;
+                        }
+                    }
+                    return x1 > nx2 || x2 < nx1 || y1 > ny2 || y2 < ny1;
+                });
+            };
+        }
+
+
+        function makeClickable() {
+            var nest = d3.nest()
+                .key(function (d) {
+                    return d.plan_id;
+                })
+                .entries(data);
+
+            $("circle").click(function () {
+                console.log(nest.filter(x => this.id == x.key).map(x => x.values));
+            });
+
+
+        }
+
+        $("label.ratingBtn").click(function () {
+            draw(this.id);
+        });
+
+        nodes.exit().remove();
+    });
+
+
+</script>
+
+<script src="https://unpkg.com/@popperjs/core@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0"
+        crossorigin="anonymous"></script>
+
+</body>
+</html>

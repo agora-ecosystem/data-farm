@@ -1,0 +1,269 @@
+<div class="row mb-4">
+    <div class="col">
+        <h2>Labeling Generated Jobs</h2>
+        {% if status["early_stop"] %}
+            <div class="alert alert-success" role="alert">
+                Early STOP at iteration {{ status["lf_current_iteration"] + 1 }}!
+            </div>
+        {% endif %}
+        {% if (status["lf_current_iteration"] + 1) >= status["max_iter"] %}
+            <div class="alert alert-warning" role="alert">
+                Max number of iterations reached!
+            </div>
+        {% endif %}
+        {% if status["lf_current_iteration"] < 0 %}
+            <p>Configure the Label Forecaster</p>
+            <form class="" action="/lf_next_iter" method="post" id="lfRunId">
+                <div class="row mb-3">
+                    <label class="col-sm-2 col-form-label" for="targetLabelId">Target Label</label>
+                    <div class="col-sm-10">
+                        <select class="form-select" id="targetLabelId" name="targetLabel">
+                            <option>Execution Time</option>
+                            <option>Output Cardinality</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <label class="col-sm-2 col-form-label" for="nInitJobsId"># Init Jobs</label>
+                    <div class="col-sm-10">
+                        <input type="number" class="form-control" id="nInitJobsId" name="nInitJobs"
+                               value="10">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <label class="col-sm-2 col-form-label" for="uncertaintyThId">Uncertainty Th.</label>
+                    <div class="col-sm-10">
+                        <div class="input-group">
+                            <div class="input-group-text">%</div>
+                            <input type="number" class="form-control" id="uncertaintyThId" name="uncertaintyTh"
+                                   value="10">
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <label class="col-sm-2 col-form-label" for="maxIterId">Max. Iterations</label>
+                    <div class="col-sm-4">
+                        <input type="number" class="form-control" id="maxIterId" name="maxIter" value="5">
+                    </div>
+                    <label class="col-sm-2 col-form-label" for="maxTimeId">Max. Time Budget</label>
+                    <div class="col-sm-4">
+                        <div class="input-group">
+                            <div class="input-group-text">Hours</div>
+                            <input type="number" class="form-control" id="maxTimeId" name="maxTime" value="1">
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3 text-center">
+                    <div class="col">
+                        <button type="submit" class="btn btn-primary">Forecast Labels</button>
+                    </div>
+                </div>
+
+            </form>
+            <script>
+                $("#lfRunId").submit(function (e) {
+
+                    e.preventDefault(); // avoid to execute the actual submit of the form.
+                    setVisible('#loading', true);
+
+                    var form = $(this);
+                    var url = form.attr('action');
+
+                    $.ajax({
+                        type: "POST",
+                        url: url,
+                        data: form.serialize(), // serializes the form's elements.
+                        success: function (data) {
+                            setVisible('#loading', false);
+                            window.location.replace("/"); // show response from the php script.
+                            window.location.reload();
+                        }
+                    });
+                });
+            </script>
+        {% else %}
+            <div class="row mb-2">
+                <div class="col">
+                    <div class="card card-counter shadow">
+                        <div class="card-body">
+                            <h5 class="card-title"># Executed Jobs</h5>
+                            {#                    <i class="fa fa-bar-chart">&#xf080;</i>#}
+                            <span class="count-numbers">{{ status["lf_iterations"][status["lf_current_iteration"]]["n_exec"] | safe }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="card card-counter shadow">
+                        <div class="card-body">
+                            <h5 class="card-title">Tot. Execution Time</h5>
+                            {#                    <i class="fa fa-bar-chart">&#xf080;</i>#}
+                            <span class="count-numbers">{{ '{0:0.2f}'.format(status["lf_iterations"][status["lf_current_iteration"]]["tot_exec_time"]/3600000) | safe }} Hours</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-4 b-2">
+                <div class="col-12">
+                    <div class="card card-counter shadow">
+                        <div class="card-body">
+                            <h5 class="card-title">Labeled jobs with uncertainty</h5>
+                            <p class="card-text">&#9660; Here you can monitor the executed jobs and the labeled once
+                                with their uncertainty.</p>
+                            <div id="plot_div"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="card card-counter shadow">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Model Uncertainty</h5>
+                            <p class="card-text">&#9660; Here you can monitor the uncertainty of the predictive model at
+                                the current iteration.</p>
+                            <div id="unc_plot_div"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <form action="/lf_next_iter" id="lf_next_iter" method="GET">
+                        <div class="row mb-3 text-center">
+                            <div class="col">
+                                <button type="submit" class="btn btn-lg btn-success">Run Next Iteration</button>
+                            </div>
+                            <div class="col"><a href="/download_generated_jobs_and_labels" role="button"
+                                                class="btn btn-primary btn-lg"><i
+                                    class="fa fa-download"></i>Download Training Data</a></div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+
+            <script>
+                var data = {{ status["lf_iterations"]|tojson }};
+                var current_iter = {{ status["lf_current_iteration"]|int }};
+                //var stop_iter = [2, 10, 12];
+                var stop_iter = [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0];
+                var data_iter_sort = data[current_iter]["jobs"].sort((a, b) => a.execution_time - b.execution_time);
+
+
+                var hist_data = data.slice(0, current_iter + 1);
+                var unc_plot_data = [
+                    {
+                        x: hist_data.map(x => x.n_exec + " Jobs"),
+                        y: hist_data.map(x => x.total_uncertainty),
+                        marker: {
+                            color: stop_iter.slice(0, current_iter + 1)
+                        },
+                        type: 'bar',
+                        showlegend: false,
+                        name: ""
+                    },
+                    {
+                        x: [null],
+                        y: [null],
+                        marker: {
+                            color: "rgb(176,15,34)",
+                        },
+                        type: "bar",
+                        name: "Early Stopping",
+                        showlegend: true
+                    }
+
+                ];
+
+                var layout = {
+                    xaxis: {
+                        range: [-1, {{ status["lf_config"]["maxIter"] | int }}],
+                        title: '# Executed Jobs'
+
+                    },
+                    title: "Uncertainty Trend",
+                    yaxis: {
+                        title: 'Total Uncertainty',
+                    },
+                };
+
+                Plotly.newPlot('unc_plot_div', unc_plot_data, layout);
+
+
+                var plot_data = [{
+                    x: [...Array(data_iter_sort.length).keys()],
+                    y: data_iter_sort.map(x => x.execution_time / 1000),
+                    error_y: {
+                        type: 'data',
+                        array: data_iter_sort.map(x => x.uncertainty),
+                        visible: true
+                    },
+                    text: data_iter_sort.map(x => x.job_id),
+                    mode: 'markers',
+                    type: 'scatter',
+                    marker: {
+                        size: 8,
+                        color: data_iter_sort.map(x => x.uncertainty == 0 ? 2 : 1)
+                    },
+                    showlegend: false,
+                    name: ""
+                },
+                    {
+                        x: [null],
+                        y: [null],
+                        marker: {
+                            color: "rgb(176,15,34)",
+                        },
+                        type: "bar",
+                        name: "Executed Jobs",
+                        showlegend: true
+                    }
+                ];
+
+                var layout = {
+                    title: 'Forecasted Labels at Iteration ' + (current_iter + 1),
+                    yaxis: {
+                        title: 'Forecasted Label - Exec. Time [s]',
+                    },
+                    xaxis: {
+                        title: 'Generated Jobs'
+                    }
+                };
+                Plotly.newPlot('plot_div', plot_data, layout);
+
+                document.getElementById("unc_plot_div").on('plotly_click', function (data) {
+                    current_iter = data.points[0].pointNumber;
+                    console.log(current_iter);
+                });
+
+
+            </script>
+
+        {% endif %}
+
+        {#        <table>#}
+        {#            <thead
+#}
+        {#            <tr>#}
+        {#            <th>Job Id</th>#}
+        {#                {% for c in status["sji"]["cardinality_plan_features"]["columns"] %}#}
+        {#                    <th>{{ c }}</th>#}
+        {#                {% endfor %}#}
+        {#            </tr>#}
+        {#            </thead>#}
+        {#            <tbody>#}
+        {#            {% for data_r in status["sji"]["cardinality_plan_features"]["data"] %}#}
+        {#                <tr>#}
+        {#                    <td>{{ status["sji"]["cardinality_plan_features"]["index"][loop.index] }}</td>#}
+        {##}
+        {#                    {% for d in data_r %}#}
+        {#                        <td>{{ d }}</td>#}
+        {#                    {% endfor %}#}
+        {#                </tr>#}
+        {#            {% endfor %}#}
+        {#            </tbody>#}
+        {#        </table>#}
+
+
+    </div>
+</div>
