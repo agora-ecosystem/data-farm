@@ -2,7 +2,7 @@ import os
 import sys
 import warnings
 import pickle
-from IPython.core.display import display
+#from IPython.core.display import display
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
