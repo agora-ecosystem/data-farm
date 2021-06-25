@@ -13,6 +13,9 @@ Thus, DataFarm allows users to produce a large heterogeneous set of realistic jo
 - Flink == 1.10.0
 - Python == 3.6
 
+Install all the python requirements specified in `requirements.txt`.  
+N.B. DtaFarm has been tested on Linux and MacOS.
+
 ## Quick-start
 
 1. Update `CONFIG.py`
@@ -68,3 +71,16 @@ The Label Forecaster can be configured with:
 - `EARLY_STOP_TH` defines the threshold for early stop. It has to be included in the range (0, 1.0).
 - `MAX_ITER` defines the maximum number of iterations that will be performed before interrupting the active learning iterations.
 - `INIT_JOBS` defines the number of jobs to sample and run before starting the Active Learning process.
+- `RANDOM_SAMPLING` defines if the instances will be picked with weighted random sampling based on uncertainty.
+
+## Table Meta-Data
+The `TableMetaData` defines all the ER information regarding your db. 
+All the information have to be provided through python dictionary.
+
+You should specify the possible join relations that you want to consider while instantiating new jobs.
+Also, you should specify, for each table, which are the fields that can be filtered, and grouped.
+Finally, you should also specify which are the fields that contains dates.
+
+Then, also the raw cardinalities of the tables under exam should be specified.
+
+To have an example of `TableMetaData` configuration, please look at the `TableMetaData.py` file.

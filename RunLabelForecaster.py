@@ -2,7 +2,7 @@ import os
 import sys
 import warnings
 import pickle
-# from IPython.core.display import display
+from IPython.core.display import display
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -199,10 +199,9 @@ def run_active_learning(features_df, feature_cols, label_col, n_iter=20, max_ear
             sampling_idx = np.random.randint(0, len(X_test), len_new_X_train)
             new_ids_train = ids_test.iloc[sampling_idx].copy()
 
-        else: # Sampling based on uncertainty threshold
+        else:  # Sampling based on uncertainty threshold
             IRQ_th = np.quantile(iter_res["uncertainty_interval"], 0.95)
             new_ids_train = ids_test.iloc[iter_res["uncertainty_interval"] > IRQ_th].copy()
-
 
         if len(new_ids_train) == 0:
             print("No more jobs to run, Early Stop!")
