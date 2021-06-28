@@ -19,7 +19,7 @@ def _serve_pil_image(pil_img):
     return send_file(img_io, mimetype='image/png')
 
 
-def get_iteretation_details(results, iteration_to_show, n_train, n_test):
+def get_iteration_details(results, iteration_to_show, n_train, n_test):
     it_results = results["iterations_results"][iteration_to_show]
     train_mask = np.arange(0, n_train)
     test_mask = np.arange(0, n_test)

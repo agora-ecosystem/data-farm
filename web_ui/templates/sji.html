@@ -31,9 +31,9 @@
                 <div class="col-3 img-check">
                     <input type="checkbox" id="img-cb{{ loop.index }}" checked/>
                     <label class="img-check-label" for="img-cb{{ loop.index }}">
-                        <img src="{{ url_for('apg_plan_plot', exp_id=status["exp_folder"], plan_id=p_id) }}"
+                        <img src="{{ url_for('apg_plan_plot', plan_id=p_id) }}"
                              class="img-thumbnail">
-                        <a href="{{ url_for('apg_plan_plot', exp_id=status["exp_folder"], plan_id=p_id) }}"
+                        <a href="{{ url_for('apg_plan_plot', plan_id=p_id) }}"
                            target="_blank">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                  class="bi bi-zoom-in" viewBox="0 0 16 16">
@@ -59,7 +59,7 @@
                     <label class="col-sm-2 col-form-label" for="nSjiJobsId"># Instances per Plan</label>
                     <div class="col-sm-10">
                         <input type="number" class="form-control" id="nSjiJobsId" name="nSjiJobs"
-                               value="10">
+                               value="2">
                     </div>
                 </div>
                 <div class="row mb-3">

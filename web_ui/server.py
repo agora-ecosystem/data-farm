@@ -18,7 +18,9 @@ from generator_labeler.FeatureExtraction import FeatureExtraction
 from networkx.drawing.nx_agraph import graphviz_layout
 import pickle
 
-from generator_labeler.Generator.AbstractPlan import AbstactPlanGeneratorModel
+from generator_labeler.FeatureExtraction.PredictorFeatureExtraction import compute_cardinality_plan_features, \
+    get_estimated_out_cardinality, preprocess_jobs_data_info
+from generator_labeler.Generator.AbstractPlan import AbstractPlanGenerator, AbstactPlanGeneratorModel
 
 # from DataFarm.FeatureExtraction import FeatureExtraction
 # import DataFarm.ExecutionPlanTools as planTools
@@ -109,7 +111,7 @@ def input_plan(plan_id):
 @app.route("/lf_next_iter", methods=["GET", "POST"])
 def lf_next_iter():
 
-    base_folder = "/Users/francescoventura/PycharmProjects/DataFarm-App/misc"
+    base_folder = "/mnt/c/Users/Robin/Documents/Git/Dataplans/misc"
     experiment_id = "20200829163549_good"  # Good
     # experiment_id = "20200829165836_prod_feat" # With product features, BAD!
     data_file = f"{base_folder}/{experiment_id}/learning_process.pkl"
@@ -134,7 +136,7 @@ def lf_next_iter():
             n_train = int(status["lf_iterations"][iteration_to_show-1]["n_exec"]) + iteration_to_show * 2
             n_test = max(0, int(status["sji"]["stats"]["n_gen_jobs"]) - n_train)
 
-        jobs, unc, unc_std = tools.get_iteretation_details(learning_data, iteration_to_show, n_train=n_train, n_test=n_test)
+        jobs, unc, unc_std = tools.get_iteration_details(learning_data, iteration_to_show, n_train=n_train, n_test=n_test)
         tot_exec_time = sum([60000 + j["execution_time"] for j in jobs if j["executed"]])
 
         status["lf_iterations"].append({
@@ -188,7 +190,7 @@ def lf_run():
         n_train = int(status["lf_config"]["nInitJobs"])
         n_test = max(0, int(status["sji"]["stats"]["n_gen_jobs"]) - n_train)
 
-        jobs, unc, unc_std = tools.get_iteretation_details(learning_data, iteration_to_show, n_train=n_train, n_test=n_test)
+        jobs, unc, unc_std = tools.get_iteration_details(learning_data, iteration_to_show, n_train=n_train, n_test=n_test)
         tot_exec_time = sum([60000 + j["execution_time"] for j in jobs if j["executed"]])
         status["lf_iterations"].append({
             "n_exec": n_train,
@@ -204,11 +206,11 @@ def lf_run():
     return redirect("/")  # render_template("index.html", status=status)
 
 
-@app.route("/apg_plan_plot/<exp_id>/<plan_id>")
-def apg_plan_plot(exp_id, plan_id):
+@app.route("/apg_plan_plot/<plan_id>")
+def apg_plan_plot(plan_id):
     global status
     p = status["apg_plans"][plan_id]["path"]
-    print(exp_id, plan_id, p)
+    # print(exp_id, plan_id, p)
     return tools._serve_image(p)
 
 
@@ -217,10 +219,8 @@ def sji_run():
     global status
 
     status["sji_config"] = request.form.to_dict()
-    current_sji_jobs_folder = os.path.join(app.config["OUT_FOLDER"], status["exp_folder"],
-                                           "generated_jobs") + "/"
-    current_abs_plans_folder = os.path.join(app.config["OUT_FOLDER"], status["exp_folder"],
-                                            "generated_abstract_exec_plans")
+    current_sji_jobs_folder = CONFIG.GENERATED_JOB_FOLDER
+    current_abs_plans_folder = CONFIG.GENERATED_ABSTRACT_EXECUTION_PLAN_FOLDER
 
     try:
         os.makedirs(current_sji_jobs_folder)
@@ -228,7 +228,8 @@ def sji_run():
         shutil.rmtree(current_sji_jobs_folder, ignore_errors=True)
         os.makedirs(current_sji_jobs_folder)
 
-    current_data_manager = "IMDBK"
+    # TODO: make data manager selecter
+    current_data_manager = CONFIG.DATA_MANAGER
 
     n_plans = len(status["apg_plans"])
     n_versions = int(status["sji_config"]["nSjiJobs"])
@@ -236,7 +237,7 @@ def sji_run():
     print(f"|--> Generating '{n_plans * n_versions}' jobs in '{current_sji_jobs_folder}'")
     print()
 
-    os.system(f'cd {app.config["JOB_GENERATOR"]}; '
+    os.system(f'cd {CONFIG.JOB_GENERATOR}; '
               f'sbt "runMain Generator.JobGenerator {n_plans} {n_versions} {current_data_manager} {current_abs_plans_folder} {current_sji_jobs_folder} {job_seed}"')
 
     generatedJobsInfo = os.path.join(current_sji_jobs_folder, "generated_jobs_info.json")
@@ -245,8 +246,9 @@ def sji_run():
     global data_plan_features
     global jobs_data_info
 
-    cardinality_plan_features = compute_cardinality_plan_features(generatedJobsInfo, data_sizes=["3GB"])
-    data_plan_features = get_estimated_out_cardinality(generatedJobsInfo, data_sizes=["3GB"])
+    #TODO: Make datasize customizable
+    cardinality_plan_features = compute_cardinality_plan_features(generatedJobsInfo, data_sizes=["1GB"])
+    data_plan_features = get_estimated_out_cardinality(generatedJobsInfo, data_sizes=["1GB"])
     jobs_data_info = preprocess_jobs_data_info(generatedJobsInfo)
 
     pact_size = data_plan_features.groupby(["pact"]).size()
@@ -293,8 +295,8 @@ def apg_run():
     global status
     status["apg_plans"] = dict()
     status["apg_config"] = request.form.to_dict()
-    current_abs_plans_folder = os.path.join(app.config["OUT_FOLDER"], status["exp_folder"],
-                                            "generated_abstract_exec_plans")
+    current_abs_plans_folder = CONFIG.GENERATED_ABSTRACT_EXECUTION_PLAN_FOLDER
+
     try:
         os.makedirs(current_abs_plans_folder)
     except:
@@ -304,11 +306,16 @@ def apg_run():
 
     # {'nAbsPlans': '18', 'maxOpSeqLen': '21', 'maxJoinOp': '3'}
     for i in range(int(status["apg_config"]['nAbsPlans'])):
+
+        # Get the child/parent matrices back
         children_transition_matrix = pd.read_json(status["apg_children_tm"], orient="split")
         parent_transition_matrix = pd.read_json(status["apg_parent_tm"], orient="split")
-        abs_generator = GAP.AbstractPlanGenerator(children_transition_matrix, parent_transition_matrix, seed=i)
+
+        # Create Abstractplan generator with matrices
+        abs_generator = AbstractPlanGenerator(children_transition_matrix, parent_transition_matrix, seed=i)
         G = abs_generator.generate(max_depth=int(status["apg_config"]['maxOpSeqLen']),
                                    max_joins=int(status["apg_config"]['maxJoinOp']))
+
         # nx.write_graphml_lxml(G, f"plan_{i}.graphml")
         # nx.write_gexf(G, f"out/plan_{i}.gexf")
 
