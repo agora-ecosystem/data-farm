@@ -10,12 +10,15 @@ import json
 import pandas as pd
 import networkx as nx
 import tools
-
+from CONFIG import CONFIG
 import matplotlib.pyplot as plt
 import seaborn as sns
-
+from generator_labeler import ExecutionPlanTools
+from generator_labeler.FeatureExtraction import FeatureExtraction
 from networkx.drawing.nx_agraph import graphviz_layout
 import pickle
+
+from generator_labeler.Generator.AbstractPlan import AbstactPlanGeneratorModel
 
 # from DataFarm.FeatureExtraction import FeatureExtraction
 # import DataFarm.ExecutionPlanTools as planTools
@@ -24,6 +27,8 @@ import pickle
 
 
 import numpy as np
+
+from RunGenerator import create_project_folders
 
 sns.set_context("talk")
 sns.set_style("whitegrid")
@@ -380,15 +385,15 @@ def analyze_plans():
     status["apg_upload_details"]["std_op"] = int(reach_nodes_table.groupby("plan_id").size().std())
 
     expanded_reach_nodes_table = FeatureExtraction.explode_multi_in_out_nodes(reach_nodes_table)
-
-    children_transition_matrix = GAP.AbstactPlanGeneratorModel.compute_transition_matrix(expanded_reach_nodes_table,
+    APG = AbstactPlanGeneratorModel()
+    children_transition_matrix = APG.compute_transition_matrix(expanded_reach_nodes_table,
                                                                                          relationship="children",
                                                                                          g_pact_exp=True)
 
     status["apg_children_tm"] = children_transition_matrix.to_json(orient="split")
     # print(children_transition_matrix)
 
-    parent_transition_matrix = GAP.AbstactPlanGeneratorModel.compute_transition_matrix(expanded_reach_nodes_table,
+    parent_transition_matrix = APG.compute_transition_matrix(expanded_reach_nodes_table,
                                                                                        relationship="parent",
                                                                                        g_pact_exp=True)
     status["apg_parent_tm"] = parent_transition_matrix.to_json(orient="split")
@@ -406,34 +411,44 @@ def analyze_plans():
 @app.route('/upload_plans', methods=["POST"])
 def upload_plans():
     try:
-        print(list(request.files.keys()))
-        file = request.files["file"]
+        print("|Init project")
+        create_project_folders()
+        input_workload_exec_plan = os.path.join(CONFIG.EXPERIMENT_PATH, "input_workload_exec_plan")
+        CONFIG.ORIG_EXEC_PLAN_FOLDER = os.path.join(input_workload_exec_plan, "plans")
+        if not os.path.exists(input_workload_exec_plan):
 
-        idx = datetime.now().strftime("%Y%m%d-%H%M%S")
-        status["exp_folder"] = idx
-        current_upload_folder = os.path.join(app.config["OUT_FOLDER"], status["exp_folder"])
+            status["exp_folder"] = input_workload_exec_plan
 
-        os.makedirs(current_upload_folder)
+            os.makedirs(input_workload_exec_plan)
 
-        new_file_name = f"plans.zip"
-        output_file = os.path.join(
-            current_upload_folder, new_file_name
-        )
+            new_file_name = f"plans.zip"
+            output_file = os.path.join(
+                input_workload_exec_plan, new_file_name
+            )
 
-        output_file_unzip = os.path.join(
-            current_upload_folder, 'plans'
-        )
+            output_file_unzip = os.path.join(
+                input_workload_exec_plan, 'plans'
+            )
 
-        # we are reading the stream when checking the file, so we need to go back to the start
-        file.stream.seek(0)
-        file.save(output_file)
+            print(list(request.files.keys()))
+            file = request.files["file"]
 
-        command_seq = [
-            'unzip', output_file, '-d', output_file_unzip
-        ]
-        subprocess.run(command_seq, shell=False, timeout=10800)
+            # we are reading the stream when checking the file, so we need to go back to the start
+            file.stream.seek(0)
+            file.save(output_file)
 
-        status["apg_upload"] = True
+            command_seq = [
+                'unzip', output_file, '-d', output_file_unzip
+            ]
+            subprocess.run(command_seq, shell=False, timeout=10800)
+
+            status["apg_upload"] = True
+
+        else:
+            print(f"|--> Skip creation of original input plan folder: ")
+            status["apg_upload"] = True
+
+
 
     except Exception as ex:
         traceback.print_stack()
@@ -450,18 +465,26 @@ def load_plans():
     global reach_input_plans_table
     global status
 
-    current_plans_folder = os.path.join(app.config["OUT_FOLDER"], status["exp_folder"], "plans")
-
     # Load json plans
-    exec_plans_json = planTools.load_exec_plans(current_plans_folder)
+    exec_plans_json = ExecutionPlanTools.load_exec_plans(CONFIG.ORIG_EXEC_PLAN_FOLDER)
 
-    exec_plans_graph = planTools.compute_graphs_from_plans(exec_plans_json, include_cycles=False)
+    exec_plans_graph = ExecutionPlanTools.compute_graphs_from_plans(exec_plans_json, include_cycles=False)
 
     reach_nodes_table = FeatureExtraction.get_plan_tables_from_plans(exec_plans_graph)
     reach_input_plans_table = reach_nodes_table.copy()
-
+    #
     status["uploaded_plans"] = list(reach_input_plans_table["plan_id"].unique())
     status["plans_to_analyze"] = list(status["uploaded_plans"])
+
+    # current_plans_folder = os.path.join(app.config["OUT_FOLDER"], status["exp_folder"], "plans")
+    # print(app.config["OUT_FOLDER"])
+    # print(f"|--> Generating '{CONFIG.N_JOBS}' abstract plans in '{CONFIG.GENERATED_ABSTRACT_EXECUTION_PLAN_FOLDER}'")
+    # print()
+    #
+    # os.system(f'cd {CONFIG.ABSTRACT_PLAN_GENERATOR}; '
+    #           f'python3 NewAbstractExecutionPlanAnalyzer.py {CONFIG.N_JOBS} {CONFIG.ORIG_EXEC_PLAN_FOLDER} {CONFIG.GENERATED_ABSTRACT_EXECUTION_PLAN_FOLDER}')
+
+
     return
 
 
