@@ -22,10 +22,6 @@ from generator_labeler.FeatureExtraction.PredictorFeatureExtraction import compu
     get_estimated_out_cardinality, preprocess_jobs_data_info
 from generator_labeler.Generator.AbstractPlan import AbstractPlanGenerator, AbstactPlanGeneratorModel
 
-# from DataFarm.FeatureExtraction import FeatureExtraction
-# import DataFarm.ExecutionPlanTools as planTools
-# from DataFarm.FeatureExtraction.PredictorFeatureExtraction import compute_cardinality_plan_features, \
-#     preprocess_jobs_data_info, get_estimated_out_cardinality, fill_jobs_cardinality
 
 
 import numpy as np
@@ -91,7 +87,10 @@ def error():
     error_message = request.args["error_message"]
     return render_template("error.html", error_message=str(error_message))
 
-
+################
+# Webapp logic
+################
+# TODO Provide Download of jobs and labels
 @app.route("/download_generated_jobs_and_labels", methods=["GET"])
 def download_generated_jobs_and_labels():
     return "Process complete!"
@@ -482,15 +481,6 @@ def load_plans():
     #
     status["uploaded_plans"] = list(reach_input_plans_table["plan_id"].unique())
     status["plans_to_analyze"] = list(status["uploaded_plans"])
-
-    # current_plans_folder = os.path.join(app.config["OUT_FOLDER"], status["exp_folder"], "plans")
-    # print(app.config["OUT_FOLDER"])
-    # print(f"|--> Generating '{CONFIG.N_JOBS}' abstract plans in '{CONFIG.GENERATED_ABSTRACT_EXECUTION_PLAN_FOLDER}'")
-    # print()
-    #
-    # os.system(f'cd {CONFIG.ABSTRACT_PLAN_GENERATOR}; '
-    #           f'python3 NewAbstractExecutionPlanAnalyzer.py {CONFIG.N_JOBS} {CONFIG.ORIG_EXEC_PLAN_FOLDER} {CONFIG.GENERATED_ABSTRACT_EXECUTION_PLAN_FOLDER}')
-
 
     return
 
