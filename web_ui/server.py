@@ -1,3 +1,4 @@
+import sys
 import time
 import traceback
 import shutil
@@ -13,6 +14,8 @@ import tools
 from CONFIG import CONFIG
 import matplotlib.pyplot as plt
 import seaborn as sns
+
+from RunLabelForecaster import set_up_active_learning, load_data_and_preprocess
 from generator_labeler import ExecutionPlanTools
 from generator_labeler.FeatureExtraction import FeatureExtraction
 from networkx.drawing.nx_agraph import graphviz_layout
@@ -22,11 +25,11 @@ from generator_labeler.FeatureExtraction.PredictorFeatureExtraction import compu
     get_estimated_out_cardinality, preprocess_jobs_data_info
 from generator_labeler.Generator.AbstractPlan import AbstractPlanGenerator, AbstactPlanGeneratorModel
 
-
-
 import numpy as np
 
 from RunGenerator import create_project_folders
+from generator_labeler.JobExecutionSampler.unsupervised_sampler import UniformAgglomerativeSampler
+
 
 sns.set_context("talk")
 sns.set_style("whitegrid")
@@ -34,9 +37,10 @@ sns.set_style("whitegrid")
 # from DataFarm.Generator import AbstractPlan as GAP
 # from DataFarm.Generator.AbstractPlan import AbstactPlanGeneratorModel
 
+
 app = Flask(__name__)
-app.config.from_object("config.DataFarmConfig")
-app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
+# app.config.from_object("config.DataFarmConfig")
+# app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 app.secret_key = os.urandom(24)
 
 plan_graphs = []
@@ -68,6 +72,8 @@ status = {
     "early_stop": False
 }
 
+keys = {"test": 0, "object": 1}
+
 
 ################
 # Error Handling
@@ -87,6 +93,7 @@ def error():
     error_message = request.args["error_message"]
     return render_template("error.html", error_message=str(error_message))
 
+
 ################
 # Webapp logic
 ################
@@ -94,6 +101,7 @@ def error():
 @app.route("/download_generated_jobs_and_labels", methods=["GET"])
 def download_generated_jobs_and_labels():
     return "Process complete!"
+
 
 @app.route("/input_plan/<plan_id>", methods=["GET"])
 def input_plan(plan_id):
@@ -106,104 +114,145 @@ def input_plan(plan_id):
     return render_template("input_plan.html", status=status, plan_info=plan_info)
 
 
+global custom_active_learning
+global iteration_results
+global active_learning_settings
+global active_learning_data
+global active_learning_features
 
-@app.route("/lf_next_iter", methods=["GET", "POST"])
-def lf_next_iter():
+active_learning_settings = {
+    "target_label": "",
+    "initial_job_selection":list(),
+    "n_init_jobs": 0,
+    "n_generation_jobs": 3,
+    "uncertainty_threshold": 0,
+    "max_iter": 0,
+    "max_time": 0,
+    "current_automated_sample_ids":list(),
+    "current_executed_jobs":list(),
 
-    base_folder = "/mnt/c/Users/Robin/Documents/Git/Dataplans/misc"
-    experiment_id = "20200829163549_good"  # Good
-    # experiment_id = "20200829165836_prod_feat" # With product features, BAD!
-    data_file = f"{base_folder}/{experiment_id}/learning_process.pkl"
-    with open(data_file, "rb") as handle:
-        learning_data = pickle.load(handle)
+}
 
-    status["early_stop"] = False
-    while (not status["early_stop"]):
-        if (status["lf_current_iteration"] >= status["max_iter"]):
-            break
+active_learning_data = {
+    "current_iteration": 0,
+    "lf_iterations": list(),
+    "executed jobs iteration": list(),
+    "execution time": list()
+}
+iteration_results = []
+active_learning_features= []
+active_learning_features_id = []
 
-        if (status["lf_current_iteration"] < 0) and (request.method == 'POST'):
-            status["lf_config"] = request.form.to_dict()
-            status["max_iter"] = int(status["lf_config"]["maxIter"])
-            status["lf_current_iteration"] = 0
-            iteration_to_show = status["lf_current_iteration"]
-            n_train = int(status["lf_config"]["nInitJobs"])
-            n_test = max(0, int(status["sji"]["stats"]["n_gen_jobs"]) - n_train)
+@app.route("/lf_iteration", methods=["GET", "POST"])
+def lf_iteration():
+    global iteration_results
+    global active_learning_settings
+    global status
+    global active_learning_features
+    global active_learning_features_id
+
+    if request.method == 'POST':
+        print(request.get_data())
+        print(request.get_json())
+        selected_jobs = request.get_json()["selected_jobs"]
+
+        active_learning_features = load_data_and_preprocess(CONFIG.GENERATED_METADATA_PATH, CONFIG.DATA_ID)
+
+        active_learning_features_id = active_learning_features.droplevel(1)
+        active_learning_features_id= active_learning_features_id.reset_index()
+
+        selected_plan_ids = active_learning_features_id.loc[active_learning_features_id['plan_id'].isin(selected_jobs)]
+        selected_ids = selected_plan_ids.index.values.tolist()
+
+        # Update list of executed jobs
+        active_learning_settings["current_executed_jobs"].extend(selected_ids)
+        print("Currently executed jobs")
+        print(active_learning_settings["current_executed_jobs"])
+
+        global custom_active_learning
+        if(status["lf_current_iteration"]<1):
+            # First iteration: set up active learning strategy object, sample and run initial jobs
+            try:
+                global LABEL_FORECASTER_OUT
+                LABEL_FORECASTER_OUT = CONFIG.LABEL_FORECASTER_OUT
+                os.mkdir(LABEL_FORECASTER_OUT)
+            except Exception as ex:
+                print(f"Experiment '{CONFIG.LABEL_FORECASTER_OUT}' already exists!")
+                sys.exit(1)
+
+            custom_active_learning = set_up_active_learning(generated_metadata_path=CONFIG.GENERATED_METADATA_PATH,
+                                                            data_id=CONFIG.DATA_ID,
+                                                            label_forecaster_out=CONFIG.LABEL_FORECASTER_OUT,
+                                                            random_init=False,
+                                                            user_init=True,
+                                                            init_jobs=active_learning_settings["n_init_jobs"],
+                                                            feature_cols=CONFIG.FEATURE_COLS,
+                                                            label_col=active_learning_settings["target_label"],
+                                                            sample_col=CONFIG.SAMPLE_COL,
+                                                            sample_ids=selected_ids,
+                                                            features_df=active_learning_features)
+
         else:
-            status["lf_current_iteration"] = status["lf_current_iteration"] + 1
-            iteration_to_show = status["lf_current_iteration"]
-            n_train = int(status["lf_iterations"][iteration_to_show-1]["n_exec"]) + iteration_to_show * 2
-            n_test = max(0, int(status["sji"]["stats"]["n_gen_jobs"]) - n_train)
+            # Later iteration
+            # Run selected jobs
+            custom_active_learning.active_learning_sampler_preparation(selected_plan_ids)
 
-        jobs, unc, unc_std = tools.get_iteration_details(learning_data, iteration_to_show, n_train=n_train, n_test=n_test)
-        tot_exec_time = sum([60000 + j["execution_time"] for j in jobs if j["executed"]])
+        # TODO: Add timer function here to communicate to client
+        iteration_results = custom_active_learning.active_learning_iteration_helper(status["lf_current_iteration"], active_learning_settings["max_iter"],
+                                                                                    early_stop_th=active_learning_settings["uncertainty_threshold"])
 
-        status["lf_iterations"].append({
-            "n_exec": n_train,
-            "n_forecast": n_test,
-            "tot_exec_time": tot_exec_time,
-            "jobs": jobs,
-            "total_uncertainty": unc,
-            "total_uncertainty_std": unc_std
-        })
-        if int(status["lf_current_iteration"]) in [2, 10, 12]:
-            status["early_stop"] = True
+        status["lf_current_iteration"] = status["lf_current_iteration"] +1
+        print(custom_active_learning.get_iteration_results())
+        iteration_results = custom_active_learning.get_iteration_results()
 
-    time.sleep(15)
+        # Automated sampling
+        sampling_idx = custom_active_learning.uncertainty_sampler()
+        print(sampling_idx)
 
-    return redirect("/")  # render_template("index.html", status=status)
+        # Get the global idx
+        sampling_idx = active_learning_features_id.loc[active_learning_features_id['plan_id'].isin(sampling_idx)]
+        total_idx = sampling_idx.index.values.tolist()
+        active_learning_settings["current_automated_sample_ids"] = total_idx
+        print(active_learning_settings["current_automated_sample_ids"])
 
-
+    return render_template("index.html", iteration_results=iteration_results, status=status, active_learning_settings = active_learning_settings, features_df = active_learning_features.to_json())
 
 @app.route("/lf_run", methods=["GET", "POST"])
 def lf_run():
-    # {
-    #     "job_id": "",
-    #     "executed": False,
-    #     "selected": False,
-    #     "uncertainty": 0.0,
-    #     "tot_uncertainty": 0.0,
-    #
-    # }
-    
-    # if request.method is "POST":
-    #     status["lf_current_iteration"] = status["lf_current_iteration"] + 1
-
-    # Update plans to filter if requested
+    global active_learning_data
+    global iteration_results
+    global active_learning_settings
+    global active_learning_features
 
     if request.method == 'POST':
+
         status["lf_config"] = request.form.to_dict()
 
-        base_folder = "/Users/francescoventura/PycharmProjects/DataFarm-App/misc"
-        experiment_id = "20200829163549_good"  # Good
+        al_setup_params = request.form.to_dict()
 
-        # experiment_id = "20200829165836_prod_feat" # With product features, BAD!
+        active_learning_settings["target_label"] = al_setup_params["targetLabel"]
+        active_learning_settings["initial_job_selection"] = al_setup_params["initialJobSelection"]
+        active_learning_settings["n_init_jobs"] = int(al_setup_params["nInitJobs"])
+        active_learning_settings["uncertainty_threshold"] = int(al_setup_params["uncertaintyTh"])
+        active_learning_settings["max_iter"] = int(al_setup_params["maxIter"])
+        active_learning_settings["max_time"] = int(al_setup_params["maxTime"])
 
-        data_file = f"{base_folder}/{experiment_id}/learning_process.pkl"
-
-        with open(data_file, "rb") as handle:
-            learning_data = pickle.load(handle)
+        features_df = load_data_and_preprocess(CONFIG.GENERATED_METADATA_PATH, CONFIG.DATA_ID)
+        sample_model = UniformAgglomerativeSampler(active_learning_settings["n_init_jobs"], CONFIG.FEATURE_COLS,
+                                                   active_learning_settings["target_label"], CONFIG.SAMPLE_COL)
+        sample_ids = sample_model.fit(features_df).sample_ids
+        active_learning_settings["current_automated_sample_ids"] = sample_ids.tolist()
 
         status["lf_current_iteration"] = 0
-        iteration_to_show = status["lf_current_iteration"]
-        n_train = int(status["lf_config"]["nInitJobs"])
-        n_test = max(0, int(status["sji"]["stats"]["n_gen_jobs"]) - n_train)
 
-        jobs, unc, unc_std = tools.get_iteration_details(learning_data, iteration_to_show, n_train=n_train, n_test=n_test)
-        tot_exec_time = sum([60000 + j["execution_time"] for j in jobs if j["executed"]])
-        status["lf_iterations"].append({
-            "n_exec": n_train,
-            "n_forecast": n_test,
-            "tot_exec_time": tot_exec_time,
-            "jobs": jobs,
-            "total_uncertainty": unc,
-            "total_uncertainty_std": unc_std
-        })
-        # return render_template("index.html", status=status)
-
+        return render_template("index.html", status=status, features_df = active_learning_features.to_dict(), active_learning_settings =  active_learning_settings)
+        # return redirect("/lf_next_iter")
+    active_learning_features = load_data_and_preprocess(CONFIG.GENERATED_METADATA_PATH, CONFIG.DATA_ID)
+    active_learning_features = active_learning_features.droplevel(1)
+    active_learning_features_json = active_learning_features.to_json()
     status["lf_run"] = True
-    return redirect("/")  # render_template("index.html", status=status)
-
+    return render_template("index.html", active_learning_settings = active_learning_settings,
+                           status=status, features_df = active_learning_features_json)  # render_template("index.html", status=status)
 
 @app.route("/apg_plan_plot/<plan_id>")
 def apg_plan_plot(plan_id):
@@ -245,7 +294,7 @@ def sji_run():
     global data_plan_features
     global jobs_data_info
 
-    #TODO: Make datasize customizable
+    # TODO: Make datasize customizable
     cardinality_plan_features = compute_cardinality_plan_features(generatedJobsInfo, data_sizes=["1GB"])
     data_plan_features = get_estimated_out_cardinality(generatedJobsInfo, data_sizes=["1GB"])
     jobs_data_info = preprocess_jobs_data_info(generatedJobsInfo)
@@ -305,7 +354,6 @@ def apg_run():
 
     # {'nAbsPlans': '18', 'maxOpSeqLen': '21', 'maxJoinOp': '3'}
     for i in range(int(status["apg_config"]['nAbsPlans'])):
-
         # Get the child/parent matrices back
         children_transition_matrix = pd.read_json(status["apg_children_tm"], orient="split")
         parent_transition_matrix = pd.read_json(status["apg_parent_tm"], orient="split")
@@ -340,7 +388,7 @@ def apg_run():
                                                  })
 
     status["apg_run"] = True
-    return redirect("/#sji") # render_template("index.html", status=status)
+    return redirect("/#sji")  # render_template("index.html", status=status)
 
 
 def compute_input_plan_stats(d):
@@ -369,6 +417,7 @@ def analyze_plans():
         status["plans_to_analyze"] = list(request.form.to_dict().values())
 
     # filter plans
+
     reach_nodes_table = reach_nodes_table[reach_nodes_table["plan_id"].isin(status["plans_to_analyze"])].copy()
     reach_nodes_table["g_pact"] = reach_nodes_table["g_pact"].astype('category')
     status["apg_upload_details"]["uploaded_plans"] = [
@@ -393,22 +442,22 @@ def analyze_plans():
     expanded_reach_nodes_table = FeatureExtraction.explode_multi_in_out_nodes(reach_nodes_table)
     APG = AbstactPlanGeneratorModel()
     children_transition_matrix = APG.compute_transition_matrix(expanded_reach_nodes_table,
-                                                                                         relationship="children",
-                                                                                         g_pact_exp=True)
+                                                               relationship="children",
+                                                               g_pact_exp=True)
 
     status["apg_children_tm"] = children_transition_matrix.to_json(orient="split")
     # print(children_transition_matrix)
 
     parent_transition_matrix = APG.compute_transition_matrix(expanded_reach_nodes_table,
-                                                                                       relationship="parent",
-                                                                                       g_pact_exp=True)
+                                                             relationship="parent",
+                                                             g_pact_exp=True)
     status["apg_parent_tm"] = parent_transition_matrix.to_json(orient="split")
     # print(parent_transition_matrix)
 
     status["apg_analyze_plans"] = True
     status["apg_run"] = False
     status["sji_run"] = False
-    return redirect(render_url) #render_template("index.html", status=status)
+    return redirect(render_url)  # render_template("index.html", status=status)
 
 
 ################
@@ -463,7 +512,7 @@ def upload_plans():
 
     load_plans()
 
-    return redirect("/") # render_template("index.html", status=status)
+    return redirect("/")  # render_template("index.html", status=status)
 
 
 def load_plans():

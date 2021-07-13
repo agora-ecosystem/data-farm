@@ -13,7 +13,7 @@
         {% endif %}
         {% if status["lf_current_iteration"] < 0 %}
             <p>Configure the Label Forecaster</p>
-            <form class="" action="/lf_next_iter" method="post" id="lfRunId">
+            <form class="" action="/lf_run" method="post" id="lfRunId">
                 <div class="row mb-3">
                     <label class="col-sm-2 col-form-label" for="targetLabelId">Target Label</label>
                     <div class="col-sm-10">
@@ -23,6 +23,16 @@
                         </select>
                     </div>
                 </div>
+                            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label" for="initialJobSelectionId">Initial Job Selection</label>
+                <div class="col-sm-10">
+                    <select class="form-select" id="initialJobSelectionId" name="initialJobSelection">
+                        <option>Random Sampler</option>
+                        <option>User Sampler</option>
+                        <option>Uniform Agglomerative Sampler</option>
+                    </select>
+                </div>
+            </div>
                 <div class="row mb-3">
                     <label class="col-sm-2 col-form-label" for="nInitJobsId"># Init Jobs</label>
                     <div class="col-sm-10">
@@ -82,13 +92,14 @@
                 });
             </script>
         {% else %}
+        <h1>Iteration: {{ status["lf_current_iteration"] }}</h1>
             <div class="row mb-2">
                 <div class="col">
                     <div class="card card-counter shadow">
                         <div class="card-body">
                             <h5 class="card-title"># Executed Jobs</h5>
                             {#                    <i class="fa fa-bar-chart">&#xf080;</i>#}
-                            <span class="count-numbers">{{ status["lf_iterations"][status["lf_current_iteration"]]["n_exec"] | safe }}</span>
+                            <span class="count-numbers">{{ active_learning_settings["current_executed_jobs"]|length }}</span>
                         </div>
                     </div>
                 </div>
@@ -98,40 +109,29 @@
                         <div class="card-body">
                             <h5 class="card-title">Tot. Execution Time</h5>
                             {#                    <i class="fa fa-bar-chart">&#xf080;</i>#}
-                            <span class="count-numbers">{{ '{0:0.2f}'.format(status["lf_iterations"][status["lf_current_iteration"]]["tot_exec_time"]/3600000) | safe }} Hours</span>
+                            <span class="count-numbers">{{ '{0:0.2f}'.format(0/3600000) | safe }} Hours</span>
                         </div>
                     </div>
                 </div>
             </div>
-
             <div class="row mb-4 b-2">
                 <div class="col-12">
                     <div class="card card-counter shadow">
                         <div class="card-body">
-                            <h5 class="card-title">Labeled jobs with uncertainty</h5>
-                            <p class="card-text">&#9660; Here you can monitor the executed jobs and the labeled once
-                                with their uncertainty.</p>
-                            <div id="plot_div"></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12">
-                    <div class="card card-counter shadow">
-                        <div class="card-body">
-                            <h5 class="card-title">Total Model Uncertainty</h5>
-                            <p class="card-text">&#9660; Here you can monitor the uncertainty of the predictive model at
-                                the current iteration.</p>
-                            <div id="unc_plot_div"></div>
+                            <h5 class="card-title">Jobs Feature Overview</h5>
+                            <p class="card-text">&#9660; Here you can see the jobs which are scheduled for execution. You can add or remove jobs to execute by clicking on them. </p>
+                            <div id="plot1_div"></div>
+                            <div id="plot2_div"></div>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="row">
                 <div class="col">
-                    <form action="/lf_next_iter" id="lf_next_iter" method="GET">
+                    <form action="/lf_iteration" id="next_iteration" method="POST">
                         <div class="row mb-3 text-center">
                             <div class="col">
-                                <button type="submit" class="btn btn-lg btn-success">Run Next Iteration</button>
+                                <button type="submit" class="btn btn-lg btn-success">Execute Jobs & Run Next Iteration</button>
                             </div>
                             <div class="col"><a href="/download_generated_jobs_and_labels" role="button"
                                                 class="btn btn-primary btn-lg"><i
@@ -139,108 +139,222 @@
                         </div>
                     </form>
                 </div>
-            </div>
+
+
 
 
             <script>
-                var data = {{ status["lf_iterations"]|tojson }};
-                var current_iter = {{ status["lf_current_iteration"]|int }};
-                //var stop_iter = [2, 10, 12];
-                var stop_iter = [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0];
-                var data_iter_sort = data[current_iter]["jobs"].sort((a, b) => a.execution_time - b.execution_time);
+
+            function on_next_iteration(url){
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST", "lf_iteration", true);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.send(JSON.stringify({
+                    selected_jobs: user_selected_points
+                }));
+            }
+
+            $("#next_iteration").submit(function (e) {
+                    console.log("next iteration clicked")
+                    e.preventDefault(); // avoid to execute the actual submit of the form.
+                    setVisible('#loading', true);
+
+                    console.log(user_selected_points)
+                    var xhr = new XMLHttpRequest();
+                    xhr.open("POST", "lf_iteration", true);
+                    xhr.setRequestHeader('Content-Type', 'application/json');
+                    xhr.send(JSON.stringify({selected_jobs: user_selected_points
+                    }));
+                    xhr.addEventListener("load", console.log("request completed"));
+                    xhr.onreadystatechange = function() {
+                            if (xhr.readyState === 4) {
+                                window.location.replace("/"); // show response from the php script.
+                                window.location.reload();
+                            }
+                        }
+                    // window.location.replace("/"); // show response from the php script.
+                    // window.location.reload();
+                    // $.ajax({
+                    //     type: "POST",
+                    //     url: url,
+                    //     data: JSON.stringify({selected_jobs: user_selected_points}), // serializes the form's elements.
+                    //     success: function (data) {
+                    //         setVisible('#loading', false);
+                    //
+                    //     }
+                    // });
+                });
+            var data = {{ status["lf_iterations"]|tojson }};
+            var current_iter = {{ status["lf_current_iteration"]|int }};
 
 
-                var hist_data = data.slice(0, current_iter + 1);
-                var unc_plot_data = [
-                    {
-                        x: hist_data.map(x => x.n_exec + " Jobs"),
-                        y: hist_data.map(x => x.total_uncertainty),
-                        marker: {
-                            color: stop_iter.slice(0, current_iter + 1)
-                        },
-                        type: 'bar',
-                        showlegend: false,
-                        name: ""
-                    },
-                    {
-                        x: [null],
-                        y: [null],
-                        marker: {
-                            color: "rgb(176,15,34)",
-                        },
-                        type: "bar",
-                        name: "Early Stopping",
-                        showlegend: true
-                    }
 
-                ];
+            var features = {{ features_df|safe }};
 
-                var layout = {
-                    xaxis: {
-                        range: [-1, {{ status["lf_config"]["maxIter"] | int }}],
-                        title: '# Executed Jobs'
+            var active_learning_settings = {{ active_learning_settings|safe }};
 
-                    },
-                    title: "Uncertainty Trend",
-                    yaxis: {
-                        title: 'Total Uncertainty',
-                    },
-                };
-
-                Plotly.newPlot('unc_plot_div', unc_plot_data, layout);
+            console.log(Object.keys(features.outCardinality_mean)[1])
 
 
-                var plot_data = [{
-                    x: [...Array(data_iter_sort.length).keys()],
-                    y: data_iter_sort.map(x => x.execution_time / 1000),
-                    error_y: {
-                        type: 'data',
-                        array: data_iter_sort.map(x => x.uncertainty),
-                        visible: true
-                    },
-                    text: data_iter_sort.map(x => x.job_id),
+
+
+            function plot_features(xs, ys, sxs, sys, rxs, rys, title, xax,yax, div) {
+                var plot_data = {
+                    x: xs,
+                    y: ys,
                     mode: 'markers',
                     type: 'scatter',
                     marker: {
                         size: 8,
-                        color: data_iter_sort.map(x => x.uncertainty == 0 ? 2 : 1)
+                        color: Array(xs.length).fill("rgb(255,0,0)")
                     },
-                    showlegend: false,
-                    name: ""
-                },
+                    showlegend: true,
+                    name: "Not executed jobs"
+                }
+                console.log(sxs)
+                var selected_points =
                     {
-                        x: [null],
-                        y: [null],
+                        x: sxs,
+                        y: sys,
+                        mode: 'markers',
+                        type: 'scatter',
                         marker: {
-                            color: "rgb(176,15,34)",
+                            size: 8,
+                            color: Array(sxs.length).fill("rgb(255,230,0)")
                         },
-                        type: "bar",
-                        name: "Executed Jobs",
-                        showlegend: true
+                        showlegend: true,
+                        name: "Scheduled for Execution"
                     }
-                ];
+
+                var executed_points =
+                    {
+                        x: rxs,
+                        y: rys,
+                        mode: 'markers',
+                        type: 'scatter',
+                        marker: {
+                            size: 8,
+                            color: Array(rxs.length).fill("rgb(47,255,0)")
+                        },
+                        showlegend: true,
+                        name: "Executed"
+                    }
 
                 var layout = {
-                    title: 'Forecasted Labels at Iteration ' + (current_iter + 1),
+                    title: title,
                     yaxis: {
-                        title: 'Forecasted Label - Exec. Time [s]',
+                        title: yax,
                     },
                     xaxis: {
-                        title: 'Generated Jobs'
+                        title: xax,
+                        categoryorder: "category ascending"
                     }
                 };
-                Plotly.newPlot('plot_div', plot_data, layout);
 
-                document.getElementById("unc_plot_div").on('plotly_click', function (data) {
-                    current_iter = data.points[0].pointNumber;
-                    console.log(current_iter);
-                });
+                complete_data = [plot_data, selected_points, executed_points]
+
+                Plotly.newPlot(div, complete_data, layout);
+                document.getElementById(div).on('plotly_click', function (data) {
+                    console.log(data.points[0].pointNumber);
+
+                    newItem = data.points[0].x
+
+
+                    // switch (data.event.button) {
+                    //     case 0:
+                    //         console.log('left click')
+                    //         break
+                    //     case 1:
+                    //         console.log('wheel click')
+                    //         break
+                    //     case 2:
+                    //         console.log('right click')
+                    //         break
+                    // }
+                    var pn='',
+                      tn='',
+                      colors=[];
+                    for(var i=0; i < data.points.length; i++){
+                        pn = data.points[i].pointNumber;
+                        tn = data.points[i].curveNumber;
+                        colors = data.points[i].data.marker.color;
+                    };
+
+                    if(user_selected_points.indexOf(newItem) === -1){
+                        colors[pn] = '#003eff';
+                        user_selected_points.push(newItem)
+                    }
+                    else{
+                        user_selected_points.splice(user_selected_points.indexOf(newItem), 1)
+                        colors[pn] = "rgb(255,0,0)";
+                    }
+                    //Add or remove when already on list
+                    console.log(user_selected_points)
+                    var update = {'marker':{color: colors, size:8}};
+                    Plotly.restyle(div, update,tn);
+
+            });
+            }
+            // Array of the names of jobs that the user selects
+
+            console.log()
+            function preselected_points(feature) {
+                var unselected_points_x =[]
+                var unselected_points_y =[]
+                var selected_points_x =[]
+                var selected_points_y = []
+                var executed_points_x=[]
+                var executed_points_y=[]
+                console.log(active_learning_settings.current_automated_sample_ids.length)
+
+                for(var i=0; i < Object.keys(feature).length; i++){
+                    if(active_learning_settings.current_automated_sample_ids.includes(i))
+                    {
+
+                        selected_points_x.push(Object.keys(feature).splice(i,1)[0]);
+                        selected_points_y.push(Object.values(feature).splice(i,1)[0]);
+
+                    }
+                    else if(active_learning_settings.current_executed_jobs.includes(i)){
+                        executed_points_x.push(Object.keys(feature).splice(i,1)[0]);
+                        executed_points_y.push(Object.values(feature).splice(i,1)[0]);
+
+                    }
+                    else
+                    {
+                        unselected_points_x.push(Object.keys(feature).splice(i,1)[0]);
+                        unselected_points_y.push(Object.values(feature).splice(i,1)[0]);
+                    }
+
+                    };
+                return [unselected_points_x, unselected_points_y, selected_points_x, selected_points_y, executed_points_x, executed_points_y]
+            }
+
+            selected_samples = [active_learning_settings.current_automated_sample_ids]
+
+            point_res = preselected_points(features.outCardinality_mean)
+            var unselected_points_x =point_res[0]
+            var unselected_points_y =point_res[1]
+            var selected_points_x =point_res[2]
+            var selected_points_y = point_res[3]
+            var executed_points_x = point_res[4]
+            var executed_points_y = point_res[5]
+            var user_selected_points = [...selected_points_x]
+
+            plot_features(unselected_points_x, unselected_points_y, selected_points_x, selected_points_y, executed_points_x, executed_points_y, "Out Cardinality Mean",  "Generated Jobs","Out Cardinality Mean", 'plot1_div')
+
+            // var pointresult = preselected_points(features.complexity_mean)
+            // console.log(features)
+            // unselected_points_y_2 = pointresult[1]
+            // selected_points_y_2 = pointresult[3]
+            // executed_points_y_2
+            // plot_features(unselected_points_x, unselected_points_y_2, selected_points_x, selected_points_y_2, data_iter_sort, "Complexity Mean",  "Generated Jobs", "Complexity Mean",'plot2_div')
+
 
 
             </script>
 
         {% endif %}
-
         {#        <table>#}
         {#            <thead
 #}

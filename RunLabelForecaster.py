@@ -2,7 +2,7 @@ import os
 import sys
 import warnings
 import pickle
-#from IPython.core.display import display
+# from IPython.core.display import display
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -14,7 +14,7 @@ from generator_labeler.JobExecutionSampler.unsupervised_sampler import UniformAg
 from generator_labeler.JobExecutionSampler.supervised_sampler import UserSampler
 from generator_labeler.ActiveModel.ActiveQuantileForest import QuantileForestModel
 import BuildAndSubmit
-from generator_labeler.CustomActiveLearning import CustomActiveLearning
+from generator_labeler.CustomActiveLearning import ActiveLearningStrategy
 from CONFIG import CONFIG
 
 
@@ -125,7 +125,8 @@ def get_dataset(features_df, feature_cols, label_col):
 
 
 def check_early_stop(iterations_results, th=0.1):
-    IQRs_RMSE = np.array([np.mean(np.exp(I["uncertainty_high"]) - np.exp(I["uncertainty_low"])) for I in iterations_results])
+    IQRs_RMSE = np.array(
+        [np.mean(np.exp(I["uncertainty_high"]) - np.exp(I["uncertainty_low"])) for I in iterations_results])
     # IQRs_std = np.array([np.std(np.exp(I["uncertainty_high"]) - np.exp(I["uncertainty_low"])) for I in iterations_results])
     print(">>> Model's uncertanties: ", IQRs_RMSE)
     if len(IQRs_RMSE) < 2:
@@ -144,7 +145,8 @@ def check_early_stop(iterations_results, th=0.1):
     return True
 
 
-def run_active_learning(features_df, feature_cols, label_col, n_iter=20, max_early_stop = 2, early_stop_th=0.1, verbose=False, random_sampling=False):
+def run_active_learning(features_df, feature_cols, label_col, n_iter=20, max_early_stop=2, early_stop_th=0.1,
+                        verbose=False, random_sampling=False):
     warnings.filterwarnings("ignore")
 
     data_size = []
@@ -180,7 +182,7 @@ def run_active_learning(features_df, feature_cols, label_col, n_iter=20, max_ear
         iter_res["model"] = str(iter_res["model"])
         iterations_results.append(iter_res)
 
-        if (idx+1 >= n_iter):
+        if (idx + 1 >= n_iter):
             print("Max iteration reached!")
             break
 
@@ -244,16 +246,16 @@ def run_active_learning(features_df, feature_cols, label_col, n_iter=20, max_ear
     return results
 
 
-def load_data_and_preprocess(config):
+def load_data_and_preprocess(GENERATED_METADATA_PATH, DATA_ID):
     # Load dataset
 
-    plan_data_features = compute_cardinality_plan_features(config.GENERATED_METADATA_PATH,
-                                                           data_sizes=[config.DATA_ID])
+    plan_data_features = compute_cardinality_plan_features(GENERATED_METADATA_PATH,
+                                                           data_sizes=[DATA_ID])
+    print(plan_data_features)
     plan_data_features = plan_data_features.sort_index()
 
     sourceCardinalitySum = plan_data_features["sourceCardinalitySum"].copy()
-    sourceCardinalitySum[
-        sourceCardinalitySum == 0] = 1  # Solves a bug in uniform sampler, because log of 0 is minus inf
+    sourceCardinalitySum[sourceCardinalitySum == 0] = 1  # Solves a bug in uniform sampler, because log of 0 is minus inf
     plan_data_features["Log_sourceCardinalitySum"] = np.log(sourceCardinalitySum)
 
     return plan_data_features
@@ -261,7 +263,7 @@ def load_data_and_preprocess(config):
 
 def run(config):
     # Load plan_data_features
-    features_df = load_data_and_preprocess(config)
+    features_df = load_data_and_preprocess(config.GENERATED_METADATA_PATH, config.DATA_ID)
 
     # Persist features
     features_df.to_csv(os.path.join(config.LABEL_FORECASTER_OUT, "plan_data_features.csv"))
@@ -291,23 +293,24 @@ def run(config):
     features_df[config.LABEL_COL] = np.log(features_df["netRunTime"])
 
     # results = run_active_learning(features_df,
-    #                               feature_cols=config.FEATURE_COLS,
-    #                               label_col=config.LABEL_COL,
+    #                               feature_cols=config.feature_cols,
+    #                               label_col=config.label_col,
     #                               n_iter=config.MAX_ITER,
-    #                               max_early_stop=config.MAX_EARLY_STOP,
-    #                               early_stop_th=config.EARLY_STOP_TH,
+    #                               max_early_stop=config.max_early_stop,
+    #                               early_stop_th=config.early_stop_th,
     #                               verbose=True)
 
-    custom_active_learning = CustomActiveLearning.CustomActiveLearning()
-    results = custom_active_learning.run_active_learning(features_df,
-                                  feature_cols=config.FEATURE_COLS,
-                                  label_col=config.LABEL_COL,
-                                  n_iter=config.MAX_ITER,
-                                  max_early_stop=config.MAX_EARLY_STOP,
-                                  early_stop_th=config.EARLY_STOP_TH,
-                                  verbose=True,
-                                  user_prompt = config.USER_PROMPT)
+    custom_active_learning = ActiveLearningStrategy.ActiveLearningStrategy(features_df=features_df,
+                                                                           feature_cols=config.FEATURE_COLS,
+                                                                           label_col=config.LABEL_COL, verbose=True)
+
+    results = custom_active_learning.run_active_learning(
+        n_iter=1,
+        max_early_stop=config.MAX_EARLY_STOP,
+        early_stop_th=config.EARLY_STOP_TH,
+        user_prompt=config.USER_PROMPT)
     results["final_dataset"].to_csv(os.path.join(config.LABEL_FORECASTER_OUT, "final_dataset.csv"))
+
     with open(os.path.join(config.LABEL_FORECASTER_OUT, "learning_process.pkl"), "wb") as handle:
         pickle.dump(results, handle)
 
@@ -319,6 +322,48 @@ def run(config):
 #         return TPCH_config
 #     else:
 #         Exception(f"No experiment type '{exp_type}'")
+
+def set_up_active_learning(generated_metadata_path, data_id, label_forecaster_out, random_init, user_init, init_jobs,
+                           feature_cols, label_col, sample_col, sample_ids, features_df):
+
+    # Persist features
+    features_df.to_csv(os.path.join(label_forecaster_out, "plan_data_features.csv"))
+
+    # # Integrate into helper
+    # if random_init:
+    #     print("Random init sampling...")
+    #     sample_model = RandomSampler(init_jobs, feature_cols, label_col, seed=42)
+    # elif user_init:
+    #     sample_model = UserSampler(init_jobs, feature_cols, label_col, seed=42)
+    # else:
+    #     sample_model = UniformAgglomerativeSampler(init_jobs, feature_cols, label_col,
+    #                                                sample_col)
+    #
+    # sample_model.fit(features_df, verbose=True)
+
+    # save init_job_sample_ids
+    np.savetxt(os.path.join(label_forecaster_out, "init_job_sample_ids.txt"), sample_ids, fmt="%d")
+
+    init_jobs_to_run = features_df.iloc[sample_ids].index.get_level_values(0)
+
+    # -> RUN Jobs
+    submit_jobs(init_jobs_to_run)
+
+    # -> Collect exec time
+    executed_jobs_runtime = get_executed_plans_exec_time(init_jobs_to_run)
+
+    features_df = pd.merge(features_df, executed_jobs_runtime, left_index=True, right_index=True, how="left")
+    features_df[label_col] = np.log(features_df["netRunTime"])
+
+    custom_active_learning = ActiveLearningStrategy.ActiveLearningStrategy(features_df=features_df,
+                                                                           feature_cols=feature_cols,
+                                                                           label_col=label_col, label_forecaster_out=label_forecaster_out, verbose=True)
+
+    return custom_active_learning
+
+    # results["final_dataset"].to_csv(os.path.join(label_forecaster_out, "final_dataset.csv"))
+    # with open(os.path.join(label_forecaster_out, "learning_process.pkl"), "wb") as handle:
+    #     pickle.dump(results, handle)
 
 
 def main():
