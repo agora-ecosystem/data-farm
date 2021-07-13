@@ -302,7 +302,9 @@ def run(config):
 
     custom_active_learning = ActiveLearningStrategy.ActiveLearningStrategy(features_df=features_df,
                                                                            feature_cols=config.FEATURE_COLS,
-                                                                           label_col=config.LABEL_COL, verbose=True)
+                                                                           label_col=config.LABEL_COL,
+                                                                           label_forecaster_out=config.LABEL_FORECASTER_OUT,
+                                                                           verbose=True)
 
     results = custom_active_learning.run_active_learning(
         n_iter=1,

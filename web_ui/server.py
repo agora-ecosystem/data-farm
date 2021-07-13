@@ -30,7 +30,6 @@ import numpy as np
 from RunGenerator import create_project_folders
 from generator_labeler.JobExecutionSampler.unsupervised_sampler import UniformAgglomerativeSampler
 
-
 sns.set_context("talk")
 sns.set_style("whitegrid")
 
@@ -122,14 +121,14 @@ global active_learning_features
 
 active_learning_settings = {
     "target_label": "",
-    "initial_job_selection":list(),
+    "initial_job_selection": list(),
     "n_init_jobs": 0,
     "n_generation_jobs": 3,
     "uncertainty_threshold": 0,
     "max_iter": 0,
     "max_time": 0,
-    "current_automated_sample_ids":list(),
-    "current_executed_jobs":list(),
+    "current_automated_sample_ids": list(),
+    "current_executed_jobs": list(),
 
 }
 
@@ -140,8 +139,9 @@ active_learning_data = {
     "execution time": list()
 }
 iteration_results = []
-active_learning_features= []
+active_learning_features = []
 active_learning_features_id = []
+
 
 @app.route("/lf_iteration", methods=["GET", "POST"])
 def lf_iteration():
@@ -159,7 +159,7 @@ def lf_iteration():
         active_learning_features = load_data_and_preprocess(CONFIG.GENERATED_METADATA_PATH, CONFIG.DATA_ID)
 
         active_learning_features_id = active_learning_features.droplevel(1)
-        active_learning_features_id= active_learning_features_id.reset_index()
+        active_learning_features_id = active_learning_features_id.reset_index()
 
         selected_plan_ids = active_learning_features_id.loc[active_learning_features_id['plan_id'].isin(selected_jobs)]
         selected_ids = selected_plan_ids.index.values.tolist()
@@ -170,7 +170,7 @@ def lf_iteration():
         print(active_learning_settings["current_executed_jobs"])
 
         global custom_active_learning
-        if(status["lf_current_iteration"]<1):
+        if status["lf_current_iteration"] < 1:
             # First iteration: set up active learning strategy object, sample and run initial jobs
             try:
                 global LABEL_FORECASTER_OUT
@@ -198,10 +198,11 @@ def lf_iteration():
             custom_active_learning.active_learning_sampler_preparation(selected_plan_ids)
 
         # TODO: Add timer function here to communicate to client
-        iteration_results = custom_active_learning.active_learning_iteration_helper(status["lf_current_iteration"], active_learning_settings["max_iter"],
-                                                                                    early_stop_th=active_learning_settings["uncertainty_threshold"])
+        iteration_results = custom_active_learning.active_learning_iteration_helper(status["lf_current_iteration"],
+                                                                                    active_learning_settings["max_iter"],
+                                                                                    early_stop_th= active_learning_settings["uncertainty_threshold"])
 
-        status["lf_current_iteration"] = status["lf_current_iteration"] +1
+        status["lf_current_iteration"] = status["lf_current_iteration"] + 1
         print(custom_active_learning.get_iteration_results())
         iteration_results = custom_active_learning.get_iteration_results()
 
@@ -215,7 +216,10 @@ def lf_iteration():
         active_learning_settings["current_automated_sample_ids"] = total_idx
         print(active_learning_settings["current_automated_sample_ids"])
 
-    return render_template("index.html", iteration_results=iteration_results, status=status, active_learning_settings = active_learning_settings, features_df = active_learning_features.to_json())
+    return render_template("index.html", iteration_results=iteration_results, status=status,
+                           active_learning_settings=active_learning_settings,
+                           features_df=active_learning_features.to_json())
+
 
 @app.route("/lf_run", methods=["GET", "POST"])
 def lf_run():
@@ -225,7 +229,6 @@ def lf_run():
     global active_learning_features
 
     if request.method == 'POST':
-
         status["lf_config"] = request.form.to_dict()
 
         al_setup_params = request.form.to_dict()
@@ -245,14 +248,22 @@ def lf_run():
 
         status["lf_current_iteration"] = 0
 
-        return render_template("index.html", status=status, features_df = active_learning_features.to_dict(), active_learning_settings =  active_learning_settings)
-        # return redirect("/lf_next_iter")
+        return render_template("index.html", status=status, features_df=active_learning_features.to_dict(),
+                               active_learning_settings=active_learning_settings)
+
     active_learning_features = load_data_and_preprocess(CONFIG.GENERATED_METADATA_PATH, CONFIG.DATA_ID)
     active_learning_features = active_learning_features.droplevel(1)
     active_learning_features_json = active_learning_features.to_json()
     status["lf_run"] = True
-    return render_template("index.html", active_learning_settings = active_learning_settings,
-                           status=status, features_df = active_learning_features_json)  # render_template("index.html", status=status)
+    return render_template("index.html", active_learning_settings=active_learning_settings,
+                           status=status,
+                           features_df=active_learning_features_json)  # render_template("index.html", status=status)
+
+@app.route("/lf_plan_stats/<plan_id>", methods=["GET"])
+def lf_plan_stats(plan_id):
+    global status
+    # print(exp_id, plan_id, p)
+    return render_template("lf_job_details.html", plan_id = plan_id)
 
 @app.route("/apg_plan_plot/<plan_id>")
 def apg_plan_plot(plan_id):

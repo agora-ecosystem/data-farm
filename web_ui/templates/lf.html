@@ -199,7 +199,7 @@
 
 
             function plot_features(xs, ys, sxs, sys, rxs, rys, title, xax,yax, div) {
-                var plot_data = {
+                var not_executed_points = {
                     x: xs,
                     y: ys,
                     mode: 'markers',
@@ -251,7 +251,7 @@
                     }
                 };
 
-                complete_data = [plot_data, selected_points, executed_points]
+                const complete_data = [not_executed_points, selected_points, executed_points];
 
                 Plotly.newPlot(div, complete_data, layout);
                 document.getElementById(div).on('plotly_click', function (data) {
@@ -260,38 +260,40 @@
                     newItem = data.points[0].x
 
 
-                    // switch (data.event.button) {
-                    //     case 0:
-                    //         console.log('left click')
-                    //         break
-                    //     case 1:
-                    //         console.log('wheel click')
-                    //         break
-                    //     case 2:
-                    //         console.log('right click')
-                    //         break
-                    // }
-                    var pn='',
-                      tn='',
-                      colors=[];
-                    for(var i=0; i < data.points.length; i++){
-                        pn = data.points[i].pointNumber;
-                        tn = data.points[i].curveNumber;
-                        colors = data.points[i].data.marker.color;
-                    };
+                    switch (data.event.button) {
+                        case 0:
+                            //Left click
+                            var pn='', tn='', colors=[];
+                            for(var i=0; i < data.points.length; i++){
+                                pn = data.points[i].pointNumber;
+                                tn = data.points[i].curveNumber;
+                                colors = data.points[i].data.marker.color;
+                            };
 
-                    if(user_selected_points.indexOf(newItem) === -1){
-                        colors[pn] = '#003eff';
-                        user_selected_points.push(newItem)
+                            if(user_selected_points.indexOf(newItem) === -1){
+                                colors[pn] = '#003eff';
+                                user_selected_points.push(newItem)
+                            }
+                            else{
+                                user_selected_points.splice(user_selected_points.indexOf(newItem), 1)
+                                colors[pn] = "rgb(255,0,0)";
+                            }
+                            //Add or remove when already on list
+                            console.log(user_selected_points)
+                            var update = {'marker':{color: colors, size:8}};
+                            Plotly.restyle(div, update,tn);
+                            break
+
+                        case 1:
+                            console.log('wheel click')
+                            window.open("/lf_plan_stats/"+newItem, "_blank");
+                            break
+
+                        case 2:
+                            console.log('right click')
+                            break
                     }
-                    else{
-                        user_selected_points.splice(user_selected_points.indexOf(newItem), 1)
-                        colors[pn] = "rgb(255,0,0)";
-                    }
-                    //Add or remove when already on list
-                    console.log(user_selected_points)
-                    var update = {'marker':{color: colors, size:8}};
-                    Plotly.restyle(div, update,tn);
+
 
             });
             }

@@ -152,7 +152,7 @@ class ActiveLearningStrategy:
             "test_scores_exp": self.test_scores_exp,
             "cross_validation_scores": self.cross_validation_scores,
             "cross_validation_scores_exp": self.cross_validation_scores_exp,
-            # "iterations_results": self.iterations_results,
+            "iterations_results": self.iterations_results,
         }
 
         if (idx + 1 >= n_iter):
