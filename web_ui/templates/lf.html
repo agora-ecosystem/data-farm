@@ -120,6 +120,7 @@
                         <div class="card-body">
                             <h5 class="card-title">Jobs Feature Overview</h5>
                             <p class="card-text">&#9660; Here you can see the jobs which are scheduled for execution. You can add or remove jobs to execute by clicking on them. </p>
+                            <select id="selectFeature" onchange="feature_select(this)" ><option>Choose a Feature</option></select>
                             <div id="plot1_div"></div>
                             <div id="plot2_div"></div>
                         </div>
@@ -144,6 +145,7 @@
 
 
             <script>
+
 
             function on_next_iteration(url){
                 var xhr = new XMLHttpRequest();
@@ -172,17 +174,6 @@
                                 window.location.reload();
                             }
                         }
-                    // window.location.replace("/"); // show response from the php script.
-                    // window.location.reload();
-                    // $.ajax({
-                    //     type: "POST",
-                    //     url: url,
-                    //     data: JSON.stringify({selected_jobs: user_selected_points}), // serializes the form's elements.
-                    //     success: function (data) {
-                    //         setVisible('#loading', false);
-                    //
-                    //     }
-                    // });
                 });
             var data = {{ status["lf_iterations"]|tojson }};
             var current_iter = {{ status["lf_current_iteration"]|int }};
@@ -190,13 +181,33 @@
 
 
             var features = {{ features_df|safe }};
-
+            console.log(features)
             var active_learning_settings = {{ active_learning_settings|safe }};
 
             console.log(Object.keys(features.outCardinality_mean)[1])
 
+            var select = document.getElementById("selectFeature");
+            var options = Object.getOwnPropertyNames(features);
+            for(var i = 0; i < options.length; i++) {
+                var opt = options[i];
+                var el = document.createElement("option");
+                el.textContent = opt;
+                el.value = opt;
+                select.appendChild(el);
 
-
+            }
+            function feature_select(obj){
+                console.log(obj.value)
+                var feature = obj.value
+                point_res = preselected_points(features[feature])
+                var unselected_points_x =point_res[0]
+                var unselected_points_y =point_res[1]
+                var selected_points_x =point_res[2]
+                var selected_points_y = point_res[3]
+                var executed_points_x = point_res[4]
+                var executed_points_y = point_res[5]
+                plot_features(unselected_points_x, unselected_points_y, selected_points_x, selected_points_y, executed_points_x, executed_points_y, feature,  "Generated Jobs",feature, 'plot1_div')
+            }
 
             function plot_features(xs, ys, sxs, sys, rxs, rys, title, xax,yax, div) {
                 var not_executed_points = {
@@ -226,7 +237,7 @@
                         name: "Scheduled for Execution"
                     }
 
-                var executed_points =
+                var executed_jobs =
                     {
                         x: rxs,
                         y: rys,
@@ -251,7 +262,7 @@
                     }
                 };
 
-                const complete_data = [not_executed_points, selected_points, executed_points];
+                const complete_data = [not_executed_points, selected_points, executed_jobs];
 
                 Plotly.newPlot(div, complete_data, layout);
                 document.getElementById(div).on('plotly_click', function (data) {
@@ -263,6 +274,7 @@
                     switch (data.event.button) {
                         case 0:
                             //Left click
+
                             var pn='', tn='', colors=[];
                             for(var i=0; i < data.points.length; i++){
                                 pn = data.points[i].pointNumber;
@@ -270,8 +282,14 @@
                                 colors = data.points[i].data.marker.color;
                             };
 
+                            if(executed_points.indexOf(newItem) !== -1)
+                            {
+                                // Already executed, not allowed to select
+                                break
+                            }
+
                             if(user_selected_points.indexOf(newItem) === -1){
-                                colors[pn] = '#003eff';
+                                colors[pn] = 'rgb(255,230,0)';
                                 user_selected_points.push(newItem)
                             }
                             else{
@@ -310,11 +328,12 @@
                 console.log(active_learning_settings.current_automated_sample_ids.length)
 
                 for(var i=0; i < Object.keys(feature).length; i++){
-                    if(active_learning_settings.current_automated_sample_ids.includes(i))
+                    if(active_learning_settings.current_automated_sample_ids.includes(i) || user_selected_points.includes(Object.keys(feature)[i]))
                     {
 
                         selected_points_x.push(Object.keys(feature).splice(i,1)[0]);
                         selected_points_y.push(Object.values(feature).splice(i,1)[0]);
+
 
                     }
                     else if(active_learning_settings.current_executed_jobs.includes(i)){
@@ -333,7 +352,7 @@
             }
 
             selected_samples = [active_learning_settings.current_automated_sample_ids]
-
+            var user_selected_points = []
             point_res = preselected_points(features.outCardinality_mean)
             var unselected_points_x =point_res[0]
             var unselected_points_y =point_res[1]
@@ -341,7 +360,8 @@
             var selected_points_y = point_res[3]
             var executed_points_x = point_res[4]
             var executed_points_y = point_res[5]
-            var user_selected_points = [...selected_points_x]
+            var executed_points = [...executed_points_x]
+            user_selected_points = [...selected_points_x]
 
             plot_features(unselected_points_x, unselected_points_y, selected_points_x, selected_points_y, executed_points_x, executed_points_y, "Out Cardinality Mean",  "Generated Jobs","Out Cardinality Mean", 'plot1_div')
 
