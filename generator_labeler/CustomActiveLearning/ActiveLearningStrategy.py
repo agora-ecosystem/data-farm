@@ -13,6 +13,7 @@ from generator_labeler.CustomActiveLearning.ActiveLearningUtility import ActiveL
     UserSampling
 from generator_labeler.JobExecutionSampler.supervised_sampler import UserSampler
 
+import shap
 
 class IQRs_mean:
     pass
@@ -120,7 +121,7 @@ class ActiveLearningStrategy:
         sampling_idx = np.random.randint(0, len(self.X_test), len_new_X_train)
         new_ids_train = self.ids_test.iloc[sampling_idx].copy()
         job_ids = new_ids_train.iloc[:, 0].values
-        return job_ids
+        return job_ids, self.iter_res["uncertainty_interval"]
 
     def active_learning_iteration_helper(self, idx, n_iter, max_early_stop=2, early_stop_th=0.1):
         print("======= Iteration", idx)
@@ -132,6 +133,7 @@ class ActiveLearningStrategy:
         self.iter_res = self.active_learning_iteration(self.X_train, self.y_train, self.ids_train, self.X_test,
                                                   self.ids_test, self.feature_cols,
                                                   verbose=self.verbose)
+        # Save model iteration
         # with open(os.path.join(self.label_forecaster_out, f"learning_process_{idx}.pkl"), "wb") as handle:
         #     pickle.dump(iter_res, handle)
 
@@ -217,6 +219,9 @@ class ActiveLearningStrategy:
 
         if X_test.__len__() != ids_test.__len__():
             raise Exception("x_test does not match ids_test")
+        # print("IDS TEST TESTING!!!")
+        # print(ids_test.index)
+        # print()
 
         results = {}
         qf_model = QuantileForestModel(random_state=42)
@@ -224,6 +229,10 @@ class ActiveLearningStrategy:
         qf_model.cross_validate(X_train, y_train)
 
         y_pred = qf_model.predict(X_test)
+
+        #Shapley values
+        self.shapley_calculation(qf_model, X_test, ids_test, feature_cols)
+
         y_pred_upper = qf_model.predict(X_test, quantile=75)
         y_pred_lower = qf_model.predict(X_test, quantile=25)
 
@@ -293,5 +302,20 @@ class ActiveLearningStrategy:
             return False
         return True
 
+    # Makes SHAP figures for model and individual figures for testset
+    def shapley_calculation(self, model, X_test, ids_test, feature_names):
+        explainer = shap.KernelExplainer(model.predict,X_test)
+        shap_values = explainer.shap_values(X=X_test)
+        print(shap_values)
+        # shap.summary_plot(shap_values, X_test, feature_names=feature_names)
+        # shap.plots.bar(explainer)
+        # plt.savefig(os.path.join(self.label_forecaster_out, f"SHAP_Bar_Overview.png"), bbox_inches="tight")
+
+        for i in range(0,len(shap_values)):
+            plt.clf()
+            #TODO: fix weird bug of overlapping shap plots
+            shap.plots._waterfall.waterfall_legacy(explainer.expected_value, shap_values[i], show=False, feature_names=feature_names)
+            job_name = ids_test.iloc[i]["plan_id"]
+            plt.savefig(os.path.join(self.label_forecaster_out, f"SHAP_Bar_{job_name}.png"), bbox_inches="tight")
     def get_iteration_results(self):
         return self.results

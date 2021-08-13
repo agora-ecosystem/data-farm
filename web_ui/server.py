@@ -113,11 +113,14 @@ def input_plan(plan_id):
     return render_template("input_plan.html", status=status, plan_info=plan_info)
 
 
+# Active learning global variables
+# Need to be available during active learning iterations
 global custom_active_learning
 global iteration_results
 global active_learning_settings
 global active_learning_data
 global active_learning_features
+global active_learning_features_stats
 
 active_learning_settings = {
     "target_label": "",
@@ -141,6 +144,7 @@ active_learning_data = {
 iteration_results = []
 active_learning_features = []
 active_learning_features_id = []
+active_learning_features_stats={}
 
 
 @app.route("/lf_iteration", methods=["GET", "POST"])
@@ -199,16 +203,37 @@ def lf_iteration():
 
         # TODO: Add timer function here to communicate to client
         iteration_results = custom_active_learning.active_learning_iteration_helper(status["lf_current_iteration"],
-                                                                                    active_learning_settings["max_iter"],
-                                                                                    early_stop_th= active_learning_settings["uncertainty_threshold"])
+                                                                                    active_learning_settings[
+                                                                                        "max_iter"],
+                                                                                    early_stop_th=
+                                                                                    active_learning_settings[
+                                                                                        "uncertainty_threshold"])
 
         status["lf_current_iteration"] = status["lf_current_iteration"] + 1
+        print("ITERATION RESULTS")
         print(custom_active_learning.get_iteration_results())
         iteration_results = custom_active_learning.get_iteration_results()
+        # results_dict = iteration_results["iterations"]
+        print(iteration_results["iterations_results"][0].keys())
+        print(iteration_results["iterations_results"][0].values())
+        results_details_dict = iteration_results["iterations_results"][0]
+        results_dict = {
+            "iterations": iteration_results["iterations"],
+            "train_ids": results_details_dict["train_ids"],
+            "test_ids": results_details_dict["test_ids"],
+            "train_labels": results_details_dict["train_labels"].tolist(),
+            "pred_labels": results_details_dict["pred_labels"].tolist(),
+            "uncertainty_high": results_details_dict["uncertainty_high"].tolist(),
+            "uncertainty_low": results_details_dict["uncertainty_low"].tolist(),
+            "uncertainty_interval": results_details_dict["uncertainty_interval"].tolist(),
+
+        }
+        iteration_results = results_dict
 
         # Automated sampling
-        sampling_idx = custom_active_learning.uncertainty_sampler()
-        print(sampling_idx)
+        sampling_idx, uncertainties = custom_active_learning.uncertainty_sampler()
+        # print(uncertainties)
+        # print(sampling_idx)
 
         # Get the global idx
         sampling_idx = active_learning_features_id.loc[active_learning_features_id['plan_id'].isin(sampling_idx)]
@@ -216,9 +241,9 @@ def lf_iteration():
         active_learning_settings["current_automated_sample_ids"] = total_idx
         print(active_learning_settings["current_automated_sample_ids"])
 
-    return render_template("index.html", iteration_results=iteration_results, status=status,
+    return render_template("index.html", iteration_results=json.dumps(iteration_results), status=status,
                            active_learning_settings=active_learning_settings,
-                           features_df=active_learning_features.to_json())
+                           features_df=active_learning_features.to_json(orient='records'))
 
 
 @app.route("/lf_run", methods=["GET", "POST"])
@@ -229,6 +254,7 @@ def lf_run():
     global active_learning_features
 
     if request.method == 'POST':
+        # First setup
         status["lf_config"] = request.form.to_dict()
 
         al_setup_params = request.form.to_dict()
@@ -254,16 +280,145 @@ def lf_run():
     active_learning_features = load_data_and_preprocess(CONFIG.GENERATED_METADATA_PATH, CONFIG.DATA_ID)
     active_learning_features = active_learning_features.droplevel(1)
     active_learning_features_json = active_learning_features.to_json()
+
+    # Table features
+    active_learning_reset = active_learning_features.reset_index()
+    active_learning_features_table_json = active_learning_reset.to_json(orient='records')
     status["lf_run"] = True
+    iteration_results_json = json.dumps(iteration_results)
+    print(json.dumps(iteration_results))
+
+    # Instantiated job info initialization
+    global cardinality_plan_features
+    global data_plan_features
+    global jobs_data_info
+    print()
+    print("GETTING INSTANTIATED PLANS INFO")
+    current_sji_jobs_folder = CONFIG.GENERATED_JOB_FOLDER
+    current_abs_plans_folder = CONFIG.GENERATED_ABSTRACT_EXECUTION_PLAN_FOLDER
+    generatedJobsInfo = os.path.join(current_sji_jobs_folder, "generated_jobs_info.json")
+    cardinality_plan_features = compute_cardinality_plan_features(generatedJobsInfo, data_sizes=["1GB"])
+    data_plan_features = get_estimated_out_cardinality(generatedJobsInfo, data_sizes=["1GB"])
+    jobs_data_info = preprocess_jobs_data_info(generatedJobsInfo)
+    # data_plan_features.reset_index(inplace=True)
+
+    # jobs_data_info.reset_index(inplace=True)
+    print(cardinality_plan_features)
+    print("===============")
+    print(data_plan_features)
+    print("===============")
+    print(jobs_data_info)
+
+    # Active learning stats calculation
+    global active_learning_features_stats
+
+    feature_mean = active_learning_features.mean()
+    feature_max = active_learning_features.max()
+    feature_min = active_learning_features.min()
+    feature_median = active_learning_features.median()
+    feature_std = active_learning_features.std()
+    feature_mode = active_learning_features.mode().iloc[0]
+
+    active_learning_features_stats = pd.DataFrame(columns=active_learning_features.columns)
+    active_learning_features_stats.loc["Mean"]=feature_mean
+    active_learning_features_stats.loc["Median"] = feature_median
+    active_learning_features_stats.loc["Mode"] = feature_mode
+    active_learning_features_stats.loc["Standard Deviation"] = feature_std
+    active_learning_features_stats.loc["Max"] = feature_max
+    active_learning_features_stats.loc["Min"] = feature_min
+
+    print(active_learning_features_stats)
+
     return render_template("index.html", active_learning_settings=active_learning_settings,
                            status=status,
-                           features_df=active_learning_features_json)  # render_template("index.html", status=status)
+                           features_df=active_learning_features_json,
+                           features_table = active_learning_features_table_json,
+                           iteration_results=iteration_results_json)  # render_template("index.html", status=status)
 
+
+# json.dumps(iteration_results)
+# Job explorer component: shows stats about the jobs (to be executed) for the user to review
 @app.route("/lf_plan_stats/<plan_id>", methods=["GET"])
 def lf_plan_stats(plan_id):
+    global active_learning_features
+    global iteration_results
+    global active_learning_settings
     global status
-    # print(exp_id, plan_id, p)
-    return render_template("lf_job_details.html", plan_id = plan_id)
+    global data_plan_features
+    global jobs_data_info
+
+    if (len(active_learning_features) == 0):
+        redirect("Error: run the AL component first")
+
+    # Get abstract plan image, Get the abstract plan ID
+    ap_path = f"/apg_plan/{plan_id[3]}"
+    plan_index = active_learning_features.loc[plan_id]
+    print(plan_index)
+
+    # Insert SHAP plot
+    shap_path = f"/shap_plot/{plan_id}"
+
+    # Insert feature row and general feature characteristics
+    feature_row = active_learning_features.loc[plan_id]
+    feature_df = active_learning_features_stats
+    feature_df = pd.concat([feature_row.to_frame().T,feature_df])
+    feature_df.reset_index(inplace=True)
+    # print(feature_df)
+
+    #Insert instantiated job information
+    # print(data_plan_features.loc[plan_id])
+    # print(jobs_data_info.loc[plan_id])
+
+    data_plan_features_job = data_plan_features.loc[plan_id]
+    jobs_data_info_job = jobs_data_info.loc[plan_id]
+
+    data_plan_features_job.reset_index(inplace=True)
+    jobs_data_info_job.reset_index(inplace=True)
+
+    data_plan_features_json = data_plan_features_job.to_json(orient='records')
+    jobs_data_info_json = jobs_data_info_job.to_json(orient='records')
+
+
+    # Insert uncertainty, predictions, set information
+    iteration_results_json = json.dumps(iteration_results)
+    # iteration_results_df = pd.DataFrame.from_dict(iteration_results)
+    print(iteration_results)
+    # print(iteration_results_df)
+
+
+    # TODO: Insert similar executed job information
+    # Similar tables, similar job length
+    return render_template("lf_job_details.html",
+                           ap_image_path=ap_path,
+                           shap_image_path=shap_path,
+                           plan_id=plan_id,
+                           features=feature_df.to_json(orient='records'),
+                           iteration_results=iteration_results_json,
+                           data_plan_features=data_plan_features_json,
+                           jobs_data_info=jobs_data_info_json)
+
+
+# Serves the abstract plan image
+@app.route("/apg_plan/<plan_id>")
+def apg_plan_serve(plan_id):
+    print(CONFIG.GENERATED_ABSTRACT_EXECUTION_PLAN_FOLDER)
+    path = os.path.join(CONFIG.GENERATED_ABSTRACT_EXECUTION_PLAN_FOLDER, f"apg_plan_{plan_id}.png")
+    return tools._serve_image(path)
+
+
+# Serves individual SHAP images for test set
+@app.route("/shap_plot/<plan_id>")
+def shap_plot_serve(plan_id):
+    # If plan ID is in tested set
+    print(plan_id)
+    print("CURRENT EXECUTED JOBS")
+    print(active_learning_settings["current_executed_jobs"])
+    path = os.path.join(CONFIG.LABEL_FORECASTER_OUT, f"SHAP_Bar_{plan_id}.png")
+
+    # if(active_learning_settings["current_executed_jobs"].includes(plan_id))
+
+    return tools._serve_image(path)
+
 
 @app.route("/apg_plan_plot/<plan_id>")
 def apg_plan_plot(plan_id):

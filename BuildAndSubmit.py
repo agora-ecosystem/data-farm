@@ -133,6 +133,8 @@ def submit(job_projects):
 
         #Submit job to flink
 
+        #Sequence of running parameters
+        #
         command_seq = [
             os.path.join(CONFIG.FLINK_HOME, "bin/flink"), 'run',
             '-c', str(jp), str(jar_path),

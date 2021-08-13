@@ -118,11 +118,70 @@
                 <div class="col-12">
                     <div class="card card-counter shadow">
                         <div class="card-body">
-                            <h5 class="card-title">Jobs Feature Overview</h5>
+                            <h5 class="card-title">Job Feature Overview</h5>
                             <p class="card-text">&#9660; Here you can see the jobs which are scheduled for execution. You can add or remove jobs to execute by clicking on them. </p>
                             <select id="selectFeature" onchange="feature_select(this)" ><option>Choose a Feature</option></select>
                             <div id="plot1_div"></div>
                             <div id="plot2_div"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <div class="accordion" id="accordionPanelsStayOpenExample">
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="panelsStayOpen-headingOne">
+              <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
+                Features Table
+              </button>
+            </h2>
+            <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-headingOne">
+              <div class="accordion-body">
+                <table class="table table-sm" id="features" data-row-style="featuresRowStyle">
+<!--                    data-card-view="true" -->
+                    <thead>
+                    <tr class="table-info">
+<!--                        <th data-field="index">Index</th>-->
+<!--                        <th data-field="Log_sourceCardinalitySum" >Log cardinality</th>-->
+<!--                        <th data-field="complexity_max" >complexity_max</th>-->
+<!--                        <th></th>-->
+                    </tr>
+                    </thead>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
+                Accordion Item #2
+              </button>
+            </h2>
+            <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
+              <div class="accordion-body">
+                                    <h5 class="card-title">Job Uncertainty Overview</h5>
+                    &#9660; Here you can see the uncertainty intervals of the jobs that have not been executed yet
+                    <div id="unc_plot_div"></div>
+              </div>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="panelsStayOpen-headingThree">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false" aria-controls="panelsStayOpen-collapseThree">
+                Accordion Item #3
+              </button>
+            </h2>
+            <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingThree">
+              <div class="accordion-body">
+                <strong>This is the third item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+              </div>
+            </div>
+          </div>
+        </div>
+           <div class="row mb-4 b-2">
+                <div class="col-12">
+                    <div class="card card-counter shadow">
+                        <div class="card-body">
+
                         </div>
                     </div>
                 </div>
@@ -140,8 +199,6 @@
                         </div>
                     </form>
                 </div>
-
-
 
 
             <script>
@@ -175,8 +232,9 @@
                             }
                         }
                 });
-            var data = {{ status["lf_iterations"]|tojson }};
-            var current_iter = {{ status["lf_current_iteration"]|int }};
+
+            // var iteration_results
+            // console.log(iteration_results)
 
 
 
@@ -371,34 +429,76 @@
             // selected_points_y_2 = pointresult[3]
             // executed_points_y_2
             // plot_features(unselected_points_x, unselected_points_y_2, selected_points_x, selected_points_y_2, data_iter_sort, "Complexity Mean",  "Generated Jobs", "Complexity Mean",'plot2_div')
+          // Uncertainty plot
+            var data = {{ status["lf_iterations"]|tojson }};
+            var iteration_results = {{ iteration_results|safe}};
+            console.log(iteration_results)
 
+            if(!Array.isArray(iteration_results) && iteration_results !== null)
+            {
+                //TODO: Fix color of error bars
+                var current_iter = {{ status["lf_current_iteration"]|int }};
+                // var data_iter_sort = data[current_iter]["jobs"].sort((a, b) => a.execution_time - b.execution_time);
+                var labels = iteration_results.test_ids.map(x => x.plan_id)
+                var low = Math.min(iteration_results.uncertainty_interval)
+                var high = Math.max(...iteration_results.uncertainty_interval)
+                var colors = []
+                console.log(high)
+                for (let i = 0; i<iteration_results.uncertainty_interval.length;i++ )
+                {
+                    item = iteration_results.uncertainty_interval[i]
+                    col = 'rgb('.concat((item/high).toString()).concat(',0,128)');
+                    colors.push(col)
+                }
+                console.log(colors)
+                // var range = high-low
+                var plot_data = [{
+                    x: labels,
+                    y: iteration_results.pred_labels,
+                    error_y: {
+                        type: 'data',
+                        array: iteration_results.uncertainty_interval,
+                        visible: true,
+                        color:  iteration_results.uncertainty_interval.map(x => "rgb("+x/high*255+",0,128)")
+                    },
+                    text: labels,
+                    mode: 'markers',
+                    type: 'scatter',
+                    marker: {
+                        size: 8,
+                        color: iteration_results.uncertainty_interval.map(x => "rgb("+x/high*255+",0,128)")
+                    },
+                    showlegend: false,
+                    name: ""
+                }
+// iteration_results.uncertainty_interval.map(x => "rgb(".concat(+x/high).concat(",0,128)")
+                ];
 
+                var layout = {
+                    title: 'Forecasted Labels at Iteration ' + (current_iter),
+                    yaxis: {
+                        title: 'Forecasted Label - Exec. Time (log s)',
+                    },
+                    xaxis: {
+                        title: 'Generated Jobs'
+                    }
+                };
+            Plotly.newPlot('unc_plot_div', plot_data, layout);
+            }
 
+    feature_table = {{features_table|safe}}
+    let feature_cols = Object.getOwnPropertyNames(feature_table[0]);
+    for (let i=0;i<feature_cols.length;i++){
+        $('#features >thead tr').append(`<th data-field=\"${feature_cols[i]}\">${feature_cols[i]} </th>`);
+    }
+
+    $('#features').bootstrapTable({
+        data: feature_table
+    });
             </script>
 
         {% endif %}
-        {#        <table>#}
-        {#            <thead
-#}
-        {#            <tr>#}
-        {#            <th>Job Id</th>#}
-        {#                {% for c in status["sji"]["cardinality_plan_features"]["columns"] %}#}
-        {#                    <th>{{ c }}</th>#}
-        {#                {% endfor %}#}
-        {#            </tr>#}
-        {#            </thead>#}
-        {#            <tbody>#}
-        {#            {% for data_r in status["sji"]["cardinality_plan_features"]["data"] %}#}
-        {#                <tr>#}
-        {#                    <td>{{ status["sji"]["cardinality_plan_features"]["index"][loop.index] }}</td>#}
-        {##}
-        {#                    {% for d in data_r %}#}
-        {#                        <td>{{ d }}</td>#}
-        {#                    {% endfor %}#}
-        {#                </tr>#}
-        {#            {% endfor %}#}
-        {#            </tbody>#}
-        {#        </table>#}
+         </div>
 
 
     </div>

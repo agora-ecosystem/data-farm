@@ -8,9 +8,161 @@
         <div class="row mb-4">
             <div class="col">
                 <h2>Job Details: {{ plan_id }}</h2>
+                <img src="{{ ap_image_path}}"/>
+                <div id="shap_image"></div>
+<!--                <img src="{{ shap_image_path}}"/>-->
+                <h2>Features</h2>
+
+                <table class="table table-sm" id="features" data-row-style="featuresRowStyle">
+<!--                    data-card-view="true" -->
+                    <thead>
+                    <tr class="table-info">
+<!--                        <th data-field="index">Index</th>-->
+<!--                        <th data-field="Log_sourceCardinalitySum" >Log cardinality</th>-->
+<!--                        <th data-field="complexity_max" >complexity_max</th>-->
+<!--                        <th></th>-->
+                    </tr>
+                    </thead>
+                </table>
+
+                <h2>Iteration results</h2>
+                <p>{{iteration_results}}</p>
+                <h2>Data plan features</h2>
+                <table id="data_plan_features">
+                </table>
+<!--                <h2> Jobs Data Info</h2>-->
+<!--                <p>{{jobs_data_info}}</p>-->
+                <div id = "container"></div>
             </div>
         </div>
     </div>
 </div>
+<script>
+    features = {{features|safe}};
+    iteration_results = {{iteration_results|safe}};
+    jobs_data_info = {{jobs_data_info|safe}};
+    data_plan_features = {{data_plan_features|safe}};
 
+    console.log(features)
+    console.log(iteration_results)
+    console.log(jobs_data_info)
+    console.log(data_plan_features)
+
+    current_plan_id = "{{ plan_id|safe }}"
+    console.log(current_plan_id)
+    if(!Array.isArray(iteration_results) && iteration_results !== null)
+    {
+        //First iteration has happened
+        let test_ids = []
+        let train_ids = []
+
+        for (let i = 0; i < iteration_results.test_ids.length; i++) {
+            test_ids.push(iteration_results.test_ids[i].plan_id)
+        }
+        for (let i = 0; i < iteration_results.train_ids.length; i++) {
+            train_ids.push(iteration_results.test_ids[i].plan_id)
+        }
+
+        // Add SHAP image
+        if(test_ids.includes(current_plan_id)){
+            var elem = document.createElement("img");
+            elem.setAttribute("src", "{{ shap_image_path}}");
+            elem.setAttribute("height", "768");
+            elem.setAttribute("width", "1024");
+            elem.setAttribute("alt", "Shap Image");
+            document.getElementById("shap_image").appendChild(elem);
+        }
+    }
+
+    function featuresRowStyle(row,index) {
+        if(index==0)
+        {
+            return{
+                classes:"table-primary",
+                 css: {"font-weight": "bold"}
+            }
+        }
+        return {
+            classes:"table-secondary"
+        }
+    }
+
+    // var $table = $('#table');
+
+    // $(function () {
+    //     $('#table').bootstrapTable({
+    //         data: jobs_data_info
+    //     });
+    // });
+
+    var feature_cols = Object.getOwnPropertyNames(features[0]);
+    for (let i=0;i<feature_cols.length;i++){
+        $('#features >thead tr').append(`<th data-field=\"${feature_cols[i]}\">${feature_cols[i]} </th>`);
+    }
+
+    $('#features').bootstrapTable({
+        data: features
+    });
+
+    $('#data_plan_features').bootstrapTable({
+        pagination: true,
+        search: true,
+
+      columns: [{
+        field: 'varName',
+        title: 'Operator ID',
+        sortable: true
+      }, {
+        field: 'pact',
+        title: 'Operator Type',
+        sortable: true
+      }, {
+        field: 'outCardinality',
+        title: 'Output Cardinality',
+        sortable: true
+      }, {
+        field: 'complexity',
+        title: 'Complexity',
+        sortable: true
+      },{
+        field: 'tables',
+        title: 'Tables',
+        sortable: true
+
+      }],
+        data: data_plan_features
+    })
+
+
+
+
+    //   $('#features').bootstrapTable({
+    //     pagination: true,
+    //     search: true,
+    //
+    //   columns: [{
+    //     field: 'index',
+    //     title: 'Job',
+    //     sortable: true
+    //   },{
+    //     field: 'Log_sourceCardinalitySum',
+    //     title: 'Log_sourceCardinalitySum',
+    //     sortable: true
+    //   },{
+    //     field: 'complexity_max',
+    //     title: 'complexity_max',
+    //     sortable: true
+    //   },{
+    //     field: 'complexity_mean',
+    //     title: 'complexity_min',
+    //     sortable: true
+    //   },{
+    //     field: 'complexity_std',
+    //     title: 'complexity_std',
+    //     sortable: true
+    //   },],
+    //     data: features
+    // })
+
+</script>
 {% endblock %}
