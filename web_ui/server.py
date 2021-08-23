@@ -37,7 +37,7 @@ sns.set_style("whitegrid")
 # from DataFarm.Generator.AbstractPlan import AbstactPlanGeneratorModel
 
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='/static')
 # app.config.from_object("config.DataFarmConfig")
 # app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 app.secret_key = os.urandom(24)
@@ -121,6 +121,12 @@ global active_learning_settings
 global active_learning_data
 global active_learning_features
 global active_learning_features_stats
+global instantiated_plan_stats
+global active_learning_duration
+# Mapping jobs to ids and reverse
+global id_to_job_mapping
+global job_to_id_mapping
+global active_learning_features_id
 
 active_learning_settings = {
     "target_label": "",
@@ -144,9 +150,12 @@ active_learning_data = {
 iteration_results = []
 active_learning_features = []
 active_learning_features_id = []
-active_learning_features_stats={}
-
-
+active_learning_features_stats = {}
+instantiated_plan_stats = {}
+active_learning_duration = 0
+id_to_job_mapping = {}
+job_to_id_mapping = {}
+active_learning_features_id=[]
 @app.route("/lf_iteration", methods=["GET", "POST"])
 def lf_iteration():
     global iteration_results
@@ -154,28 +163,40 @@ def lf_iteration():
     global status
     global active_learning_features
     global active_learning_features_id
-
+    global active_learning_duration
+    global id_to_job_mapping
+    global job_to_id_mapping
     if request.method == 'POST':
         print(request.get_data())
         print(request.get_json())
         selected_jobs = request.get_json()["selected_jobs"]
 
-        active_learning_features = load_data_and_preprocess(CONFIG.GENERATED_METADATA_PATH, CONFIG.DATA_ID)
+        # Initialize first generation
+        if(len(active_learning_features_id)==0):
+            active_learning_features = load_data_and_preprocess(CONFIG.GENERATED_METADATA_PATH, CONFIG.DATA_ID)
 
-        active_learning_features_id = active_learning_features.droplevel(1)
-        active_learning_features_id = active_learning_features_id.reset_index()
+            active_learning_features_id = active_learning_features.droplevel(1)
+            active_learning_features_id = active_learning_features_id.reset_index()
 
+        if(len(id_to_job_mapping)==0):
+            id_to_job_mapping = active_learning_features_id["plan_id"].to_dict()
+            job_to_id_mapping = {v: k for k, v in id_to_job_mapping.items()}
+        print("JOB MAPPING")
+        print(id_to_job_mapping)
+        print(job_to_id_mapping)
         selected_plan_ids = active_learning_features_id.loc[active_learning_features_id['plan_id'].isin(selected_jobs)]
-        selected_ids = selected_plan_ids.index.values.tolist()
-
+        # selected_ids = selected_plan_ids.index.values.tolist()
+        selected_ids = [job_to_id_mapping.get(key) for key in selected_jobs]
+        print(selected_ids)
         # Update list of executed jobs
         active_learning_settings["current_executed_jobs"].extend(selected_ids)
         print("Currently executed jobs")
         print(active_learning_settings["current_executed_jobs"])
 
         global custom_active_learning
+        start_time = time.perf_counter()
         if status["lf_current_iteration"] < 1:
-            # First iteration: set up active learning strategy object, sample and run initial jobs
+            # First iteration: set up active learning strategy object, run initial jobs and train model
             try:
                 global LABEL_FORECASTER_OUT
                 LABEL_FORECASTER_OUT = CONFIG.LABEL_FORECASTER_OUT
@@ -200,7 +221,6 @@ def lf_iteration():
             # Later iteration
             # Run selected jobs
             custom_active_learning.active_learning_sampler_preparation(selected_plan_ids)
-
         # TODO: Add timer function here to communicate to client
         iteration_results = custom_active_learning.active_learning_iteration_helper(status["lf_current_iteration"],
                                                                                     active_learning_settings[
@@ -209,16 +229,16 @@ def lf_iteration():
                                                                                     active_learning_settings[
                                                                                         "uncertainty_threshold"])
 
-        status["lf_current_iteration"] = status["lf_current_iteration"] + 1
+        previous_iteration = status["lf_current_iteration"]
+        active_learning_duration = time.perf_counter() - start_time
         print("ITERATION RESULTS")
         print(custom_active_learning.get_iteration_results())
         iteration_results = custom_active_learning.get_iteration_results()
         # results_dict = iteration_results["iterations"]
-        print(iteration_results["iterations_results"][0].keys())
-        print(iteration_results["iterations_results"][0].values())
-        results_details_dict = iteration_results["iterations_results"][0]
+        print(iteration_results["iterations_results"][previous_iteration].keys())
+        print(iteration_results["iterations_results"][previous_iteration].values())
+        results_details_dict = iteration_results["iterations_results"][previous_iteration]
         results_dict = {
-            "iterations": iteration_results["iterations"],
             "train_ids": results_details_dict["train_ids"],
             "test_ids": results_details_dict["test_ids"],
             "train_labels": results_details_dict["train_labels"].tolist(),
@@ -228,6 +248,8 @@ def lf_iteration():
             "uncertainty_interval": results_details_dict["uncertainty_interval"].tolist(),
 
         }
+        # print(iteration_results["cross_validation_scores"])
+        results_dict.update(iteration_results["cross_validation_scores"][previous_iteration])
         iteration_results = results_dict
 
         # Automated sampling
@@ -240,8 +262,9 @@ def lf_iteration():
         total_idx = sampling_idx.index.values.tolist()
         active_learning_settings["current_automated_sample_ids"] = total_idx
         print(active_learning_settings["current_automated_sample_ids"])
+        status["lf_current_iteration"] = status["lf_current_iteration"] + 1
 
-    return render_template("index.html", iteration_results=json.dumps(iteration_results), status=status,
+    return render_template("index.html", iteration_results=iteration_results, status=status,
                            active_learning_settings=active_learning_settings,
                            features_df=active_learning_features.to_json(orient='records'))
 
@@ -252,6 +275,8 @@ def lf_run():
     global iteration_results
     global active_learning_settings
     global active_learning_features
+    global instantiated_plan_stats
+    global active_learning_duration
 
     if request.method == 'POST':
         # First setup
@@ -274,8 +299,12 @@ def lf_run():
 
         status["lf_current_iteration"] = 0
 
-        return render_template("index.html", status=status, features_df=active_learning_features.to_dict(),
-                               active_learning_settings=active_learning_settings)
+        return render_template("index.html",
+                               status=status,
+                               features_df=active_learning_features.to_dict(),
+                               active_learning_settings=active_learning_settings,
+                               instantiated_plan_stats=instantiated_plan_stats,
+                               active_learning_duration=active_learning_duration)
 
     active_learning_features = load_data_and_preprocess(CONFIG.GENERATED_METADATA_PATH, CONFIG.DATA_ID)
     active_learning_features = active_learning_features.droplevel(1)
@@ -287,53 +316,87 @@ def lf_run():
     status["lf_run"] = True
     iteration_results_json = json.dumps(iteration_results)
     print(json.dumps(iteration_results))
-
-    # Instantiated job info initialization
     global cardinality_plan_features
     global data_plan_features
     global jobs_data_info
-    print()
-    print("GETTING INSTANTIATED PLANS INFO")
-    current_sji_jobs_folder = CONFIG.GENERATED_JOB_FOLDER
-    current_abs_plans_folder = CONFIG.GENERATED_ABSTRACT_EXECUTION_PLAN_FOLDER
-    generatedJobsInfo = os.path.join(current_sji_jobs_folder, "generated_jobs_info.json")
-    cardinality_plan_features = compute_cardinality_plan_features(generatedJobsInfo, data_sizes=["1GB"])
-    data_plan_features = get_estimated_out_cardinality(generatedJobsInfo, data_sizes=["1GB"])
-    jobs_data_info = preprocess_jobs_data_info(generatedJobsInfo)
-    # data_plan_features.reset_index(inplace=True)
 
-    # jobs_data_info.reset_index(inplace=True)
-    print(cardinality_plan_features)
-    print("===============")
-    print(data_plan_features)
-    print("===============")
-    print(jobs_data_info)
+    # Check if already collected
+    if len(instantiated_plan_stats) == 0:
+        # Instantiated job info initialization
+        print()
+        print("GETTING INSTANTIATED PLANS INFO")
+        current_sji_jobs_folder = CONFIG.GENERATED_JOB_FOLDER
+        current_abs_plans_folder = CONFIG.GENERATED_ABSTRACT_EXECUTION_PLAN_FOLDER
+        generatedJobsInfo = os.path.join(current_sji_jobs_folder, "generated_jobs_info.json")
+        cardinality_plan_features = compute_cardinality_plan_features(generatedJobsInfo, data_sizes=["1GB"])
+        data_plan_features = get_estimated_out_cardinality(generatedJobsInfo, data_sizes=["1GB"])
+        jobs_data_info = preprocess_jobs_data_info(generatedJobsInfo)
+        # data_plan_features.reset_index(inplace=True)
 
+        instantiated_plan_stats["n_gen_jobs"] = len(cardinality_plan_features)
+        instantiated_plan_stats["avg_op"] = data_plan_features.groupby(["plan_id", "data_id"]).size().mean()
+        instantiated_plan_stats["std_op"] = int(data_plan_features.groupby(["plan_id", "data_id"]).size().std())
+        instantiated_plan_stats["op_list"] = data_plan_features.groupby(["plan_id", "data_id"]).size().values.tolist()
+        instantiated_plan_stats["plan_id"] = data_plan_features.reset_index()["plan_id"].values.tolist()
+        instantiated_plan_stats["op_id"] = data_plan_features["id"].values.tolist()
+        instantiated_plan_stats["op_est_out_card"] = data_plan_features["outCardinality"].values.tolist()
+        instantiated_plan_stats["avg_op_est_out_card"] = int(data_plan_features["outCardinality"].mean())
+        instantiated_plan_stats["std_op_est_out_card"] = int(data_plan_features["outCardinality"].std())
+        instantiated_plan_stats["est_source_card"] = data_plan_features.loc[
+            data_plan_features["pact"] == "Data Source", "outCardinality"].values.tolist()
+        data_plan_features.groupby(["plan_id", "data_id"]).size()
+        instantiated_plan_stats["avg_est_source_card"] = int(
+            data_plan_features.loc[data_plan_features["pact"] == "Data Source", "outCardinality"].mean())
+        instantiated_plan_stats["std_est_source_card"] = int(
+            data_plan_features.loc[data_plan_features["pact"] == "Data Source", "outCardinality"].std())
+        instantiated_plan_stats["est_sink_card"] = data_plan_features.loc[
+            data_plan_features["pact"] == "Data Sink", "outCardinality"].values.tolist()
+        instantiated_plan_stats["avg_est_sink_card"] = int(
+            data_plan_features.loc[data_plan_features["pact"] == "Data Sink", "outCardinality"].mean())
+        instantiated_plan_stats["std_est_sink_card"] = int(
+            data_plan_features.loc[data_plan_features["pact"] == "Data Sink", "outCardinality"].std())
+        # status["sji"]["cardinality_plan_features"] = cardinality_plan_features.reset_index(level=1).to_dict(orient="split")
+        # status["sji"]["data_plan_features"] = data_plan_features.to_dict(orient="split")
+        # status["sji"]["pact_size"] = pact_size.to_frame().to_dict(orient="split")
+        # jobs_data_info.reset_index(inplace=True)
+        print(cardinality_plan_features)
+        print("===============")
+        print(data_plan_features)
+        print("===============")
+        print(jobs_data_info)
+    jobs_data_info_json = jobs_data_info.to_json(orient='records')
+    data_plan_features_json = data_plan_features.to_json(orient='records')
     # Active learning stats calculation
     global active_learning_features_stats
+    if(len(active_learning_features_stats)==0):
+        feature_mean = active_learning_features.mean()
+        feature_max = active_learning_features.max()
+        feature_min = active_learning_features.min()
+        feature_median = active_learning_features.median()
+        feature_std = active_learning_features.std()
+        feature_mode = active_learning_features.mode().iloc[0]
 
-    feature_mean = active_learning_features.mean()
-    feature_max = active_learning_features.max()
-    feature_min = active_learning_features.min()
-    feature_median = active_learning_features.median()
-    feature_std = active_learning_features.std()
-    feature_mode = active_learning_features.mode().iloc[0]
+        active_learning_features_stats = pd.DataFrame(columns=active_learning_features.columns)
+        active_learning_features_stats.loc["Mean"] = feature_mean
+        active_learning_features_stats.loc["Median"] = feature_median
+        active_learning_features_stats.loc["Mode"] = feature_mode
+        active_learning_features_stats.loc["Standard Deviation"] = feature_std
+        active_learning_features_stats.loc["Max"] = feature_max
+        active_learning_features_stats.loc["Min"] = feature_min
 
-    active_learning_features_stats = pd.DataFrame(columns=active_learning_features.columns)
-    active_learning_features_stats.loc["Mean"]=feature_mean
-    active_learning_features_stats.loc["Median"] = feature_median
-    active_learning_features_stats.loc["Mode"] = feature_mode
-    active_learning_features_stats.loc["Standard Deviation"] = feature_std
-    active_learning_features_stats.loc["Max"] = feature_max
-    active_learning_features_stats.loc["Min"] = feature_min
-
-    print(active_learning_features_stats)
-
-    return render_template("index.html", active_learning_settings=active_learning_settings,
+    # print(active_learning_features_stats)
+    print("INSTANTIATED PLAN STATS")
+    print(instantiated_plan_stats)
+    return render_template("index.html",
+                           active_learning_settings=active_learning_settings,
                            status=status,
                            features_df=active_learning_features_json,
-                           features_table = active_learning_features_table_json,
-                           iteration_results=iteration_results_json)  # render_template("index.html", status=status)
+                           features_table=active_learning_features_table_json,
+                           iteration_results=iteration_results_json,
+                           jobs_data_info=jobs_data_info_json,
+                           data_plan_features=data_plan_features_json,
+                           instantiated_plan_stats=instantiated_plan_stats,
+                           active_learning_duration=active_learning_duration)  # render_template("index.html", status=status)
 
 
 # json.dumps(iteration_results)
@@ -359,13 +422,17 @@ def lf_plan_stats(plan_id):
     shap_path = f"/shap_plot/{plan_id}"
 
     # Insert feature row and general feature characteristics
+    print(active_learning_features)
     feature_row = active_learning_features.loc[plan_id]
+    plan_id_num = active_learning_features.loc[active_learning_features.plan_id == plan_id].index[0]
+    print("Plan id num")
+    print(plan_id_num)
     feature_df = active_learning_features_stats
-    feature_df = pd.concat([feature_row.to_frame().T,feature_df])
+    feature_df = pd.concat([feature_row.to_frame().T, feature_df])
     feature_df.reset_index(inplace=True)
     # print(feature_df)
 
-    #Insert instantiated job information
+    # Insert instantiated job information
     # print(data_plan_features.loc[plan_id])
     # print(jobs_data_info.loc[plan_id])
 
@@ -378,17 +445,25 @@ def lf_plan_stats(plan_id):
     data_plan_features_json = data_plan_features_job.to_json(orient='records')
     jobs_data_info_json = jobs_data_info_job.to_json(orient='records')
 
-
     # Insert uncertainty, predictions, set information
     iteration_results_json = json.dumps(iteration_results)
     # iteration_results_df = pd.DataFrame.from_dict(iteration_results)
     print(iteration_results)
     # print(iteration_results_df)
 
+    # TODO: Insert performance metrics, predicted label, uncertainty
 
     # TODO: Insert similar executed job information
+    similar_jobs = []
+    if(status["lf_current_iteration"] > 0):
+        # Collect similar jobs
+        executed_jobs = active_learning_settings["current_executed_jobs"]
+        # Get id of current job
+        # instantiated_plan_stats["op_list"]
+
     # Similar tables, similar job length
     return render_template("lf_job_details.html",
+                           status=status,
                            ap_image_path=ap_path,
                            shap_image_path=shap_path,
                            plan_id=plan_id,
@@ -408,16 +483,28 @@ def apg_plan_serve(plan_id):
 
 # Serves individual SHAP images for test set
 @app.route("/shap_plot/<plan_id>")
-def shap_plot_serve(plan_id):
+def shap_plan_plot_serve(plan_id):
     # If plan ID is in tested set
-    print(plan_id)
-    print("CURRENT EXECUTED JOBS")
-    print(active_learning_settings["current_executed_jobs"])
-    path = os.path.join(CONFIG.LABEL_FORECASTER_OUT, f"SHAP_Bar_{plan_id}.png")
+    # print(plan_id)
+    path = os.path.join(CONFIG.LABEL_FORECASTER_OUT, f"SHAP_{plan_id}.png")
 
     # if(active_learning_settings["current_executed_jobs"].includes(plan_id))
+    if (os.path.exists(path)):
+        return tools._serve_image(path)
+    else:
+        return app.send_static_file("/img/image-not-found.png")
 
-    return tools._serve_image(path)
+
+# Serves overview SHAP images for test set
+@app.route("/shap_plot/<type_plot>")
+def shap_plot_serve(type_plot):
+    # If plan ID is in tested set
+    print(type_plot)
+    path = os.path.join(CONFIG.LABEL_FORECASTER_OUT, f"SHAP_{type_plot}.png")
+    if (os.path.exists(path)):
+        return tools._serve_image(path)
+    else:
+        return tools._serve_image("/static/img/image-not-found.png")
 
 
 @app.route("/apg_plan_plot/<plan_id>")

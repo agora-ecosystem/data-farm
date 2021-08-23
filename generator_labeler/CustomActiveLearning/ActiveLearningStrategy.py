@@ -41,6 +41,7 @@ class ActiveLearningStrategy:
         self.iterations_results = []
         self.early_stop_count = 0
         self.iter_res = []
+        self.executed_jobs_runtime = []
 
         # Get dataset
         self.X_train, self.y_train, self.ids_train, self.X_test, _, self.ids_test = ActiveLearningUtility.get_dataset(
@@ -103,9 +104,9 @@ class ActiveLearningStrategy:
         ActiveLearningUtility.submit_jobs(new_jobs_to_run)
 
         # -> Collect exec time
-        executed_jobs_runtime = ActiveLearningUtility.get_executed_plans_exec_time(new_jobs_to_run)
+        self.executed_jobs_runtime = ActiveLearningUtility.get_executed_plans_exec_time(new_jobs_to_run)
 
-        for k, v in executed_jobs_runtime.iterrows():
+        for k, v in self.executed_jobs_runtime.iterrows():
             self.features_df.loc[k, "netRunTime"] = v.values[0]
         self.features_df[self.label_col] = np.log(self.features_df["netRunTime"])
 
@@ -155,6 +156,7 @@ class ActiveLearningStrategy:
             "cross_validation_scores": self.cross_validation_scores,
             "cross_validation_scores_exp": self.cross_validation_scores_exp,
             "iterations_results": self.iterations_results,
+
         }
 
         if (idx + 1 >= n_iter):
@@ -306,16 +308,44 @@ class ActiveLearningStrategy:
     def shapley_calculation(self, model, X_test, ids_test, feature_names):
         explainer = shap.KernelExplainer(model.predict,X_test)
         shap_values = explainer.shap_values(X=X_test)
+        # explain_object = explainer.explain(X=X_test)
+        print(shap.__version__)
         print(shap_values)
-        # shap.summary_plot(shap_values, X_test, feature_names=feature_names)
-        # shap.plots.bar(explainer)
-        # plt.savefig(os.path.join(self.label_forecaster_out, f"SHAP_Bar_Overview.png"), bbox_inches="tight")
+
+        # Summary Plot
+        shap.summary_plot(shap_values, X_test, feature_names=feature_names, show=False)
+        plt.savefig(os.path.join(self.label_forecaster_out, f"SHAP_Summary_Plot.png"), bbox_inches="tight")
+
+        print(type(explainer))
+        print(type(shap_values))
+        plt.clf()
+        plt.close()
+
+        # Decision Plot
+        shap.decision_plot(explainer.expected_value, shap_values, show=False, feature_names=feature_names)
+        plt.savefig(os.path.join(self.label_forecaster_out, f"SHAP_Decision_Plot.png"), bbox_inches="tight")
+
+        plt.clf()
+        plt.close()
+
+        shap.plots.force(explainer.expected_value, shap_values, show=True, feature_names=feature_names)
+        plt.savefig(os.path.join(self.label_forecaster_out, f"SHAP_Force_Plot.png"), bbox_inches="tight")
+
+        # shap.plots._waterfall.waterfall_legacy(explainer.expected_value, shap_values, show=False, feature_names=feature_names)
+        # shap.plots.beeswarm(shap_values)
+        # shap.force_plot(
+
+
 
         for i in range(0,len(shap_values)):
             plt.clf()
             #TODO: fix weird bug of overlapping shap plots
-            shap.plots._waterfall.waterfall_legacy(explainer.expected_value, shap_values[i], show=False, feature_names=feature_names)
+            shap.plots._waterfall.waterfall_legacy(explainer.expected_value, shap_values[i], show=False,  feature_names=feature_names)
             job_name = ids_test.iloc[i]["plan_id"]
-            plt.savefig(os.path.join(self.label_forecaster_out, f"SHAP_Bar_{job_name}.png"), bbox_inches="tight")
+            plt.savefig(os.path.join(self.label_forecaster_out, f"SHAP_{job_name}_Waterfall.png"), bbox_inches="tight")
+            plt.clf()
+            plt.close()
+            shap.plots.force(explainer.expected_value, shap_values[i], matplotlib=True, show=False, feature_names=feature_names)
+            plt.savefig(os.path.join(self.label_forecaster_out, f"SHAP_{job_name}_Force.png"), bbox_inches="tight")
     def get_iteration_results(self):
         return self.results

@@ -1,5 +1,4 @@
 {% extends 'layout.html' %}
-
 {% block body %}
 <div class="row">
     <div class="col-lg-1"></div>
@@ -7,41 +6,215 @@
         <h1 class="mb-4"></h1>
         <div class="row mb-4">
             <div class="col">
-                <h2>Job Details: {{ plan_id }}</h2>
-                <img src="{{ ap_image_path}}"/>
-                <div id="shap_image"></div>
-<!--                <img src="{{ shap_image_path}}"/>-->
-                <h2>Features</h2>
+                <h1 class="display-1">Active Learner</h1>
+                <h1 class="mb-4"></h1>
+                <div class="row mb-4">
+                    <div class="col">
+                        <h3 class="display-3">Job Dashboard</h3>
+                        <h3>{{ plan_id }}</h3>
+                        <div class="row mb-4 b-2">
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col">
+                                <div class="card card-counter shadow h-100">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Iteration</h5>
+                                        {# <i class="fa fa-bar-chart">&#xf080;</i>#}
+                                        <span class="count-numbers">{{ status["lf_current_iteration"] }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="card card-counter shadow h-100">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Executed</h5>
+                                        {# <i class="fa fa-bar-chart">&#xf080;</i>#}
+                                        <span class="count-numbers" id="executed_stat"></span>
+                                    </div>
+                                </div>
+                            </div>
 
-                <table class="table table-sm" id="features" data-row-style="featuresRowStyle">
-<!--                    data-card-view="true" -->
-                    <thead>
-                    <tr class="table-info">
-<!--                        <th data-field="index">Index</th>-->
-<!--                        <th data-field="Log_sourceCardinalitySum" >Log cardinality</th>-->
-<!--                        <th data-field="complexity_max" >complexity_max</th>-->
-<!--                        <th></th>-->
-                    </tr>
-                    </thead>
-                </table>
+                            <div class="col">
+                                <div class="card card-counter shadow h-100">
+                                    <div class="card-body">
+                                        <h5 class="card-title" id="label_stat_text">Label</h5>
+                                        {# <i class="fa fa-bar-chart">&#xf080;</i>#}
+                                        <span class="count-numbers" id="label_stat"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="card card-counter shadow h-100">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Estimated Uncertainty</h5>
+                                        {# <i class="fa fa-bar-chart">&#xf080;</i>#}
+                                        <span class="count-numbers" id="general_uncertainty_interval"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="card card-counter shadow h-100">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Data ID</h5>
+                                        <span class="count-numbers">1GB</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                           <div class="accordion shadow-lg p-3 mb-5 bg-white rounded" id="accordionPanelsStayOpen">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="panelsStayOpen-headingOne">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="false"
+                                    aria-controls="panelsStayOpen-collapseOne">
+                                <h3><i class="bi bi-card-list"></i> Instantiated Plan Characteristics</h3>
+                            </button>
+                        </h2>
+                        <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse"
+                             aria-labelledby="panelsStayOpen-headingOne">
+                            <div class="accordion-body">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="card card-counter shadow h-100">
+                                            <div class="card-body">
+                                                <h5 class="card-title">Abstract Plan</h5>
+                                                <img src="{{ ap_image_path}}"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="card card-counter shadow h-100">
+                                            <div class="card-body">
+                                                <h5 class="card-title">Operator Features</h5>
+                                                                    <table id="data_plan_features" class="table-striped">
+                                                                    </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false"
+                                    aria-controls="panelsStayOpen-collapseTwo">
+                                <h3> <i class="bi bi-book-fill"></i> Feature Overview</h3>
+                            </button>
+                        </h2>
+                        <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse"
+                             aria-labelledby="panelsStayOpen-headingTwo">
+                            <div class="accordion-body">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="card card-counter shadow h-100">
+                                            <div class="card-body flex-fill">
+                                                <h5 class="card-title">Feature statistics</h5>
+                                                <table class="table table-sm table-striped" id="features">
+                                                    <!--                    data-card-view="true" -->
+                                                    <thead>
+                                                    <tr>
+                                                        <!--                        <th data-field="index">Index</th>-->
+                                                        <!--                        <th data-field="Log_sourceCardinalitySum" >Log cardinality</th>-->
+                                                        <!--                        <th data-field="complexity_max" >complexity_max</th>-->
+                                                        <!--                        <th></th>-->
+                                                    </tr>
+                                                    </thead>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="panelsStayOpen-headingThree">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false"
+                                    aria-controls="panelsStayOpen-collapseThree">
+                                <h3><i class="bi bi-diagram-2-fill"></i> Similar Jobs</h3>
+                            </button>
+                        </h2>
+                        <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse"
+                             aria-labelledby="panelsStayOpen-headingThree">
+                            <div class="accordion-body">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="card card-counter shadow h-100">
+                                            <div class="card-body">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="card card-counter shadow h-100">
+                                            <div class="card-body">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-                <h2>Iteration results</h2>
-                <p>{{iteration_results}}</p>
-                <h2>Data plan features</h2>
-                <table id="data_plan_features">
-                </table>
-<!--                <h2> Jobs Data Info</h2>-->
-<!--                <p>{{jobs_data_info}}</p>-->
-                <div id = "container"></div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="panelsStayOpen-headingFour">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#panelsStayOpen-collapseFour" aria-expanded="false"
+                                    aria-controls="panelsStayOpen-collapseFour">
+                                <h3><i class="bi bi-exclamation-circle"></i> Feature Importance Analysis</h3>
+                            </button>
+                        </h2>
+                        <div id="panelsStayOpen-collapseFour" class="accordion-collapse collapse"
+                             aria-labelledby="panelsStayOpen-headingFour">
+                            <div class="accordion-body">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="card card-counter shadow h-100">
+                                            <div class="card-body">
+                                                    <div id="shap_force"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    </div>
+                        <div class="row mb-4 b-2">
+                        </div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="card card-counter shadow h-100">
+                                            <div class="card-body">
+                                                <div id="shap_waterfall"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+                    <div class="col">
+                        <button type="submit" class="btn btn-lg btn-success shadow">Schedule For Execution</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+</div>
+</div>
+</div>
+
 <script>
     features = {{features|safe}};
     iteration_results = {{iteration_results|safe}};
     jobs_data_info = {{jobs_data_info|safe}};
     data_plan_features = {{data_plan_features|safe}};
+    precision = 5;
 
     console.log(features)
     console.log(iteration_results)
@@ -60,18 +233,57 @@
             test_ids.push(iteration_results.test_ids[i].plan_id)
         }
         for (let i = 0; i < iteration_results.train_ids.length; i++) {
-            train_ids.push(iteration_results.test_ids[i].plan_id)
+            train_ids.push(iteration_results.train_ids[i].plan_id)
         }
 
+
         // Add SHAP image
+        // Job has not been executed
         if(test_ids.includes(current_plan_id)){
-            var elem = document.createElement("img");
-            elem.setAttribute("src", "{{ shap_image_path}}");
-            elem.setAttribute("height", "768");
-            elem.setAttribute("width", "1024");
-            elem.setAttribute("alt", "Shap Image");
-            document.getElementById("shap_image").appendChild(elem);
+            //Plan has not been executed
+            $('#executed_stat').append("No")
+            $('#executed_stat').addClass("text-danger")
+
+            var waterfall_img = $('<img class="img-responsive" width="100%" height="auto">');
+            waterfall_img.attr('src', "{{ shap_image_path}}"+"_Waterfall");
+            waterfall_img.appendTo('#shap_waterfall');
+
+            var force_img = $('<img class="img-responsive" width="100%" height="auto">');
+            force_img.attr('src', "{{ shap_image_path}}" +"_Force");
+            force_img.appendTo('#shap_force');
+
+            job_id_number = test_ids.indexOf(current_plan_id);
+            console.log(job_id_number);
+
+            let uncertainty_interval = iteration_results.uncertainty_interval[job_id_number];
+            $('#general_uncertainty_interval').append(uncertainty_interval.toPrecision(precision))
+
+            exec_seconds = Math.pow(Math.E,iteration_results.pred_labels[job_id_number]);
+            exec_time = new Date(exec_seconds * 1000).toISOString().substr(11, 8)
+            $('#label_stat').append(exec_time+" Min")
+            $('#label_stat_text').append(" Estimation")
         }
+        else{
+            //Plan has been executed
+            $('#executed_stat').append("Yes")
+            $('#executed_stat').addClass("text-success")
+            $('#general_uncertainty_interval').append(0)
+            job_id_number = train_ids.indexOf(current_plan_id);
+            console.log(job_id_number);
+
+            exec_seconds = Math.pow(Math.E,iteration_results.train_labels[job_id_number]);
+            exec_time = new Date(exec_seconds * 1000).toISOString().substr(11, 8)
+            $('#label_stat').append(exec_time+" Min")
+
+        }
+        console.log()
+    }
+    else{
+        //No Plan has been executed
+        $('#executed_stat').append("No")
+        $('#executed_stat').addClass("text-danger")
+        $('#label_stat').append("Unknown")
+        $('#general_uncertainty_interval').append("Unknown")
     }
 
     function featuresRowStyle(row,index) {
@@ -97,11 +309,12 @@
 
     var feature_cols = Object.getOwnPropertyNames(features[0]);
     for (let i=0;i<feature_cols.length;i++){
-        $('#features >thead tr').append(`<th data-field=\"${feature_cols[i]}\">${feature_cols[i]} </th>`);
+        $('#features >thead tr').append(`<th data-sortable="true" data-field=\"${feature_cols[i]}\">${feature_cols[i]} </th>`);
     }
 
     $('#features').bootstrapTable({
-        data: features
+        data: features,
+        search: true,
     });
 
     $('#data_plan_features').bootstrapTable({
