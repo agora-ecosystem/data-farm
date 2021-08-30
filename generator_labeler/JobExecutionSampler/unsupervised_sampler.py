@@ -23,7 +23,7 @@ class RandomSampler:
 
     def fit(self, df, verbose=False):
 
-        self.samples = df.reset_index().sample(self.k_sample, random_state=self.seed)
+        self.samples = df.reset_index().sample(self.k_sample)
         self.sample_ids = self.samples.index.values
 
         return self

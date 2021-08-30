@@ -34,6 +34,7 @@ def get_executed_plans_exec_time(jobs_to_run):
 
 
 def submit_jobs(init_jobs_to_run):
+    print("SUBMIT JOBS FUNCTION RUNNING")
     exec_plans_path_already_computed = BuildAndSubmit.get_exec_plans_path()
     exec_plans_already_computed = {os.path.basename(ep).replace("$.json", "") for ep in
                                    exec_plans_path_already_computed}
@@ -249,8 +250,8 @@ def run_active_learning(features_df, feature_cols, label_col, n_iter=20, max_ear
 def load_data_and_preprocess(GENERATED_METADATA_PATH, DATA_ID):
     # Load dataset
 
-    plan_data_features = compute_cardinality_plan_features(GENERATED_METADATA_PATH,
-                                                           data_sizes=[DATA_ID])
+    # Todo: Change to multiple data ids
+    plan_data_features = compute_cardinality_plan_features(GENERATED_METADATA_PATH,data_sizes=[DATA_ID])
     print(plan_data_features)
     plan_data_features = plan_data_features.sort_index()
 
@@ -282,6 +283,7 @@ def run(config):
     np.savetxt(os.path.join(config.LABEL_FORECASTER_OUT, "init_job_sample_ids.txt"), sample_model.sample_ids, fmt="%d")
 
     init_jobs_to_run = features_df.iloc[sample_model.sample_ids].index.get_level_values(0)
+    features_df.iloc[sample_model.sample_ids].to_csv(os.path.join(CONFIG.LABEL_FORECASTER_OUT, f"job_sample_ids_iteration_0.csv"), index=True)
 
     # -> RUN Jobs
     submit_jobs(init_jobs_to_run)
@@ -292,27 +294,23 @@ def run(config):
     features_df = pd.merge(features_df, executed_jobs_runtime, left_index=True, right_index=True, how="left")
     features_df[config.LABEL_COL] = np.log(features_df["netRunTime"])
 
-    # results = run_active_learning(features_df,
-    #                               feature_cols=config.feature_cols,
-    #                               label_col=config.label_col,
-    #                               n_iter=config.MAX_ITER,
-    #                               max_early_stop=config.max_early_stop,
-    #                               early_stop_th=config.early_stop_th,
-    #                               verbose=True)
-
+    # Initialize object
     custom_active_learning = ActiveLearningStrategy.ActiveLearningStrategy(features_df=features_df,
                                                                            feature_cols=config.FEATURE_COLS,
                                                                            label_col=config.LABEL_COL,
                                                                            label_forecaster_out=config.LABEL_FORECASTER_OUT,
                                                                            verbose=True)
-
+    # Run model training
     results = custom_active_learning.run_active_learning(
         n_iter=1,
         max_early_stop=config.MAX_EARLY_STOP,
         early_stop_th=config.EARLY_STOP_TH,
         user_prompt=config.USER_PROMPT)
+
+    # Save results
     results["final_dataset"].to_csv(os.path.join(config.LABEL_FORECASTER_OUT, "final_dataset.csv"))
 
+    # Save model
     with open(os.path.join(config.LABEL_FORECASTER_OUT, "learning_process.pkl"), "wb") as handle:
         pickle.dump(results, handle)
 
@@ -347,15 +345,18 @@ def set_up_active_learning(generated_metadata_path, data_id, label_forecaster_ou
     np.savetxt(os.path.join(label_forecaster_out, "init_job_sample_ids.txt"), sample_ids, fmt="%d")
 
     init_jobs_to_run = features_df.iloc[sample_ids].index.get_level_values(0)
+    # init_jobs_to_run = features_df.iloc[list(range(0, len(features_df)))].index.get_level_values(0)
 
     # -> RUN Jobs
-    submit_jobs(init_jobs_to_run)
+    # submit_jobs(init_jobs_to_run)
 
     # -> Collect exec time
     executed_jobs_runtime = get_executed_plans_exec_time(init_jobs_to_run)
 
     features_df = pd.merge(features_df, executed_jobs_runtime, left_index=True, right_index=True, how="left")
     features_df[label_col] = np.log(features_df["netRunTime"])
+    # features_df.rename(columns={'Execution Time': 'Log_netRunTime'}, inplace=True)
+    features_df.to_csv(os.path.join(label_forecaster_out, "plan_data_features.csv"))
 
     custom_active_learning = ActiveLearningStrategy.ActiveLearningStrategy(features_df=features_df,
                                                                            feature_cols=feature_cols,

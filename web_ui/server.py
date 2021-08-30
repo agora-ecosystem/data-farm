@@ -28,7 +28,7 @@ from generator_labeler.Generator.AbstractPlan import AbstractPlanGenerator, Abst
 import numpy as np
 
 from RunGenerator import create_project_folders
-from generator_labeler.JobExecutionSampler.unsupervised_sampler import UniformAgglomerativeSampler
+from generator_labeler.JobExecutionSampler.unsupervised_sampler import UniformAgglomerativeSampler, RandomSampler
 
 sns.set_context("talk")
 sns.set_style("whitegrid")
@@ -188,6 +188,8 @@ def lf_iteration():
         # selected_ids = selected_plan_ids.index.values.tolist()
         selected_ids = [job_to_id_mapping.get(key) for key in selected_jobs]
         print(selected_ids)
+
+
         # Update list of executed jobs
         active_learning_settings["current_executed_jobs"].extend(selected_ids)
         print("Currently executed jobs")
@@ -219,6 +221,10 @@ def lf_iteration():
 
         else:
             # Later iteration
+            # Save jobs
+            current_iteration = status["lf_current_iteration"]
+            np.savetxt(os.path.join(CONFIG.LABEL_FORECASTER_OUT, f"job_sample_ids_iteration_{current_iteration}.txt"), selected_ids,
+                       fmt="%d")
             # Run selected jobs
             custom_active_learning.active_learning_sampler_preparation(selected_plan_ids)
         # TODO: Add timer function here to communicate to client
@@ -254,6 +260,8 @@ def lf_iteration():
 
         # Automated sampling
         sampling_idx, uncertainties = custom_active_learning.uncertainty_sampler()
+        # sampling_idx, uncertainties = custom_active_learning.top_uncertainty_sampler(200)
+
         # print(uncertainties)
         # print(sampling_idx)
 
@@ -294,7 +302,9 @@ def lf_run():
         features_df = load_data_and_preprocess(CONFIG.GENERATED_METADATA_PATH, CONFIG.DATA_ID)
         sample_model = UniformAgglomerativeSampler(active_learning_settings["n_init_jobs"], CONFIG.FEATURE_COLS,
                                                    active_learning_settings["target_label"], CONFIG.SAMPLE_COL)
+        # sample_model = RandomSampler(active_learning_settings["n_init_jobs"], CONFIG.FEATURE_COLS, active_learning_settings["target_label"])
         sample_ids = sample_model.fit(features_df).sample_ids
+        print(sample_ids)
         active_learning_settings["current_automated_sample_ids"] = sample_ids.tolist()
 
         status["lf_current_iteration"] = 0
@@ -424,9 +434,9 @@ def lf_plan_stats(plan_id):
     # Insert feature row and general feature characteristics
     print(active_learning_features)
     feature_row = active_learning_features.loc[plan_id]
-    plan_id_num = active_learning_features.loc[active_learning_features.plan_id == plan_id].index[0]
-    print("Plan id num")
-    print(plan_id_num)
+    # plan_id_num = active_learning_features.loc[active_learning_features.plan_id == plan_id].index[0]
+    # print("Plan id num")
+    # print(plan_id_num)
     feature_df = active_learning_features_stats
     feature_df = pd.concat([feature_row.to_frame().T, feature_df])
     feature_df.reset_index(inplace=True)

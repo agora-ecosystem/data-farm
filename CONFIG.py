@@ -86,11 +86,11 @@ class CONFIG:
     MAX_EARLY_STOP = 2
     EARLY_STOP_TH = 0.1 # Float between 0 and 1
     MAX_ITER = 5
-    INIT_JOBS = 10
+    INIT_JOBS = 190
     RANDOM_INIT = False
     RANDOM_SAMPLING = False
 
-    USER_INIT = True
+    USER_INIT = False
     USER_PROMPT = False
 
     GENERATED_METADATA_PATH = join(GENERATED_JOB_FOLDER, "generated_jobs_info.json")

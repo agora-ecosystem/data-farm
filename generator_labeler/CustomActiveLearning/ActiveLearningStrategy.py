@@ -12,15 +12,16 @@ from generator_labeler.ActiveModel.ActiveQuantileForest import QuantileForestMod
 from generator_labeler.CustomActiveLearning.ActiveLearningUtility import ActiveLearningUtility, JobExecutionSampler, \
     UserSampling
 from generator_labeler.JobExecutionSampler.supervised_sampler import UserSampler
+from CONFIG import CONFIG
 
 import shap
+
 
 class IQRs_mean:
     pass
 
 
 class ActiveLearningStrategy:
-
     separator = "====================================================="
 
     def __init__(self, features_df, feature_cols, label_col, label_forecaster_out, verbose=False, user_prompt=False):
@@ -50,7 +51,7 @@ class ActiveLearningStrategy:
         print(f"Initiating Custom Active Learning procedure, predicting {label_col}, with features: {feature_cols}")
 
     # Fully automated learning
-    def run_active_learning(self, n_iter=20, max_early_stop=2, early_stop_th=0.1,
+    def run_active_learning(self, n_iter=1, max_early_stop=2, early_stop_th=0.1,
                             sampler=JobExecutionSampler.USER_SPECIFIED, user_prompt=False):
         warnings.filterwarnings("ignore")
 
@@ -59,12 +60,19 @@ class ActiveLearningStrategy:
         # -> next iteration
 
         for idx in range(n_iter):
-            if user_prompt:
-                val = input("Enter x to stop AL process, press any other key to continue: ")
-                if val.strip() == "x":
-                    break
+            # if user_prompt:
+            #     val = input("Enter x to stop AL process, press any other key to continue: ")
+            #     if val.strip() == "x":
+            #         break
             self.active_learning_iteration_helper(idx, n_iter, max_early_stop, early_stop_th)
-            self.active_learning_sampler_preparation()
+            new_train_ids, jobs_ids, sample = self.uncertainty_sampler()
+            # new_train_ids, jobs_ids, sample = self.top_uncertainty_sampler(130)
+
+            new_train_ids.to_csv(os.path.join(CONFIG.LABEL_FORECASTER_OUT, f"job_sample_ids_iteration_1.csv"), index=False)
+            new_train_ids = list(new_train_ids.index.values)
+
+            # np.savetxt(os.path.join(CONFIG.LABEL_FORECASTER_OUT, f"job_sample_ids_iteration_1.txt"), new_train_ids, fmt="%d")
+            # self.active_learning_sampler_preparation(new_train_ids)
 
         results = self.active_learning_finalize(n_iter)
         return results
@@ -102,13 +110,15 @@ class ActiveLearningStrategy:
         # -> RUN Jobs
         new_jobs_to_run = new_ids_train.iloc[:, 0].values
         ActiveLearningUtility.submit_jobs(new_jobs_to_run)
-
+        print("NEW JOBS TO RUN")
+        print(new_jobs_to_run)
         # -> Collect exec time
         self.executed_jobs_runtime = ActiveLearningUtility.get_executed_plans_exec_time(new_jobs_to_run)
 
         for k, v in self.executed_jobs_runtime.iterrows():
             self.features_df.loc[k, "netRunTime"] = v.values[0]
         self.features_df[self.label_col] = np.log(self.features_df["netRunTime"])
+        # self.features_df.to_csv(os.path.join(self.label_forecaster_out, "plan_data_features.csv"))
 
         self.X_train, self.y_train, self.ids_train, self.X_test, _, self.ids_test = ActiveLearningUtility.get_dataset(
             self.features_df, self.feature_cols,
@@ -116,6 +126,7 @@ class ActiveLearningStrategy:
 
         print(self.separator)
 
+    # Get amount of jobs equal to uncertainty threshold
     def uncertainty_sampler(self):
         IRQ_th = np.quantile(self.iter_res["uncertainty_interval"], 0.95)
         len_new_X_train = len(self.X_test[self.iter_res["uncertainty_interval"] > IRQ_th])
@@ -123,6 +134,14 @@ class ActiveLearningStrategy:
         new_ids_train = self.ids_test.iloc[sampling_idx].copy()
         job_ids = new_ids_train.iloc[:, 0].values
         return job_ids, self.iter_res["uncertainty_interval"]
+
+    # Get num amount of top uncertain jobs
+    def top_uncertainty_sampler(self, num):
+        # Get X top samples
+        sampling_idx = np.argsort(self.iter_res["uncertainty_interval"])[-num:]
+        new_ids_train = self.ids_test.iloc[sampling_idx].copy()
+        job_ids = new_ids_train.iloc[:, 0].values
+        return new_ids_train, job_ids, self.iter_res["uncertainty_interval"]
 
     def active_learning_iteration_helper(self, idx, n_iter, max_early_stop=2, early_stop_th=0.1):
         print("======= Iteration", idx)
@@ -132,8 +151,8 @@ class ActiveLearningStrategy:
         print("Test:", self.X_test.shape)
 
         self.iter_res = self.active_learning_iteration(self.X_train, self.y_train, self.ids_train, self.X_test,
-                                                  self.ids_test, self.feature_cols,
-                                                  verbose=self.verbose)
+                                                       self.ids_test, self.feature_cols,
+                                                       verbose=self.verbose)
         # Save model iteration
         # with open(os.path.join(self.label_forecaster_out, f"learning_process_{idx}.pkl"), "wb") as handle:
         #     pickle.dump(iter_res, handle)
@@ -232,7 +251,7 @@ class ActiveLearningStrategy:
 
         y_pred = qf_model.predict(X_test)
 
-        #Shapley values
+        # Shapley values
         self.shapley_calculation(qf_model, X_test, ids_test, feature_cols)
 
         y_pred_upper = qf_model.predict(X_test, quantile=75)
@@ -306,7 +325,7 @@ class ActiveLearningStrategy:
 
     # Makes SHAP figures for model and individual figures for testset
     def shapley_calculation(self, model, X_test, ids_test, feature_names):
-        explainer = shap.KernelExplainer(model.predict,X_test)
+        explainer = shap.KernelExplainer(model.predict, X_test)
         shap_values = explainer.shap_values(X=X_test)
         # explain_object = explainer.explain(X=X_test)
         print(shap.__version__)
@@ -335,17 +354,18 @@ class ActiveLearningStrategy:
         # shap.plots.beeswarm(shap_values)
         # shap.force_plot(
 
-
-
-        for i in range(0,len(shap_values)):
+        for i in range(0, len(shap_values)):
             plt.clf()
-            #TODO: fix weird bug of overlapping shap plots
-            shap.plots._waterfall.waterfall_legacy(explainer.expected_value, shap_values[i], show=False,  feature_names=feature_names)
+            # TODO: fix weird bug of overlapping shap plots
+            shap.plots._waterfall.waterfall_legacy(explainer.expected_value, shap_values[i], show=False,
+                                                   feature_names=feature_names)
             job_name = ids_test.iloc[i]["plan_id"]
             plt.savefig(os.path.join(self.label_forecaster_out, f"SHAP_{job_name}_Waterfall.png"), bbox_inches="tight")
             plt.clf()
             plt.close()
-            shap.plots.force(explainer.expected_value, shap_values[i], matplotlib=True, show=False, feature_names=feature_names)
+            shap.plots.force(explainer.expected_value, shap_values[i], matplotlib=True, show=False,
+                             feature_names=feature_names)
             plt.savefig(os.path.join(self.label_forecaster_out, f"SHAP_{job_name}_Force.png"), bbox_inches="tight")
+
     def get_iteration_results(self):
         return self.results
