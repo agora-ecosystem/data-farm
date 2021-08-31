@@ -157,7 +157,7 @@
                 <div class="card-body h-100">
                     <h5 class="card-title text-danger">Unselected Jobs</h5>
                     <div class="card-body h-100" style="max-height: 200px; overflow-y: auto;">
-                        <ul id="unselected_jobs" style=" columns: 4;"></ul>
+                        <ul id="unselected_jobs" style=" columns: 3;"></ul>
                     </div>
                 </div>
             </div>
@@ -167,7 +167,7 @@
                 <div class="card-body h-100">
                     <h5 class="card-title text-warning">Jobs Scheduled for Execution</h5>
                     <div class="card-body h-100" style="max-height: 200px; overflow-y: auto;">
-                        <ul id="scheduled_jobs" style=" columns: 4;"></ul>
+                        <ul id="scheduled_jobs" style=" columns: 3;"></ul>
                     </div>
                 </div>
             </div>
@@ -177,7 +177,7 @@
                 <div class="card-body h-100">
                     <h5 class="card-title text-success">Executed Jobs</h5>
                     <div class="card-body h-100" style="max-height: 200px; overflow-y: auto;">
-                        <ul id="executed_jobs" style=" columns: 4;"></ul>
+                        <ul id="executed_jobs" style=" columns: 3;"></ul>
                     </div>
                 </div>
             </div>
@@ -281,7 +281,15 @@
                             <div class="card card-counter shadow h-100">
                                 <div class="card-body">
                                     <h5 class="card-title">Features Table</h5>
-                                    <table class="table table-sm table-striped" id="features">
+                                    <table class="table table-sm table-striped"
+                                           id="features"
+                                           data-search="true"
+                                           data-show-fullscreen="true"
+                                           data-show-columns="true"
+                                           data-detail-formatter="detailFormatter"
+                                           data-show-columns-toggle-all="true"
+                                           data-show-pagination-switch="true"
+                                           data-pagination="true">
                                         <thead>
                                         <tr>
                                         </tr>
@@ -374,7 +382,7 @@
                         <div class="col-6">
                             <div class="card card-counter shadow h-100">
                                 <div class="card-body">
-                                    <table class="table table-sm table-striped" id="data_plan_features">
+                                    <table class="table table-sm table-striped" id="data_plan_features" data-search="true" data-show-fullscreen="true">
                                         <thead>
                                         <tr>
                                         </tr>
@@ -485,11 +493,11 @@
             </h2>
             <div id="panelsStayOpen-collapseFour" class="accordion-collapse collapse"
                  aria-labelledby="panelsStayOpen-headingFour">
-                <div class="accordion-body">
+                <div class="accordion-body" >
                     <div class="row">
                         <div class="col-6">
                             <div class="card card-counter shadow h-100">
-                                <div class="card-body">
+                                <div class="card-body" id="shap_summary_plot">
                                     <img src="/shap_plot/Summary_Plot" class="img-responsive" width="100%"
                                          height="auto"></img>
                                 </div>
@@ -497,7 +505,7 @@
                         </div>
                         <div class="col-6">
                             <div class="card card-counter shadow h-100">
-                                <div class="card-body">
+                                <div class="card-body" id="shap_decision_plot">
 
                                     <img src="/shap_plot/Decision_Plot" class="img-responsive" width="100%"
                                          height="auto"></img>
@@ -849,7 +857,7 @@
             feature_table = {{features_table|safe}}
             let feature_cols = Object.getOwnPropertyNames(feature_table[0]);
             for (let i=0;i<feature_cols.length;i++){
-                $('#features >thead tr').append(`<th data-field=\"${feature_cols[i]}\">${feature_cols[i]} </th>`);
+                $('#features >thead tr').append(`<th data-sortable="true" data-field=\"${feature_cols[i]}\">${feature_cols[i]} </th>`);
             }
             let precision = 5;
             if(iteration_number>0){
@@ -881,10 +889,16 @@
 
                 $('#mse_mean').append("Unknown")
                 $('#mse_std').append("Unknown")
+
+                executed_first_error = "<div class=\"alert alert-warning\" role=\"alert\">Please execute the first iteration in order to see this</div>"
+                $('#shap_decision_plot').append(executed_first_error)
+                $('#shap_summary_plot').append(executed_first_error)
+
+                $('#unc_plot_div').append(executed_first_error)
             }
             $('#features').bootstrapTable({
                 pagination: true,
-                data: feature_table,
+                data: feature_table
             });
 
 
@@ -897,10 +911,7 @@
             data_plan_features = {{data_plan_features | safe}};
             console.log(data_plan_features)
 
-            // let plan_feature_cols = Object.getOwnPropertyNames(data_plan_features[0]);
-            // for (let i=0;i<feature_cols.length;i++){
-            //     $('#data_plan_features >thead tr').append(`<th data-field=\"${data_plan_features[i]}\">${data_plan_features[i]} </th>`);
-            // }
+
             console.log({{ active_learning_duration|safe }});
             $('#data_plan_features').bootstrapTable({
                 pagination: true,

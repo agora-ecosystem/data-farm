@@ -247,11 +247,14 @@ def run_active_learning(features_df, feature_cols, label_col, n_iter=20, max_ear
     return results
 
 
-def load_data_and_preprocess(GENERATED_METADATA_PATH, DATA_ID):
+def load_data_and_preprocess(GENERATED_METADATA_PATH, DATA_ID="1GB", DATA_IDS=[]):
     # Load dataset
 
-    # Todo: Change to multiple data ids
-    plan_data_features = compute_cardinality_plan_features(GENERATED_METADATA_PATH,data_sizes=[DATA_ID])
+    # Check for either one or a list of data ids
+    if(len(DATA_IDS)==0):
+        plan_data_features = compute_cardinality_plan_features(GENERATED_METADATA_PATH, data_sizes=[DATA_ID])
+    else:
+        plan_data_features = compute_cardinality_plan_features(GENERATED_METADATA_PATH,data_sizes=DATA_IDS)
     print(plan_data_features)
     plan_data_features = plan_data_features.sort_index()
 
@@ -323,7 +326,7 @@ def run(config):
 #     else:
 #         Exception(f"No experiment type '{exp_type}'")
 
-def set_up_active_learning(generated_metadata_path, data_id, label_forecaster_out, random_init, user_init, init_jobs,
+def set_up_active_learning(generated_metadata_path, label_forecaster_out, random_init, user_init, init_jobs,
                            feature_cols, label_col, sample_col, sample_ids, features_df):
 
     # Persist features

@@ -144,14 +144,14 @@ class ActiveLearningStrategy:
         return new_ids_train, job_ids, self.iter_res["uncertainty_interval"]
 
     def active_learning_iteration_helper(self, idx, n_iter, max_early_stop=2, early_stop_th=0.1):
-        print("======= Iteration", idx)
+        print(f"======= Active Learning Iteration {idx}=======")
 
         self.data_size.append(self.X_train.shape[0])
         print("Train:", self.X_train.shape)
         print("Test:", self.X_test.shape)
 
         self.iter_res = self.active_learning_iteration(self.X_train, self.y_train, self.ids_train, self.X_test,
-                                                       self.ids_test, self.feature_cols,
+                                                       self.ids_test, self.feature_cols, idx,
                                                        verbose=self.verbose)
         # Save model iteration
         # with open(os.path.join(self.label_forecaster_out, f"learning_process_{idx}.pkl"), "wb") as handle:
@@ -234,7 +234,7 @@ class ActiveLearningStrategy:
         # print(self.separator)
         return self.results
 
-    def active_learning_iteration(self, X_train, y_train, ids_train, X_test, ids_test, feature_cols, verbose=False):
+    def active_learning_iteration(self, X_train, y_train, ids_train, X_test, ids_test, feature_cols, idx, verbose=False):
         if X_train.__len__() != ids_train.__len__():
             raise Exception("x_train does not match ids_train")
 
@@ -252,8 +252,8 @@ class ActiveLearningStrategy:
         y_pred = qf_model.predict(X_test)
 
         # Shapley values
-        self.shapley_calculation(qf_model, X_test, ids_test, feature_cols)
-
+        if(idx<1 and CONFIG.SHAP_IMAGES):
+            self.shapley_calculation(qf_model, X_test, ids_test, feature_cols)
         y_pred_upper = qf_model.predict(X_test, quantile=75)
         y_pred_lower = qf_model.predict(X_test, quantile=25)
 
@@ -360,12 +360,14 @@ class ActiveLearningStrategy:
             shap.plots._waterfall.waterfall_legacy(explainer.expected_value, shap_values[i], show=False,
                                                    feature_names=feature_names)
             job_name = ids_test.iloc[i]["plan_id"]
-            plt.savefig(os.path.join(self.label_forecaster_out, f"SHAP_{job_name}_Waterfall.png"), bbox_inches="tight")
+            job_data_id = ids_test.iloc[i]["data_id"]
+
+            plt.savefig(os.path.join(self.label_forecaster_out, f"SHAP_{job_name}_{job_data_id}_Waterfall.png"), bbox_inches="tight")
             plt.clf()
             plt.close()
             shap.plots.force(explainer.expected_value, shap_values[i], matplotlib=True, show=False,
                              feature_names=feature_names)
-            plt.savefig(os.path.join(self.label_forecaster_out, f"SHAP_{job_name}_Force.png"), bbox_inches="tight")
+            plt.savefig(os.path.join(self.label_forecaster_out, f"SHAP_{job_name}_{job_data_id}_Force.png"), bbox_inches="tight")
 
     def get_iteration_results(self):
         return self.results

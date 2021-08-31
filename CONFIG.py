@@ -14,9 +14,11 @@ class CONFIG:
     FLINK_HOME = "/mnt/c/Users/Robin/Documents/Flink/flink-1.10.0" # <path_to_flink>
 
     # EXPERIMENT ID
-    EXPERIMENT_ID = "Experiment1"
+    EXPERIMENT_ID = "Experiment2"
     # DATA ID
     DATA_ID = "1GB"
+    # ACTIVE LEARNING DATA IDS
+    DATA_IDS = ["1GB", "5GB"]
 
     # Job generator conf
     N_JOBS = 10
@@ -96,3 +98,8 @@ class CONFIG:
     GENERATED_METADATA_PATH = join(GENERATED_JOB_FOLDER, "generated_jobs_info.json")
 
     LABEL_FORECASTER_OUT = join(EXPERIMENT_PATH, "label_forecaster_" + exec_timestamp)
+    ########################################################
+    ## Config GUI #############################
+    ########################################################
+    SHAP_IMAGES = False
+    LOAD_FROM_DISK = True

@@ -144,7 +144,7 @@
                                 <div class="row">
                                     <div class="col-6">
                                         <div class="card card-counter shadow h-100">
-                                            <div class="card-body">
+                                            <div class="card-body" id="similar_jobs">
                                             </div>
                                         </div>
                                     </div>
@@ -223,6 +223,12 @@
 
     current_plan_id = "{{ plan_id|safe }}"
     console.log(current_plan_id)
+    let stripped_string = current_plan_id.replace(/[.\/#!$%\^&\*;:{}=\-_`~()']/g,"").split(", ");
+    let plan_id = stripped_string[0]
+    let data_id = stripped_string[1]
+    console.log(stripped_string)
+    job_object = {"plan_id":plan_id,"data_id":data_id}
+
     if(!Array.isArray(iteration_results) && iteration_results !== null)
     {
         //First iteration has happened
@@ -230,16 +236,16 @@
         let train_ids = []
 
         for (let i = 0; i < iteration_results.test_ids.length; i++) {
-            test_ids.push(iteration_results.test_ids[i].plan_id)
+            test_ids.push(iteration_results.test_ids[i])
         }
         for (let i = 0; i < iteration_results.train_ids.length; i++) {
-            train_ids.push(iteration_results.train_ids[i].plan_id)
+            train_ids.push(iteration_results.train_ids[i])
         }
 
 
         // Add SHAP image
         // Job has not been executed
-        if(test_ids.includes(current_plan_id)){
+        if(test_ids.findIndex(i => i.plan_id == plan_id && i.data_id == data_id)!=-1){
             //Plan has not been executed
             $('#executed_stat').append("No")
             $('#executed_stat').addClass("text-danger")
@@ -252,7 +258,7 @@
             force_img.attr('src', "{{ shap_image_path}}" +"_Force");
             force_img.appendTo('#shap_force');
 
-            job_id_number = test_ids.indexOf(current_plan_id);
+            job_id_number = test_ids.findIndex(i => i.plan_id == plan_id && i.data_id == data_id);
             console.log(job_id_number);
 
             let uncertainty_interval = iteration_results.uncertainty_interval[job_id_number];
@@ -268,10 +274,18 @@
             $('#executed_stat').append("Yes")
             $('#executed_stat').addClass("text-success")
             $('#general_uncertainty_interval').append(0)
-            job_id_number = train_ids.indexOf(current_plan_id);
+            $('#shap_force').append("This job has already been executed")
+
+            console.log(job_object)
+            // job_id_number = train_ids.indexOf(job_object);
+            console.log(train_ids)
+            job_id_number = train_ids.findIndex(i => i.plan_id == plan_id && i.data_id == data_id);
+            console.log(current_plan_id)
             console.log(job_id_number);
 
+            console.log(train_ids)
             exec_seconds = Math.pow(Math.E,iteration_results.train_labels[job_id_number]);
+            console.log(iteration_results.train_labels[job_id_number])
             exec_time = new Date(exec_seconds * 1000).toISOString().substr(11, 8)
             $('#label_stat').append(exec_time+" Min")
 
@@ -284,6 +298,9 @@
         $('#executed_stat').addClass("text-danger")
         $('#label_stat').append("Unknown")
         $('#general_uncertainty_interval').append("Unknown")
+        executed_first_error = "<div class=\"alert alert-warning\" role=\"alert\">Please execute the first iteration in order to see this</div>"
+        $('#shap_force').append(executed_first_error)
+        $('#similar_jobs').append(executed_first_error)
     }
 
     function featuresRowStyle(row,index) {
