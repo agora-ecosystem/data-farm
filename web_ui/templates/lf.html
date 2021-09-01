@@ -152,7 +152,7 @@
     <div class="row mb-4 b-2">
     </div>
     <div class="row mb-2">
-        <div class="col">
+        <div class="col-md-4">
             <div class="card card-counter shadow h-100">
                 <div class="card-body h-100">
                     <h5 class="card-title text-danger">Unselected Jobs</h5>
@@ -162,7 +162,7 @@
                 </div>
             </div>
         </div>
-        <div class="col">
+        <div class="col-md-4">
             <div class="card card-counter shadow h-100">
                 <div class="card-body h-100">
                     <h5 class="card-title text-warning">Jobs Scheduled for Execution</h5>
@@ -172,7 +172,7 @@
                 </div>
             </div>
         </div>
-        <div class="col">
+        <div class="col-md-4">
             <div class="card card-counter shadow h-100">
                 <div class="card-body h-100">
                     <h5 class="card-title text-success">Executed Jobs</h5>
@@ -184,7 +184,6 @@
         </div>
     </div>
     <div class="row mb-4 b-2">
-
     </div>
     <div class="accordion shadow-lg p-3 mb-5 bg-white rounded" id="accordionPanelsStayOpen">
         <div class="accordion-item">
@@ -200,6 +199,7 @@
             <div id="panelsStayOpen-collapseZero" class="accordion-collapse collapse"
                  aria-labelledby="panelsStayOpen-headingZero">
                 <div class="accordion-body">
+                    <p class="card-text">&#9660; View metrics of the current model performance after executing the previous generation.</p>
                     <div class="row mb-2">
                         <div class="col">
                             <div class="card card-counter shadow h-100">
@@ -264,12 +264,11 @@
                             <div class="card card-counter shadow h-100">
                                 <div class="card-body">
                                     <h5 class="card-title">Job Feature Explorer</h5>
-                                    <p class="card-text">&#9660; Here you can see the jobs which are scheduled for
-                                        execution. You can add or remove jobs to execute by clicking on them. </p>
+                                    <p class="card-text">&#9660; Compare the generated jobs on the basis of multiple features. Add or remove jobs to execute by clicking on them. Use the dropdown to plot a particular feature.</p>
                                     <select id="selectFeature" onchange="feature_select(this)">
                                         <option>Choose a Feature</option>
                                     </select>
-                                    <div id="plot1_div"></div>
+                                    <div id="plot1_div" style="width: 100%; height: 100%;"></div>
                                     <div id="plot2_div"></div>
                                 </div>
                             </div>
@@ -308,7 +307,7 @@
                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                         data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false"
                         aria-controls="panelsStayOpen-collapseTwo">
-                    <h3><i class="bi bi-bullseye"></i> Job Uncertainty Overview</h3>
+                    <h3><i class="bi bi-bullseye"></i> Job Uncertainty</h3>
                 </button>
             </h2>
             <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse"
@@ -321,7 +320,7 @@
                                     <h5 class="card-title">Uncertainty Interval Explorer</h5>
                                     &#9660; Here you can see the uncertainty intervals of the jobs that have not been
                                     executed yet
-                                    <div id="unc_plot_div"></div>
+                                    <div id="unc_plot_div" style="width: 100%; height: 100%;"></div>
                                 </div>
                             </div>
                         </div>
@@ -378,6 +377,7 @@
             <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse"
                  aria-labelledby="panelsStayOpen-headingThree">
                 <div class="accordion-body">
+                    <p class="card-text">&#9660; See the cardinalities of operators analyze general operator statistics</p>
                     <div class="row">
                         <div class="col-6">
                             <div class="card card-counter shadow h-100">
@@ -482,18 +482,82 @@
                 </div>
             </div>
         </div>
-
         <div class="accordion-item">
             <h2 class="accordion-header" id="panelsStayOpen-headingFour">
                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                         data-bs-target="#panelsStayOpen-collapseFour" aria-expanded="false"
                         aria-controls="panelsStayOpen-collapseFour">
-                    <h3><i class="bi bi-exclamation-circle"></i> Model Explanation Analysis</h3>
+                    <h3><i class="bi bi-server"></i> Original Workload</h3>
                 </button>
             </h2>
             <div id="panelsStayOpen-collapseFour" class="accordion-collapse collapse"
                  aria-labelledby="panelsStayOpen-headingFour">
-                <div class="accordion-body" >
+                <div class="accordion-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card card-counter shadow h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">Original Features</h5>
+                                    <p class="card-text">&#9660; The original workload from which we generated the new jobs</p>
+                                    <table class="table table-sm table-striped"
+                                           id="original_features"
+                                           data-search="true"
+                                           data-show-fullscreen="true"
+                                           data-show-columns="true"
+                                           data-detail-formatter="detailFormatter"
+                                           data-show-columns-toggle-all="true"
+                                           data-show-pagination-switch="true"
+                                           data-pagination="true">
+                                        <thead>
+                                        <tr>
+                                        </tr>
+                                        </thead>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-2 b-2"></div>
+                        <div class="row">
+                        <div class="col-12">
+                            <div class="card card-counter shadow h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">Statistical Features Comparison</h5>
+                                    <p class="card-text">&#9660; Compare the generated and original sets on the basis of their statistical features.</p>
+                                    <table class="table table-sm table-striped"
+                                           id="features_comparison"
+                                           data-search="true"
+                                           data-show-fullscreen="true"
+                                           data-show-columns="true"
+                                           data-detail-formatter="detailFormatter"
+                                           data-show-columns-toggle-all="true"
+                                           data-show-pagination-switch="true"
+                                           data-pagination="true">
+                                        <thead>
+                                        <tr>
+                                        </tr>
+                                        </thead>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="panelsStayOpen-headingFive">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#panelsStayOpen-collapseFive" aria-expanded="false"
+                        aria-controls="panelsStayOpen-collapseFive">
+                    <h3><i class="bi bi-exclamation-circle"></i> Model Explanation Analysis</h3>
+                </button>
+            </h2>
+            <div id="panelsStayOpen-collapseFive" class="accordion-collapse collapse"
+                 aria-labelledby="panelsStayOpen-headingFive">
+                <div class="accordion-body">
+                    <p class="card-text">&#9660; See how the features have been used to train the model.</p>
+                    <div id="explanation_analysis"></div>
                     <div class="row">
                         <div class="col-6">
                             <div class="card card-counter shadow h-100">
@@ -575,6 +639,9 @@
 
             var features = {{ features_df|safe }};
             console.log(features)
+
+            var original_workload = {{ original_workload|safe }};
+            console.log(original_workload)
             var active_learning_settings = {{ active_learning_settings|safe }};
             console.log(active_learning_settings)
             console.log(Object.keys(features.outCardinality_mean)[1])
@@ -646,8 +713,7 @@
 
                 var layout = {
                     title: title,
-                    width: 1850,
-                    height: 700,
+                    autosize: true,
                     yaxis: {
                         title: yax,
                     },
@@ -711,7 +777,7 @@
             });
             }
             // Array of the names of jobs that the user selects
-
+            $(window).trigger('resize');
             console.log()
             function preselected_points(feature) {
                 var unselected_points_x =[]
@@ -794,7 +860,7 @@
                 //TODO: Fix color of error bars
                 var current_iter = {{ status["lf_current_iteration"]|int }};
                 // var data_iter_sort = data[current_iter]["jobs"].sort((a, b) => a.execution_time - b.execution_time);
-                var labels = iteration_results.test_ids.map(x => x.plan_id)
+                var labels = iteration_results.test_ids.map(x => x.plan_id+" "+x.data_id)
                 var low = Math.min(iteration_results.uncertainty_interval)
                 var high = Math.max(...iteration_results.uncertainty_interval)
                 var colors = []
@@ -859,6 +925,29 @@
             for (let i=0;i<feature_cols.length;i++){
                 $('#features >thead tr').append(`<th data-sortable="true" data-field=\"${feature_cols[i]}\">${feature_cols[i]} </th>`);
             }
+
+            let original_workload_cols = Object.getOwnPropertyNames(original_workload[0]);
+            for (let i=0;i<original_workload_cols.length;i++){
+                $('#original_features >thead tr').append(`<th data-sortable="true" data-field=\"${original_workload_cols[i]}\">${original_workload_cols[i]} </th>`);
+            }
+
+            $('#original_features').bootstrapTable({
+                pagination: true,
+                data: original_workload
+            });
+
+            original_workload_description = {{ original_workload_description|safe }};
+            console.log(original_workload_description)
+            let original_workload_description_cols = Object.getOwnPropertyNames(original_workload_description[0]);
+            for (let i=0;i<original_workload_description_cols.length;i++){
+                $('#features_comparison >thead tr').append(`<th data-sortable="true" data-field=\"${original_workload_description_cols[i]}\">${original_workload_description_cols[i]} </th>`);
+            }
+            $('#features_comparison').bootstrapTable({
+                pagination: true,
+                data: original_workload_description
+            });
+
+
             let precision = 5;
             if(iteration_number>0){
                 $('#stats_mse').append(iteration_results["mse_mean"].toPrecision(precision))
@@ -890,9 +979,9 @@
                 $('#mse_mean').append("Unknown")
                 $('#mse_std').append("Unknown")
 
-                executed_first_error = "<div class=\"alert alert-warning\" role=\"alert\">Please execute the first iteration in order to see this</div>"
-                $('#shap_decision_plot').append(executed_first_error)
-                $('#shap_summary_plot').append(executed_first_error)
+                executed_first_error = "<div class=\"alert alert-warning\" role=\"alert\">Please execute the first iteration in order to inspect this.</div>"
+                $('#explanation_analysis').append(executed_first_error)
+                // $('#shap_summary_plot').append(executed_first_error)
 
                 $('#unc_plot_div').append(executed_first_error)
             }

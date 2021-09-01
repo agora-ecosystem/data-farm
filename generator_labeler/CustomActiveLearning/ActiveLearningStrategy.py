@@ -45,6 +45,8 @@ class ActiveLearningStrategy:
         self.executed_jobs_runtime = []
 
         # Get dataset
+        # print("FEATURES DF TESTING")
+        # print(features_df)
         self.X_train, self.y_train, self.ids_train, self.X_test, _, self.ids_test = ActiveLearningUtility.get_dataset(
             self.features_df, self.feature_cols, self.label_col)
 
@@ -108,12 +110,14 @@ class ActiveLearningStrategy:
         print("Candidates to run:\n", new_ids_train)
 
         # -> RUN Jobs
-        new_jobs_to_run = new_ids_train.iloc[:, 0].values
+        # new_jobs_to_run = new_ids_train.iloc[:, 0].values
+        new_jobs_to_run = list(zip(new_ids_train.plan_id, new_ids_train.data_id))
         ActiveLearningUtility.submit_jobs(new_jobs_to_run)
         print("NEW JOBS TO RUN")
         print(new_jobs_to_run)
         # -> Collect exec time
         self.executed_jobs_runtime = ActiveLearningUtility.get_executed_plans_exec_time(new_jobs_to_run)
+
 
         for k, v in self.executed_jobs_runtime.iterrows():
             self.features_df.loc[k, "netRunTime"] = v.values[0]
@@ -149,6 +153,7 @@ class ActiveLearningStrategy:
         self.data_size.append(self.X_train.shape[0])
         print("Train:", self.X_train.shape)
         print("Test:", self.X_test.shape)
+        # print(self.X_train)
 
         self.iter_res = self.active_learning_iteration(self.X_train, self.y_train, self.ids_train, self.X_test,
                                                        self.ids_test, self.feature_cols, idx,
@@ -237,7 +242,8 @@ class ActiveLearningStrategy:
     def active_learning_iteration(self, X_train, y_train, ids_train, X_test, ids_test, feature_cols, idx, verbose=False):
         if X_train.__len__() != ids_train.__len__():
             raise Exception("x_train does not match ids_train")
-
+        print("ACTIVE LEARNING ITERATION")
+        print(ids_train)
         if X_test.__len__() != ids_test.__len__():
             raise Exception("x_test does not match ids_test")
         # print("IDS TEST TESTING!!!")

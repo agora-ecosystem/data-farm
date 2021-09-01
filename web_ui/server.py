@@ -19,6 +19,7 @@ import seaborn as sns
 
 from RunLabelForecaster import set_up_active_learning, load_data_and_preprocess
 from generator_labeler import ExecutionPlanTools
+from generator_labeler.OriginalWorkloadModel import OriginalWorkloadModel
 from generator_labeler.FeatureExtraction import FeatureExtraction
 from networkx.drawing.nx_agraph import graphviz_layout
 import pickle
@@ -129,7 +130,9 @@ global active_learning_duration
 global id_to_job_mapping
 global job_to_id_mapping
 global active_learning_features_id
-
+# Original workload
+global original_workload
+global OriginalWorkloadModel
 active_learning_settings = {
     "target_label": "",
     "initial_job_selection": list(),
@@ -158,6 +161,7 @@ active_learning_duration = 0
 id_to_job_mapping = {}
 job_to_id_mapping = {}
 active_learning_features_id=[]
+original_workload=[]
 @app.route("/lf_iteration", methods=["GET", "POST"])
 def lf_iteration():
     global iteration_results
@@ -168,6 +172,7 @@ def lf_iteration():
     global active_learning_duration
     global id_to_job_mapping
     global job_to_id_mapping
+    global OriginalWorkloadModel
     if request.method == 'POST':
         print(request.get_data())
         print(request.get_json())
@@ -206,7 +211,6 @@ def lf_iteration():
         # selected_ids = #[job_to_id_mapping.get(key) for key in selected_jobs_parsed]
         print(selected_ids)
 
-
         # Update list of executed jobs
         active_learning_settings["current_executed_jobs"].extend(selected_ids)
         print("Currently executed jobs")
@@ -241,8 +245,9 @@ def lf_iteration():
             current_iteration = status["lf_current_iteration"]
             np.savetxt(os.path.join(CONFIG.LABEL_FORECASTER_OUT, f"job_sample_ids_iteration_{current_iteration}.txt"), selected_ids,
                        fmt="%d")
-            # Run selected jobs
-            custom_active_learning.active_learning_sampler_preparation(selected_plan_ids)
+
+        # Run selected jobs
+        custom_active_learning.active_learning_sampler_preparation(selected_plan_ids)
         # TODO: Add timer function here to communicate to client
         iteration_results = custom_active_learning.active_learning_iteration_helper(status["lf_current_iteration"],
                                                                                     active_learning_settings[
@@ -254,11 +259,11 @@ def lf_iteration():
         previous_iteration = status["lf_current_iteration"]
         active_learning_duration = time.perf_counter() - start_time
         print("ITERATION RESULTS")
-        print(custom_active_learning.get_iteration_results())
+        # print(custom_active_learning.get_iteration_results())
         iteration_results = custom_active_learning.get_iteration_results()
         # results_dict = iteration_results["iterations"]
-        print(iteration_results["iterations_results"][previous_iteration].keys())
-        print(iteration_results["iterations_results"][previous_iteration].values())
+        # print(iteration_results["iterations_results"][previous_iteration].keys())
+        # print(iteration_results["iterations_results"][previous_iteration].values())
         results_details_dict = iteration_results["iterations_results"][previous_iteration]
         results_dict = {
             "train_ids": results_details_dict["train_ids"],
@@ -270,6 +275,34 @@ def lf_iteration():
             "uncertainty_interval": results_details_dict["uncertainty_interval"].tolist(),
 
         }
+        # print(results_dict["train_labels"])
+
+        train_ids_df = pd.DataFrame(results_details_dict["train_ids"])
+        # train_ids_df.reset_index(inplace=True)
+        print(train_ids_df.index)
+        # print(active_learning_features_id.index)
+        # al_reset = active_learning_features_id.reset_index(drop=False)
+        print("SELECTED PLAN INDEX")
+        print(train_ids_df)
+        print(selected_plan_ids)
+        print(selected_plan_ids.index)
+        selected_plan_ids = selected_plan_ids.filter(['plan_id', 'data_id'])
+        selected_plan_ids["ids"] = selected_plan_ids.index
+        print(selected_plan_ids["ids"])
+        selected_plan_ids["ids"] = selected_plan_ids["ids"].astype("Int64")
+        merged = pd.merge(train_ids_df, selected_plan_ids,  how='left', left_on=['plan_id','data_id'], right_on = ['plan_id','data_id'])
+        # print(merged)
+        # print(merged.dtypes)
+        # merged = merged["ids"]
+
+        print(merged)
+        print(merged.columns)
+        print(merged)
+        # indices = active_learning_features_id[active_learning_features_id["plan_id"].isin(train_ids_df["plan_id"]) and active_learning_features_id["data_id"].isin(train_ids_df["data_id"])]
+        # print(indices)
+        # Original workload performance
+        original_test_results = OriginalWorkloadModel.train_model(merged["ids"].tolist(), results_dict["train_labels"])
+
         # print(iteration_results["cross_validation_scores"])
         results_dict.update(iteration_results["cross_validation_scores"][previous_iteration])
         iteration_results = results_dict
@@ -282,9 +315,9 @@ def lf_iteration():
         # print(sampling_idx)
 
         # Get the global idx
-        sampling_idx = active_learning_features_id.loc[active_learning_features_id['plan_id'].isin(sampling_idx)]
-        total_idx = sampling_idx.index.values.tolist()
-        active_learning_settings["current_automated_sample_ids"] = total_idx
+        # sampling_idx = active_learning_features_id.loc[active_learning_features_id['plan_id','data_id'].isin(sampling_idx)]
+        # total_idx = sampling_idx.index.values.tolist()
+        active_learning_settings["current_automated_sample_ids"] = merged["ids"].tolist()
         print(active_learning_settings["current_automated_sample_ids"])
         status["lf_current_iteration"] = status["lf_current_iteration"] + 1
 
@@ -301,6 +334,8 @@ def lf_run():
     global active_learning_features
     global instantiated_plan_stats
     global active_learning_duration
+    global original_workload
+    global OriginalWorkloadModel
 
     if request.method == 'POST':
         # First setup
@@ -342,8 +377,24 @@ def lf_run():
             # Persist data
             active_learning_features.to_csv(os.path.join(CONFIG.EXPERIMENT_PATH, "active_learning_features.csv"), index_label=["plan_id","data_id"])
         # active_learning_features = active_learning_features.droplevel(1)
+
     active_learning_features_json = active_learning_features.to_json()
 
+    # Original workload
+    if (len(original_workload) == 0):
+        print("LOADING ORIGINAL WORKLOAD")
+        original_workload = pd.read_csv(os.path.join(CONFIG.EXPERIMENT_PATH, "original_workload.csv"))
+        # Getting the right data ids, setting index
+        original_workload = original_workload[original_workload["data_id"].isin(CONFIG.DATA_IDS)].set_index(["plan_id", "data_id"])
+        print(original_workload)
+        OriginalWorkloadModel = OriginalWorkloadModel(original_workload, active_learning_features)
+    original_workload_json = original_workload.to_json()
+    original_workload_reset = original_workload.reset_index()
+    original_workload_table_json = original_workload_reset.to_json(orient='records')
+
+    features_original_workload = pd.merge(original_workload.describe(), active_learning_features.describe(), left_index=True, right_index=True, suffixes=(' Original', ' Generated'))
+    print(features_original_workload)
+    original_workload_description_json = features_original_workload.reset_index().to_json(orient='records')
     # Table features
     active_learning_reset = active_learning_features.reset_index()
     active_learning_features_table_json = active_learning_reset.to_json(orient='records')
@@ -443,6 +494,8 @@ def lf_run():
                            jobs_data_info=jobs_data_info_json,
                            data_plan_features=data_plan_features_json,
                            instantiated_plan_stats=instantiated_plan_stats,
+                           original_workload=original_workload_table_json,
+                           original_workload_description = original_workload_description_json,
                            active_learning_duration=active_learning_duration)  # render_template("index.html", status=status)
 
 

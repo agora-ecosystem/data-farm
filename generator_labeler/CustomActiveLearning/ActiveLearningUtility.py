@@ -18,12 +18,13 @@ class ActiveLearningUtility:
         return df.loc[:, feature_cols].values, df.loc[:, label_col].values
 
     def get_executed_plans_exec_time(jobs_to_run):
-        executed_plans = BuildAndSubmit.get_executed_plans()
+        executed_plans = BuildAndSubmit.get_executed_plans_multiple_data_ids()
         executed_plans_times = [(ep_k[0], ep_k[1], ep_v["netRunTime"]) for ep_k, ep_v in executed_plans.items() if
-                                ep_k[0] in jobs_to_run]
+                                ep_k in jobs_to_run]
         if len(executed_plans_times) != len(jobs_to_run):
             print(
                 f"WARNING - The number of executed jobs '{len(executed_plans_times)}' does not match the requested jobs '{len(jobs_to_run)}'.")
+
         return pd.DataFrame(executed_plans_times, columns=["plan_id", "data_id", "netRunTime"]).set_index(
             ["plan_id", "data_id"])
 
@@ -43,6 +44,8 @@ class ActiveLearningUtility:
 
     def get_dataset(features_df, feature_cols, label_col):
         train_data_df = features_df.loc[~features_df[label_col].isna(), :]
+        print("TRAIN DATA DF")
+        print(train_data_df)
         # train_data_df = features_df.loc[features_df.index.get_level_values(0).isin(executed_jobs), :]
         val_data_df = features_df.loc[~features_df.index.isin(train_data_df.index), :]
         # test_data_df = test_df.copy()

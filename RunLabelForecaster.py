@@ -23,9 +23,14 @@ def get_X_y(df, feature_cols, label_col):
 
 
 def get_executed_plans_exec_time(jobs_to_run):
-    executed_plans = BuildAndSubmit.get_executed_plans()
+    executed_plans = BuildAndSubmit.get_executed_plans_multiple_data_ids()
+
+    # Fixed data id bug here
+    print(executed_plans.keys())
     executed_plans_times = [(ep_k[0], ep_k[1], ep_v["netRunTime"]) for ep_k, ep_v in executed_plans.items() if
-                            ep_k[0] in jobs_to_run]
+                            ep_k in jobs_to_run]
+    # executed_plans_times = [(ep_k[0], ep_k[1], ep_v["netRunTime"]) for ep_k, ep_v in executed_plans.items() if
+    #                         ep_k[0] in jobs_to_run]
     if len(executed_plans_times) != len(jobs_to_run):
         print(
             f"WARNING - The number of executed jobs '{len(executed_plans_times)}' does not match the requested jobs '{len(jobs_to_run)}'.")
@@ -347,7 +352,10 @@ def set_up_active_learning(generated_metadata_path, label_forecaster_out, random
     # save init_job_sample_ids
     np.savetxt(os.path.join(label_forecaster_out, "init_job_sample_ids.txt"), sample_ids, fmt="%d")
 
-    init_jobs_to_run = features_df.iloc[sample_ids].index.get_level_values(0)
+    init_jobs_to_run = features_df.iloc[sample_ids].index
+
+    print("INIT JOBS TO RUN")
+    print(features_df.iloc[sample_ids])
     # init_jobs_to_run = features_df.iloc[list(range(0, len(features_df)))].index.get_level_values(0)
 
     # -> RUN Jobs
@@ -355,9 +363,13 @@ def set_up_active_learning(generated_metadata_path, label_forecaster_out, random
 
     # -> Collect exec time
     executed_jobs_runtime = get_executed_plans_exec_time(init_jobs_to_run)
-
+    print("Executed jobs runtime")
+    print(executed_jobs_runtime)
     features_df = pd.merge(features_df, executed_jobs_runtime, left_index=True, right_index=True, how="left")
+    print("Features df merge")
     features_df[label_col] = np.log(features_df["netRunTime"])
+    print(features_df.loc[~features_df[label_col].isna(), :])
+
     # features_df.rename(columns={'Execution Time': 'Log_netRunTime'}, inplace=True)
     features_df.to_csv(os.path.join(label_forecaster_out, "plan_data_features.csv"))
 

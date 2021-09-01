@@ -5,7 +5,7 @@ from glob import glob
 from CONFIG import CONFIG
 import requests
 import json
-
+from os.path import join
 
 class TaskManagerClient:
 
@@ -175,6 +175,23 @@ def get_executed_plans():
 
     return executed_plans
 
+# Get executed jobs if you specified multiple data ids
+def get_executed_plans_multiple_data_ids():
+    executed_plans = {}
+    for data_id in CONFIG.DATA_IDS:
+        GENERATED_JOB_OUTPUT_PLAN_PATH = join(CONFIG.GENERATED_JOB_EXEC_PLAN_FOLDER, data_id + "/")
+        executed_plans_path = glob(f'{GENERATED_JOB_OUTPUT_PLAN_PATH}/*.json')
+        data_id = data_id
+        executed_plans_data_id = {}
+
+        for ep in executed_plans_path:
+            ep_id = os.path.basename(ep).replace("$.json", "")
+            with open(ep, "r") as f:
+                ep_j = json.load(f)
+
+            executed_plans_data_id[(ep_id, data_id)] = ep_j
+        executed_plans.update(executed_plans_data_id)
+    return executed_plans
 
 def job_id_v(s):
     s = s.replace("Job", "")
