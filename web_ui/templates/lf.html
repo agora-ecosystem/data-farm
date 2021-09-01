@@ -120,6 +120,7 @@
                         <h5 class="card-title">Total Execution Time</h5>
                         {# <i class="fa fa-bar-chart">&#xf080;</i>#}
                         <span class="count-numbers">{{ '{0:0.2f}'.format(active_learning_duration) | safe }} Seconds</span>
+<!--                        <span class="count-numbers">1 Seconds</span>-->
                     </div>
                 </div>
             </div>
@@ -639,7 +640,7 @@
 
             var features = {{ features_df|safe }};
             console.log(features)
-
+            var active_learning_duration = {{ active_learning_duration|safe }}
             var original_workload = {{ original_workload|safe }};
             console.log(original_workload)
             var active_learning_settings = {{ active_learning_settings|safe }};

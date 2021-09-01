@@ -136,7 +136,12 @@ class ActiveLearningStrategy:
         len_new_X_train = len(self.X_test[self.iter_res["uncertainty_interval"] > IRQ_th])
         sampling_idx = np.random.randint(0, len(self.X_test), len_new_X_train)
         new_ids_train = self.ids_test.iloc[sampling_idx].copy()
-        job_ids = new_ids_train.iloc[:, 0].values
+        # job_ids = new_ids_train.iloc[:, 0].values
+        # job_ids = new_ids_train.iloc[:, 0:2].values
+        # print(new_ids_train.iloc[:, 0:2].index.tolist())
+        # job_ids = new_ids_train.iloc[:, 0:2]
+        print(new_ids_train.iloc[:, 0:2])
+        job_ids = new_ids_train.iloc[:, 0:2]
         return job_ids, self.iter_res["uncertainty_interval"]
 
     # Get num amount of top uncertain jobs

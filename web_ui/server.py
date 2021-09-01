@@ -282,24 +282,16 @@ def lf_iteration():
         print(train_ids_df.index)
         # print(active_learning_features_id.index)
         # al_reset = active_learning_features_id.reset_index(drop=False)
-        print("SELECTED PLAN INDEX")
-        print(train_ids_df)
-        print(selected_plan_ids)
-        print(selected_plan_ids.index)
+        # print("SELECTED PLAN INDEX")
+        # print(train_ids_df)
+        # print(selected_plan_ids)
+        # print(selected_plan_ids.index)
         selected_plan_ids = selected_plan_ids.filter(['plan_id', 'data_id'])
         selected_plan_ids["ids"] = selected_plan_ids.index
         print(selected_plan_ids["ids"])
         selected_plan_ids["ids"] = selected_plan_ids["ids"].astype("Int64")
         merged = pd.merge(train_ids_df, selected_plan_ids,  how='left', left_on=['plan_id','data_id'], right_on = ['plan_id','data_id'])
-        # print(merged)
-        # print(merged.dtypes)
-        # merged = merged["ids"]
 
-        print(merged)
-        print(merged.columns)
-        print(merged)
-        # indices = active_learning_features_id[active_learning_features_id["plan_id"].isin(train_ids_df["plan_id"]) and active_learning_features_id["data_id"].isin(train_ids_df["data_id"])]
-        # print(indices)
         # Original workload performance
         original_test_results = OriginalWorkloadModel.train_model(merged["ids"].tolist(), results_dict["train_labels"])
 
@@ -312,13 +304,19 @@ def lf_iteration():
         # sampling_idx, uncertainties = custom_active_learning.top_uncertainty_sampler(200)
 
         # print(uncertainties)
-        # print(sampling_idx)
+        print(sampling_idx)
 
         # Get the global idx
-        # sampling_idx = active_learning_features_id.loc[active_learning_features_id['plan_id','data_id'].isin(sampling_idx)]
-        # total_idx = sampling_idx.index.values.tolist()
-        active_learning_settings["current_automated_sample_ids"] = merged["ids"].tolist()
-        print(active_learning_settings["current_automated_sample_ids"])
+        active_learning_features_id = active_learning_features_id.filter(['plan_id', 'data_id'])
+        active_learning_features_id["ids"] = active_learning_features_id.index
+        active_learning_features_id["ids"] = active_learning_features_id["ids"].astype("Int64")
+
+        merged = pd.merge(sampling_idx, active_learning_features_id, how='left', left_on=['plan_id', 'data_id'],right_on=['plan_id', 'data_id'])
+
+        total_idx = merged["ids"].tolist()
+        active_learning_settings["current_automated_sample_ids"] = total_idx
+
+        # print(active_learning_settings["current_automated_sample_ids"])
         status["lf_current_iteration"] = status["lf_current_iteration"] + 1
 
     return render_template("index.html", iteration_results=iteration_results, status=status,
@@ -400,7 +398,7 @@ def lf_run():
     active_learning_features_table_json = active_learning_reset.to_json(orient='records')
     status["lf_run"] = True
     iteration_results_json = json.dumps(iteration_results)
-    print(json.dumps(iteration_results))
+    # print(json.dumps(iteration_results))
     global cardinality_plan_features
     global data_plan_features
     global jobs_data_info
