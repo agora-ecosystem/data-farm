@@ -285,14 +285,19 @@ def lf_iteration():
 
         # Original workload performance
         train_ids_df = pd.DataFrame(results_details_dict["train_ids"])
-        # print(train_ids_df.index)
-        selected_plan_ids = selected_plan_ids.filter(['plan_id', 'data_id'])
-        selected_plan_ids["ids"] = selected_plan_ids.index
-        # print(selected_plan_ids["ids"])
-        selected_plan_ids["ids"] = selected_plan_ids["ids"].astype("Int64")
-        merged = pd.merge(train_ids_df, selected_plan_ids, how='left', left_on=['plan_id', 'data_id'],
-                          right_on=['plan_id', 'data_id'])
 
+        active_learning_features_id = active_learning_features_id.filter(['plan_id', 'data_id'])
+        active_learning_features_id["ids"] = active_learning_features_id.index
+        active_learning_features_id["ids"] = active_learning_features_id["ids"].astype("Int64")
+
+        # print(train_ids_df.index)
+        # selected_plan_ids = selected_plan_ids.filter(['plan_id', 'data_id'])
+        # selected_plan_ids["ids"] = selected_plan_ids.index
+        # print(selected_plan_ids["ids"])
+        # selected_plan_ids["ids"] = selected_plan_ids["ids"].astype("Int64")
+        merged = pd.merge(train_ids_df, active_learning_features_id, how='left', left_on=['plan_id', 'data_id'],
+                          right_on=['plan_id', 'data_id'])
+        print(merged["ids"].tolist())
         original_workload_results = OriginalWorkloadModel.train_model(merged["ids"].tolist(),
                                                                       results_dict["train_labels"])
 
@@ -308,9 +313,8 @@ def lf_iteration():
         print(sampling_idx)
 
         # Get the global idx
-        active_learning_features_id = active_learning_features_id.filter(['plan_id', 'data_id'])
-        active_learning_features_id["ids"] = active_learning_features_id.index
-        active_learning_features_id["ids"] = active_learning_features_id["ids"].astype("Int64")
+
+
 
         merged = pd.merge(sampling_idx, active_learning_features_id, how='left', left_on=['plan_id', 'data_id'],
                           right_on=['plan_id', 'data_id'])
@@ -543,6 +547,8 @@ def lf_plan_stats(plan_id):
     # Insert feature row and general feature characteristics
     print(active_learning_features)
     feature_row = active_learning_features.loc[(plan_num, data_id)]
+
+
     # plan_id_num = active_learning_features.loc[active_learning_features.plan_id == plan_id].index[0]
     # print("Plan id num")
     # print(plan_id_num)
@@ -573,12 +579,22 @@ def lf_plan_stats(plan_id):
     print(iteration_results)
     # print(iteration_results_df)
 
-    # TODO: Insert similar executed job information
+    # Insert similar executed job information
+    # if (status["lf_current_iteration"] > 0):
+    #
+    # else:
+    # todo: Add true label/estimated label to results
+    similar_jobs_card = active_learning_features.iloc[(active_learning_features['outCardinality_mean'] - feature_row['outCardinality_mean']).abs().argsort()[:5]]
+    similar_jobs_op_count = active_learning_features.iloc[(active_learning_features['outCardinality_count'] - feature_row['outCardinality_count']).abs().argsort()[:5]]
 
-    similar_jobs = []
+    similar_jobs_card = similar_jobs_card.reset_index()
+    similar_jobs_op_count = similar_jobs_op_count.reset_index()
+
+    # similar_jobs = []
     if (status["lf_current_iteration"] > 0):
         # Collect similar jobs
         executed_jobs = active_learning_settings["current_executed_jobs"]
+        print(executed_jobs)
         # Get id of current job
         # instantiated_plan_stats["op_list"]
 
@@ -591,7 +607,9 @@ def lf_plan_stats(plan_id):
                            features=feature_df.to_json(orient='records'),
                            iteration_results=iteration_results_json,
                            data_plan_features=data_plan_features_json,
-                           jobs_data_info=jobs_data_info_json)
+                           jobs_data_info=jobs_data_info_json,
+                           similar_jobs_card=similar_jobs_card.to_json(orient='records'),
+                           similar_jobs_op_count=similar_jobs_op_count.to_json(orient='records'))
 
 
 # Serves the abstract plan image

@@ -79,6 +79,7 @@
                                         <div class="card card-counter shadow h-100">
                                             <div class="card-body">
                                                 <h5 class="card-title">Abstract Plan</h5>
+                                                <p class="card-text">&#9660; The abstract plan of this job</p>
                                                 <img src="{{ ap_image_path}}"/>
                                             </div>
                                         </div>
@@ -87,6 +88,7 @@
                                         <div class="card card-counter shadow h-100">
                                             <div class="card-body">
                                                 <h5 class="card-title">Operator Features</h5>
+                                                <p class="card-text">&#9660; The characteristics of each operator in the instantiated plan</p>
                                                                     <table id="data_plan_features" class="table-striped">
                                                                     </table>
                                             </div>
@@ -112,6 +114,7 @@
                                         <div class="card card-counter shadow h-100">
                                             <div class="card-body flex-fill">
                                                 <h5 class="card-title">Feature statistics</h5>
+                                                <p class="card-text">&#9660; Compare the generated job on the basis of multiple features to the statistical features of the overall set</p>
                                                 <table class="table table-sm table-striped" id="features">
                                                     <!--                    data-card-view="true" -->
                                                     <thead>
@@ -142,20 +145,40 @@
                              aria-labelledby="panelsStayOpen-headingThree">
                             <div class="accordion-body">
                                 <div class="row">
-                                    <div class="col-6">
+                                    <div class="col-12">
                                         <div class="card card-counter shadow h-100">
                                             <div class="card-body" id="similar_jobs">
+                                                <h5 class="card-title">Cardinality</h5>
+                                                <p class="card-text">&#9660; Similar jobs with respects to cardinality</p>
+                                                <table class="table table-sm table-striped" id="similar_jobs_card">
+                                                    <thead>
+                                                    <tr>
+                                                    </tr>
+                                                    </thead>
+                                                </table>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-6">
+                            </div>
+                                <div class="row mb-4 b-2">
+                        </div>
+                                <div class="row">
+                                    <div class="col-12">
                                         <div class="card card-counter shadow h-100">
                                             <div class="card-body">
+                                                <h5 class="card-title">Operator Count</h5>
+                                                <p class="card-text">&#9660; Similar jobs with respects to operator count</p>
+                                                <table class="table table-sm table-striped" id="similar_jobs_op_count">
+                                                    <thead>
+                                                    <tr>
+                                                    </tr>
+                                                    </thead>
+                                                </table>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
                             </div>
+                        </div>
                         </div>
                     </div>
 
@@ -174,6 +197,7 @@
                                     <div class="col-12">
                                         <div class="card card-counter shadow h-100">
                                             <div class="card-body">
+                                                <p class="card-text">&#9660; See how the features of this job have been used for its prediction</p>
                                                     <div id="shap_force"></div>
                                             </div>
                                         </div>
@@ -214,6 +238,11 @@
     iteration_results = {{iteration_results|safe}};
     jobs_data_info = {{jobs_data_info|safe}};
     data_plan_features = {{data_plan_features|safe}};
+    similar_jobs_card = {{similar_jobs_card|safe}};
+    similar_jobs_op_count = {{similar_jobs_op_count|safe}};
+
+
+    console.log(similar_jobs_op_count)
     precision = 5;
 
     console.log(features)
@@ -332,6 +361,25 @@
     $('#features').bootstrapTable({
         data: features,
         search: true,
+    });
+
+    // console.log(similar_jobs)
+    var similar_cols_card = Object.getOwnPropertyNames(similar_jobs_card[0]);
+    for (let i=0;i<feature_cols.length;i++){
+        $('#similar_jobs_card >thead tr').append(`<th data-sortable="true" data-field=\"${similar_cols_card[i]}\">${similar_cols_card[i]} </th>`);
+    }
+    $('#similar_jobs_card').bootstrapTable({
+    data: similar_jobs_card,
+    search: true,
+    });
+
+    var similar_cols_op_count = Object.getOwnPropertyNames(similar_jobs_op_count[0])
+    for (let i=0;i<similar_cols_op_count.length;i++){
+        $('#similar_jobs_op_count >thead tr').append(`<th data-sortable="true" data-field=\"${similar_cols_op_count[i]}\">${similar_cols_op_count[i]} </th>`);
+    }
+    $('#similar_jobs_op_count').bootstrapTable({
+    data: similar_jobs_op_count,
+    search: true,
     });
 
     $('#data_plan_features').bootstrapTable({
