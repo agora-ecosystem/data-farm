@@ -2,7 +2,7 @@ import sklearn
 import pandas as pd
 import numpy as np
 import xgboost as xgb
-from sklearn.metrics import r2_score, mean_absolute_error
+from sklearn.metrics import r2_score, mean_squared_error, mean_gamma_deviance, mean_poisson_deviance
 
 from CONFIG import CONFIG
 
@@ -44,9 +44,12 @@ class OriginalWorkloadModel:
         test_X = self.original_dataset
         test_y = self.labels_original_dataset
         pred_y = clf.predict(test_X)
-        log_r2 = r2_score(test_y, pred_y)
-        mae = mean_absolute_error(test_y, pred_y)
+        r2 = r2_score(test_y, pred_y)
+        mse = mean_squared_error(test_y, pred_y)
+        gd = mean_gamma_deviance(test_y, pred_y)
+        mpd = mean_poisson_deviance(test_y, pred_y)
         print(name)
-        print("Log r2", log_r2)
-        print("MAE", mae)
-        return [log_r2, mae]
+        # print("R2", r2)
+        # print("MAE", mae)
+
+        return {"r2_mean": r2, "mse_mean": mse, "gamma_deviance_mean": gd, "poisson_deviance_mean": mpd}

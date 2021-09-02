@@ -133,6 +133,8 @@ global active_learning_features_id
 # Original workload
 global original_workload
 global OriginalWorkloadModel
+global original_workload_results
+
 active_learning_settings = {
     "target_label": "",
     "initial_job_selection": list(),
@@ -160,8 +162,10 @@ instantiated_plan_stats = {}
 active_learning_duration = 0
 id_to_job_mapping = {}
 job_to_id_mapping = {}
-active_learning_features_id=[]
-original_workload=[]
+active_learning_features_id = []
+original_workload = []
+original_workload_results = {}
+
 @app.route("/lf_iteration", methods=["GET", "POST"])
 def lf_iteration():
     global iteration_results
@@ -173,6 +177,7 @@ def lf_iteration():
     global id_to_job_mapping
     global job_to_id_mapping
     global OriginalWorkloadModel
+    global original_workload_results
     if request.method == 'POST':
         print(request.get_data())
         print(request.get_json())
@@ -184,16 +189,16 @@ def lf_iteration():
             splitted = re.sub("[\'()]", "", item).split(", ")
             plan_num = splitted[0]
             data_id = splitted[1]
-            selected_jobs_parsed.append((plan_num,data_id))
+            selected_jobs_parsed.append((plan_num, data_id))
 
         # Initialize first generation
-        if(len(active_learning_features_id)==0):
-            active_learning_features_id = active_learning_features #load_data_and_preprocess(CONFIG.GENERATED_METADATA_PATH, DATA_IDS = CONFIG.DATA_IDS)
+        if (len(active_learning_features_id) == 0):
+            active_learning_features_id = active_learning_features  # load_data_and_preprocess(CONFIG.GENERATED_METADATA_PATH, DATA_IDS = CONFIG.DATA_IDS)
 
             # active_learning_features_id = active_learning_features.droplevel(1)
             active_learning_features_id = active_learning_features_id.reset_index()
 
-        if(len(id_to_job_mapping)==0):
+        if (len(id_to_job_mapping) == 0):
             print("ACTIVE LEARNING FEATURES")
             print(active_learning_features_id)
             id_to_job_mapping = active_learning_features_id["plan_id"].to_dict()
@@ -204,7 +209,8 @@ def lf_iteration():
         # make global
         tuple_mapping = list(zip(active_learning_features_id['plan_id'], active_learning_features_id['data_id']))
         print(tuple_mapping)
-        selected_plan_ids = active_learning_features_id.loc[[i for i, x in enumerate(tuple_mapping) if x in selected_jobs_parsed]]
+        selected_plan_ids = active_learning_features_id.loc[
+            [i for i, x in enumerate(tuple_mapping) if x in selected_jobs_parsed]]
         # selected_plan_ids = active_learning_features_id.loc[active_learning_features_id['plan_id'].isin(selected_jobs_parsed)]
         print(selected_plan_ids)
         selected_ids = selected_plan_ids.index.values.tolist()
@@ -243,7 +249,8 @@ def lf_iteration():
             # Later iteration
             # Save jobs
             current_iteration = status["lf_current_iteration"]
-            np.savetxt(os.path.join(CONFIG.LABEL_FORECASTER_OUT, f"job_sample_ids_iteration_{current_iteration}.txt"), selected_ids,
+            np.savetxt(os.path.join(CONFIG.LABEL_FORECASTER_OUT, f"job_sample_ids_iteration_{current_iteration}.txt"),
+                       selected_ids,
                        fmt="%d")
 
         # Run selected jobs
@@ -275,25 +282,19 @@ def lf_iteration():
             "uncertainty_interval": results_details_dict["uncertainty_interval"].tolist(),
 
         }
-        # print(results_dict["train_labels"])
-
-        train_ids_df = pd.DataFrame(results_details_dict["train_ids"])
-        # train_ids_df.reset_index(inplace=True)
-        print(train_ids_df.index)
-        # print(active_learning_features_id.index)
-        # al_reset = active_learning_features_id.reset_index(drop=False)
-        # print("SELECTED PLAN INDEX")
-        # print(train_ids_df)
-        # print(selected_plan_ids)
-        # print(selected_plan_ids.index)
-        selected_plan_ids = selected_plan_ids.filter(['plan_id', 'data_id'])
-        selected_plan_ids["ids"] = selected_plan_ids.index
-        print(selected_plan_ids["ids"])
-        selected_plan_ids["ids"] = selected_plan_ids["ids"].astype("Int64")
-        merged = pd.merge(train_ids_df, selected_plan_ids,  how='left', left_on=['plan_id','data_id'], right_on = ['plan_id','data_id'])
 
         # Original workload performance
-        original_test_results = OriginalWorkloadModel.train_model(merged["ids"].tolist(), results_dict["train_labels"])
+        train_ids_df = pd.DataFrame(results_details_dict["train_ids"])
+        # print(train_ids_df.index)
+        selected_plan_ids = selected_plan_ids.filter(['plan_id', 'data_id'])
+        selected_plan_ids["ids"] = selected_plan_ids.index
+        # print(selected_plan_ids["ids"])
+        selected_plan_ids["ids"] = selected_plan_ids["ids"].astype("Int64")
+        merged = pd.merge(train_ids_df, selected_plan_ids, how='left', left_on=['plan_id', 'data_id'],
+                          right_on=['plan_id', 'data_id'])
+
+        original_workload_results = OriginalWorkloadModel.train_model(merged["ids"].tolist(),
+                                                                      results_dict["train_labels"])
 
         # print(iteration_results["cross_validation_scores"])
         results_dict.update(iteration_results["cross_validation_scores"][previous_iteration])
@@ -311,7 +312,8 @@ def lf_iteration():
         active_learning_features_id["ids"] = active_learning_features_id.index
         active_learning_features_id["ids"] = active_learning_features_id["ids"].astype("Int64")
 
-        merged = pd.merge(sampling_idx, active_learning_features_id, how='left', left_on=['plan_id', 'data_id'],right_on=['plan_id', 'data_id'])
+        merged = pd.merge(sampling_idx, active_learning_features_id, how='left', left_on=['plan_id', 'data_id'],
+                          right_on=['plan_id', 'data_id'])
 
         total_idx = merged["ids"].tolist()
         active_learning_settings["current_automated_sample_ids"] = total_idx
@@ -334,6 +336,7 @@ def lf_run():
     global active_learning_duration
     global original_workload
     global OriginalWorkloadModel
+    global original_workload_results
 
     if request.method == 'POST':
         # First setup
@@ -366,14 +369,17 @@ def lf_run():
                                instantiated_plan_stats=instantiated_plan_stats,
                                active_learning_duration=active_learning_duration)
 
-    if(len(active_learning_features) == 0):
-        if(CONFIG.LOAD_FROM_DISK):
-            active_learning_features = pd.read_csv(os.path.join(CONFIG.EXPERIMENT_PATH, "active_learning_features.csv"), index_col=[0,1])
+    if (len(active_learning_features) == 0):
+        if (CONFIG.LOAD_FROM_DISK):
+            active_learning_features = pd.read_csv(os.path.join(CONFIG.EXPERIMENT_PATH, "active_learning_features.csv"),
+                                                   index_col=[0, 1])
             print(active_learning_features)
         else:
-            active_learning_features = load_data_and_preprocess(CONFIG.GENERATED_METADATA_PATH, DATA_IDS= CONFIG.DATA_IDS)
+            active_learning_features = load_data_and_preprocess(CONFIG.GENERATED_METADATA_PATH,
+                                                                DATA_IDS=CONFIG.DATA_IDS)
             # Persist data
-            active_learning_features.to_csv(os.path.join(CONFIG.EXPERIMENT_PATH, "active_learning_features.csv"), index_label=["plan_id","data_id"])
+            active_learning_features.to_csv(os.path.join(CONFIG.EXPERIMENT_PATH, "active_learning_features.csv"),
+                                            index_label=["plan_id", "data_id"])
         # active_learning_features = active_learning_features.droplevel(1)
 
     active_learning_features_json = active_learning_features.to_json()
@@ -383,14 +389,16 @@ def lf_run():
         print("LOADING ORIGINAL WORKLOAD")
         original_workload = pd.read_csv(os.path.join(CONFIG.EXPERIMENT_PATH, "original_workload.csv"))
         # Getting the right data ids, setting index
-        original_workload = original_workload[original_workload["data_id"].isin(CONFIG.DATA_IDS)].set_index(["plan_id", "data_id"])
+        original_workload = original_workload[original_workload["data_id"].isin(CONFIG.DATA_IDS)].set_index(
+            ["plan_id", "data_id"])
         print(original_workload)
         OriginalWorkloadModel = OriginalWorkloadModel(original_workload, active_learning_features)
     original_workload_json = original_workload.to_json()
     original_workload_reset = original_workload.reset_index()
     original_workload_table_json = original_workload_reset.to_json(orient='records')
 
-    features_original_workload = pd.merge(original_workload.describe(), active_learning_features.describe(), left_index=True, right_index=True, suffixes=(' Original', ' Generated'))
+    features_original_workload = pd.merge(original_workload.describe(), active_learning_features.describe(),
+                                          left_index=True, right_index=True, suffixes=(' Original', ' Generated'))
     print(features_original_workload)
     original_workload_description_json = features_original_workload.reset_index().to_json(orient='records')
     # Table features
@@ -411,11 +419,14 @@ def lf_run():
         current_sji_jobs_folder = CONFIG.GENERATED_JOB_FOLDER
         current_abs_plans_folder = CONFIG.GENERATED_ABSTRACT_EXECUTION_PLAN_FOLDER
         generatedJobsInfo = os.path.join(current_sji_jobs_folder, "generated_jobs_info.json")
-        if(CONFIG.LOAD_FROM_DISK):
-            cardinality_plan_features = pd.read_csv(os.path.join(CONFIG.EXPERIMENT_PATH, "cardinality_plan_features.csv"), header=[0,1], index_col=0)
-            data_plan_features = pd.read_csv(os.path.join(CONFIG.EXPERIMENT_PATH, "data_plan_features.csv"), index_col=[0,1], skipinitialspace=True)
+        if (CONFIG.LOAD_FROM_DISK):
+            cardinality_plan_features = pd.read_csv(
+                os.path.join(CONFIG.EXPERIMENT_PATH, "cardinality_plan_features.csv"), header=[0, 1], index_col=0)
+            data_plan_features = pd.read_csv(os.path.join(CONFIG.EXPERIMENT_PATH, "data_plan_features.csv"),
+                                             index_col=[0, 1], skipinitialspace=True)
             print(data_plan_features)
-            jobs_data_info = pd.read_csv(os.path.join(CONFIG.EXPERIMENT_PATH, "jobs_data_info.csv"),index_col=[0,1], skipinitialspace=True)
+            jobs_data_info = pd.read_csv(os.path.join(CONFIG.EXPERIMENT_PATH, "jobs_data_info.csv"), index_col=[0, 1],
+                                         skipinitialspace=True)
         else:
             cardinality_plan_features = compute_cardinality_plan_features(generatedJobsInfo, data_sizes=CONFIG.DATA_IDS)
             data_plan_features = get_estimated_out_cardinality(generatedJobsInfo, data_sizes=CONFIG.DATA_IDS)
@@ -423,9 +434,12 @@ def lf_run():
             jobs_data_info = preprocess_jobs_data_info(generatedJobsInfo)
 
             # Persist data
-            cardinality_plan_features.to_csv(os.path.join(CONFIG.EXPERIMENT_PATH, "cardinality_plan_features.csv"), index_label=["plan_id","data_id"])
-            data_plan_features.to_csv(os.path.join(CONFIG.EXPERIMENT_PATH, "data_plan_features.csv"), index_label=["plan_id","data_id"])
-            jobs_data_info.to_csv(os.path.join(CONFIG.EXPERIMENT_PATH, "jobs_data_info.csv"), index_label=["plan_id","data_id"])
+            cardinality_plan_features.to_csv(os.path.join(CONFIG.EXPERIMENT_PATH, "cardinality_plan_features.csv"),
+                                             index_label=["plan_id", "data_id"])
+            data_plan_features.to_csv(os.path.join(CONFIG.EXPERIMENT_PATH, "data_plan_features.csv"),
+                                      index_label=["plan_id", "data_id"])
+            jobs_data_info.to_csv(os.path.join(CONFIG.EXPERIMENT_PATH, "jobs_data_info.csv"),
+                                  index_label=["plan_id", "data_id"])
 
         # data_plan_features.reset_index(inplace=True)
 
@@ -464,7 +478,7 @@ def lf_run():
     data_plan_features_json = data_plan_features.to_json(orient='records')
     # Active learning stats calculation
     global active_learning_features_stats
-    if(len(active_learning_features_stats)==0):
+    if (len(active_learning_features_stats) == 0):
         feature_mean = active_learning_features.mean()
         feature_max = active_learning_features.max()
         feature_min = active_learning_features.min()
@@ -493,8 +507,9 @@ def lf_run():
                            data_plan_features=data_plan_features_json,
                            instantiated_plan_stats=instantiated_plan_stats,
                            original_workload=original_workload_table_json,
-                           original_workload_description = original_workload_description_json,
-                           active_learning_duration=active_learning_duration)  # render_template("index.html", status=status)
+                           original_workload_description=original_workload_description_json,
+                           active_learning_duration=active_learning_duration,
+                           original_workload_results=original_workload_results)  # render_template("index.html", status=status)
 
 
 # json.dumps(iteration_results)
@@ -518,7 +533,6 @@ def lf_plan_stats(plan_id):
     # print(plan_index)
 
     # Insert SHAP plot
-
 
     splitted = re.sub("[\'()]", "", plan_id).split(", ")
     plan_num = splitted[0]
@@ -544,7 +558,7 @@ def lf_plan_stats(plan_id):
     print(data_plan_features)
     print(plan_num)
     print(data_id)
-    data_plan_features_job = data_plan_features.loc[(plan_num,data_id)]
+    data_plan_features_job = data_plan_features.loc[(plan_num, data_id)]
     jobs_data_info_job = jobs_data_info.loc[plan_num]
 
     data_plan_features_job.reset_index(inplace=True)
@@ -562,7 +576,7 @@ def lf_plan_stats(plan_id):
     # TODO: Insert similar executed job information
 
     similar_jobs = []
-    if(status["lf_current_iteration"] > 0):
+    if (status["lf_current_iteration"] > 0):
         # Collect similar jobs
         executed_jobs = active_learning_settings["current_executed_jobs"]
         # Get id of current job

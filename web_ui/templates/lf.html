@@ -200,7 +200,11 @@
             <div id="panelsStayOpen-collapseZero" class="accordion-collapse collapse"
                  aria-labelledby="panelsStayOpen-headingZero">
                 <div class="accordion-body">
-                    <p class="card-text">&#9660; View metrics of the current model performance after executing the previous generation.</p>
+
+                    <div class="card card-counter shadow">
+                    <div class="card-body">
+                        <h5 class="card-title">Current Model Performance</h5>
+                    <p class="card-text">&#9660; View metrics of the current cross validated model performance, after executing the previous generation.</p>
                     <div class="row mb-2">
                         <div class="col">
                             <div class="card card-counter shadow h-100">
@@ -246,6 +250,54 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    </div>
+                </div>
+                    <div class="row mb-2 b-2"></div>
+                    <div class="card card-counter shadow">
+                    <div class="card-body">
+                    <h5 class="card-title">Original Workload Model Performance</h5>
+                    <p class="card-text">&#9660; The current labels have been used to forecast labels for the remaining generated jobs.
+                        The model built from these jobs was tested on the original workload</p>
+                    <div class="row mb-2">
+                        <div class="col">
+                            <div class="card card-counter shadow h-100">
+                                <div class="card-body">
+                                    <h4 class="card-title">Gamma Deviance</h4>
+                                    <h5 class="card-title">Mean</h5>
+                                    <span id="ow_gamma_deviance_mean"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card card-counter shadow h-100">
+                                <div class="card-body">
+                                    <h4 class="card-title">Mean Squared Error</h4>
+                                    <h5 class="card-title">Mean</h5>
+                                    <span id="ow_mse_mean"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card card-counter shadow h-100">
+                                <div class="card-body">
+                                    <h4 class="card-title">R&sup2;</h4>
+                                    <h5 class="card-title">Mean</h5>
+                                    <span id="ow_r2_mean"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card card-counter shadow h-100">
+                                <div class="card-body">
+                                    <h4 class="card-title">Poisson Deviance</h4>
+                                    <h5 class="card-title">Mean</h5>
+                                    <span id="ow_poisson_mean"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -643,6 +695,9 @@
             var active_learning_duration = {{ active_learning_duration|safe }}
             var original_workload = {{ original_workload|safe }};
             console.log(original_workload)
+            var original_workload_results = {{ original_workload_results|safe }}
+            console.log(original_workload_results)
+
             var active_learning_settings = {{ active_learning_settings|safe }};
             console.log(active_learning_settings)
             console.log(Object.keys(features.outCardinality_mean)[1])
@@ -966,6 +1021,17 @@
 
                 $('#mse_mean').append(iteration_results["mse_mean"].toPrecision(precision))
                 $('#mse_std').append(iteration_results["mse_std"].toPrecision(precision))
+
+                //Original Workload Model statistics
+                $('#ow_gamma_deviance_mean').append(original_workload_results["gamma_deviance_mean"].toPrecision(precision))
+
+                $('#ow_poisson_mean').append(original_workload_results["poisson_deviance_mean"].toPrecision(precision))
+
+                $('#ow_r2_mean').append(original_workload_results["r2_mean"].toPrecision(precision))
+
+                $('#ow_mse_mean').append(original_workload_results["mse_mean"].toPrecision(precision))
+
+
             }
             else{
                 $('#gamma_deviance_mean').append("Unknown")
