@@ -206,4 +206,7 @@ input[type="checkbox"][id^="img-cb"] {
     box-shadow: 0 0 5px #333;
     z-index: -1;
 }
-
+:root {
+  blueish: #1e90ff;
+  --white: #ffffff;
+}
