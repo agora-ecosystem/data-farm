@@ -682,13 +682,16 @@ def sji_run():
 
     generatedJobsInfo = os.path.join(current_sji_jobs_folder, "generated_jobs_info.json")
 
+    print("GENERATED JOBS INFO")
+    print(generatedJobsInfo)
+
     global cardinality_plan_features
     global data_plan_features
     global jobs_data_info
 
     # TODO: Make datasize customizable
-    cardinality_plan_features = compute_cardinality_plan_features(generatedJobsInfo, data_sizes=["1GB"])
-    data_plan_features = get_estimated_out_cardinality(generatedJobsInfo, data_sizes=["1GB"])
+    cardinality_plan_features = compute_cardinality_plan_features(generatedJobsInfo, data_sizes=CONFIG.DATA_IDS)
+    data_plan_features = get_estimated_out_cardinality(generatedJobsInfo, data_sizes=CONFIG.DATA_IDS)
     jobs_data_info = preprocess_jobs_data_info(generatedJobsInfo)
 
     pact_size = data_plan_features.groupby(["pact"]).size()

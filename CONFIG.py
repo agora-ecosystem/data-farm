@@ -8,24 +8,33 @@ class CONFIG:
     PROJECT_PATH = "/mnt/c/Users/Robin/Documents/Git/Datafarm/data-farm" # <absolute_path_to_project>
 
     # PATH TO INPUT DATA
-    GENERATED_JOB_INPUT_DATA_PATH = "/mnt/c/Users/Robin/Documents/experimentdata/1GB/" #"/mnt/c/Users/Robin/Documents/Git/Datafarm/Dataplans/misc/20200829163549_good" # <absolute_path_to_input_data>
+    #GENERATED_JOB_INPUT_DATA_PATH = "/mnt/c/Users/Robin/Documents/experimentdata/1GB/" #"/mnt/c/Users/Robin/Documents/Git/Datafarm/Dataplans/misc/20200829163549_good" # <absolute_path_to_input_data>
+    GENERATED_JOB_INPUT_DATA_PATH = "/mnt/c/Users/Robin/Documents/experimentdata/IMDB/" #"/mnt/c/Users/Robin/Documents/Git/Datafarm/Dataplans/misc/20200829163549_good" # <absolute_path_to_input_data>
 
     # FLINK HOME
     FLINK_HOME = "/mnt/c/Users/Robin/Documents/Flink/flink-1.10.0" # <path_to_flink>
 
     # EXPERIMENT ID
-    EXPERIMENT_ID = "Experiment2"
+    EXPERIMENT_ID = "Experiment4"
     # DATA ID
-    DATA_ID = "1GB"
+    DATA_ID = "3GB"
     # ACTIVE LEARNING DATA IDS
-    DATA_IDS = ["1GB", "5GB"]
+    # DATA_IDS = ["1GB", "5GB"]
+    DATA_IDS = ["3GB"]
+
+    # # EXPERIMENT ID
+    # EXPERIMENT_ID = "Experiment3"
+    # # DATA ID
+    # DATA_ID = "1GB"
+    # # ACTIVE LEARNING DATA IDS
+    # DATA_IDS = ["1GB"]
 
     # Job generator conf
     N_JOBS = 10
     N_VERSIONS = 3
     JOB_SEED = -1  # -1 | 0
-    DATA_MANAGER = "TPCH" # "TPCH" | "IMDB"
-
+    # DATA_MANAGER = "TPCH" # "TPCH" | "IMDB"
+    DATA_MANAGER = "IMDB"
     #################################################################
 
     # DATA GENERATORS HOME
@@ -102,4 +111,4 @@ class CONFIG:
     ## Config GUI #############################
     ########################################################
     SHAP_IMAGES = False
-    LOAD_FROM_DISK = True
+    LOAD_FROM_DISK = False

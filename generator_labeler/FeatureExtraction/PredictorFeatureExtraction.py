@@ -174,8 +174,11 @@ def remove_outliers(df, outlier_col, b=0.01, verbose=False):
 ###############################
 ## Data cardinality features ##
 ###############################
-from TableMetaData import data_cardinality
 
+# TPC-H DATA CARDINALITY
+# from TableMetaData import data_cardinality
+# IMDB DATA CARDINALITY
+from generator_labeler.DatasetMetadata.IMDBK_MetaData import data_cardinality;
 
 def preprocess_jobs_data_info(path):
     print(path)
@@ -207,6 +210,7 @@ def fill_cardinality(df, jid, data_size="1GB"):
         if row["pact"] == "Data Source":
             # new branch
             # TODO load data cardinality from the correct metadata
+            print(data_cardinality)
             oc = data_cardinality[data_size][row["tables"][0]] * row["selectivity"]
             oc_queue.append(oc)
 
