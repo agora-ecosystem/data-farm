@@ -206,7 +206,8 @@ class UnsupervisedSampler:
         from sklearn.decomposition import PCA
 
         X = df.loc[:, self.feature_cols].values
-
+        # print(self.feature_cols)
+        # X = df.reindex(columns = self.feature_cols).values
         if normalize_columns:
             X = (X - X.mean(axis=0)) / X.std(axis=0)
 

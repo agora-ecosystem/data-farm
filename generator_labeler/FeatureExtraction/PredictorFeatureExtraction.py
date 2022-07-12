@@ -14,6 +14,7 @@ import re
 ####################
 ## Table features ##
 ####################
+from CONFIG import CONFIG
 from generator_labeler.TaskMonitor.TaskManagerClient import TaskDetailsParser
 
 
@@ -175,10 +176,11 @@ def remove_outliers(df, outlier_col, b=0.01, verbose=False):
 ## Data cardinality features ##
 ###############################
 
-# TPC-H DATA CARDINALITY
-# from TableMetaData import data_cardinality
-# IMDB DATA CARDINALITY
-from generator_labeler.DatasetMetadata.IMDBK_MetaData import data_cardinality;
+if CONFIG.DATA_MANAGER=="TPCH":
+    from TableMetaData import data_cardinality
+elif CONFIG.DATA_MANAGER=="IMDB":
+    from generator_labeler.DatasetMetadata.IMDBK_MetaData import data_cardinality;
+else: print("ERROR: PredictorFeatureExtraction needs table metadata")
 
 def preprocess_jobs_data_info(path):
     print(path)
@@ -210,7 +212,7 @@ def fill_cardinality(df, jid, data_size="1GB"):
         if row["pact"] == "Data Source":
             # new branch
             # TODO load data cardinality from the correct metadata
-            print(data_cardinality)
+            # print(data_cardinality)
             oc = data_cardinality[data_size][row["tables"][0]] * row["selectivity"]
             oc_queue.append(oc)
 
@@ -241,9 +243,11 @@ def fill_cardinality(df, jid, data_size="1GB"):
 
 def fill_jobs_cardinality(df, data_size="1GB"):
     filled_jobs = []
+    #TODO: fix bug when jobs are identical (they will not be included otherwise)
     for jid in df.index.unique():
         j = fill_cardinality(df, jid, data_size=data_size)
         filled_jobs.append(j)
+
 
     filled_jobs_df = pd.concat(filled_jobs)
     filled_jobs_df["data_id"] = data_size

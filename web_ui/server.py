@@ -298,7 +298,10 @@ def lf_iteration():
         merged = pd.merge(train_ids_df, active_learning_features_id, how='left', left_on=['plan_id', 'data_id'],
                           right_on=['plan_id', 'data_id'])
         print(merged["ids"].tolist())
+
+        print(results_dict["train_labels"])
         original_workload_results = OriginalWorkloadModel.train_model(merged["ids"].tolist(),
+                                                                      #CONFIG.FEATURE_COLS)
                                                                       results_dict["train_labels"])
 
         # print(iteration_results["cross_validation_scores"])
@@ -313,8 +316,6 @@ def lf_iteration():
         print(sampling_idx)
 
         # Get the global idx
-
-
 
         merged = pd.merge(sampling_idx, active_learning_features_id, how='left', left_on=['plan_id', 'data_id'],
                           right_on=['plan_id', 'data_id'])
@@ -359,9 +360,12 @@ def lf_run():
         sample_model = UniformAgglomerativeSampler(active_learning_settings["n_init_jobs"], CONFIG.FEATURE_COLS,
                                                    active_learning_settings["target_label"], CONFIG.SAMPLE_COL)
         # sample_model = RandomSampler(active_learning_settings["n_init_jobs"], CONFIG.FEATURE_COLS, active_learning_settings["target_label"])
+        print(features_df)
         sample_ids = sample_model.fit(features_df).sample_ids
         print("INITIALLY SAMPLED IDS")
         print(sample_ids)
+        print(sample_model.transform(features_df))
+        sample_model.transform(features_df)
         active_learning_settings["current_automated_sample_ids"] = sample_ids.tolist()
 
         status["lf_current_iteration"] = 0
@@ -393,6 +397,8 @@ def lf_run():
         print("LOADING ORIGINAL WORKLOAD")
         original_workload = pd.read_csv(os.path.join(CONFIG.EXPERIMENT_PATH, "original_workload.csv"))
         # Getting the right data ids, setting index
+        # original_workload["data_id"] = "3GB"
+        original_workload.to_csv(os.path.join(CONFIG.EXPERIMENT_PATH, "original_workload.csv"))
         original_workload = original_workload[original_workload["data_id"].isin(CONFIG.DATA_IDS)].set_index(
             ["plan_id", "data_id"])
         print(original_workload)

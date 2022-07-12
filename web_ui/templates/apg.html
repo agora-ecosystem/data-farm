@@ -1,7 +1,8 @@
 <div class="row">
     <a id="input_query_workload"></a>
     <h2>Input Query Workload</h2>
-    <p> Start generating from your existing workload!  <a class="nav-link" href="/lf_run"> Or start Active Learning process</a> </p>
+    <p> Start generating from your existing workload! </p>
+<!--        <a class="nav-link" href="/lf_run"> Or start Active Learning process</a> </p>-->
 </div>
 {% if status["apg_upload"] == False %}
     <div class="row mb-4">
@@ -9,7 +10,7 @@
               class="dropzone"
               id="my-awesome-dropzone" method="POST" enctype="multipart/form-data">
             <div class="dz-message needsclick">
-                <button type="button" class="dz-button">Drop here your dataflow jobs (.zip)
+                <button type="button" class="dz-button">Drop your dataflow jobs here (.zip)
                 </button>
             </div>
         </form>

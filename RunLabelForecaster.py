@@ -27,10 +27,10 @@ def get_executed_plans_exec_time(jobs_to_run):
 
     # Fixed data id bug here
     print(executed_plans.keys())
-    executed_plans_times = [(ep_k[0], ep_k[1], ep_v["netRunTime"]) for ep_k, ep_v in executed_plans.items() if
-                            ep_k in jobs_to_run]
     # executed_plans_times = [(ep_k[0], ep_k[1], ep_v["netRunTime"]) for ep_k, ep_v in executed_plans.items() if
-    #                         ep_k[0] in jobs_to_run]
+    #                         ep_k in jobs_to_run]
+    executed_plans_times = [(ep_k[0], ep_k[1], ep_v["netRunTime"]) for ep_k, ep_v in executed_plans.items() if
+                            ep_k[0] in jobs_to_run]
     if len(executed_plans_times) != len(jobs_to_run):
         print(
             f"WARNING - The number of executed jobs '{len(executed_plans_times)}' does not match the requested jobs '{len(jobs_to_run)}'.")
@@ -257,6 +257,7 @@ def load_data_and_preprocess(GENERATED_METADATA_PATH, DATA_ID="1GB", DATA_IDS=[]
 
     # Check for either one or a list of data ids
     if(len(DATA_IDS)==0):
+        print("dataids 0")
         plan_data_features = compute_cardinality_plan_features(GENERATED_METADATA_PATH, data_sizes=[DATA_ID])
     else:
         plan_data_features = compute_cardinality_plan_features(GENERATED_METADATA_PATH,data_sizes=DATA_IDS)
@@ -275,33 +276,36 @@ def run(config):
     features_df = load_data_and_preprocess(config.GENERATED_METADATA_PATH, config.DATA_ID)
 
     # Persist features
-    features_df.to_csv(os.path.join(config.LABEL_FORECASTER_OUT, "plan_data_features.csv"))
+    # features_df.to_csv(os.path.join(config.LABEL_FORECASTER_OUT, "plan_data_features.csv"))
 
-    if config.RANDOM_INIT:
-        print("Random init sampling...")
-        sample_model = RandomSampler(config.INIT_JOBS, config.FEATURE_COLS, config.LABEL_COL, seed=42)
-    elif config.USER_INIT:
-        sample_model = UserSampler(config.INIT_JOBS, config.FEATURE_COLS, config.LABEL_COL, seed=42)
-    else:
-        sample_model = UniformAgglomerativeSampler(config.INIT_JOBS, config.FEATURE_COLS, config.LABEL_COL,
-                                                   config.SAMPLE_COL)
+    # if config.RANDOM_INIT:
+    #     print("Random init sampling...")
+    #     sample_model = RandomSampler(config.INIT_JOBS, config.FEATURE_COLS, config.LABEL_COL, seed=42)
+    # elif config.USER_INIT:
+    #     sample_model = UserSampler(config.INIT_JOBS, config.FEATURE_COLS, config.LABEL_COL, seed=42)
+    # else:
+    #     sample_model = UniformAgglomerativeSampler(config.INIT_JOBS, config.FEATURE_COLS, config.LABEL_COL,
+    #                                                config.SAMPLE_COL)
+    #
+    # sample_model.fit(features_df, verbose=True)
+    # # save init_job_sample_ids
+    # np.savetxt(os.path.join(config.LABEL_FORECASTER_OUT, "init_job_sample_ids.txt"), sample_model.sample_ids, fmt="%d")
+    #
+    # init_jobs_to_run = features_df.iloc[sample_model.sample_ids].index.get_level_values(0)
+    # features_df.iloc[sample_model.sample_ids].to_csv(os.path.join(CONFIG.LABEL_FORECASTER_OUT, f"job_sample_ids_iteration_0.csv"), index=True)
+    #
+    # # -> RUN Jobs
+    # submit_jobs(init_jobs_to_run)
 
-    sample_model.fit(features_df, verbose=True)
-    # save init_job_sample_ids
-    np.savetxt(os.path.join(config.LABEL_FORECASTER_OUT, "init_job_sample_ids.txt"), sample_model.sample_ids, fmt="%d")
-
-    init_jobs_to_run = features_df.iloc[sample_model.sample_ids].index.get_level_values(0)
-    features_df.iloc[sample_model.sample_ids].to_csv(os.path.join(CONFIG.LABEL_FORECASTER_OUT, f"job_sample_ids_iteration_0.csv"), index=True)
-
-    # -> RUN Jobs
-    submit_jobs(init_jobs_to_run)
-
+    init_jobs_to_run = features_df.index.get_level_values(0)
     # -> Collect exec time
     executed_jobs_runtime = get_executed_plans_exec_time(init_jobs_to_run)
-
+    print(executed_jobs_runtime)
     features_df = pd.merge(features_df, executed_jobs_runtime, left_index=True, right_index=True, how="left")
+    features_df.to_csv(os.path.join(config.LABEL_FORECASTER_OUT, "plan_data_features.csv"))
     features_df[config.LABEL_COL] = np.log(features_df["netRunTime"])
 
+    features_df.to_csv(os.path.join(config.LABEL_FORECASTER_OUT, "plan_data_features.csv"))
     # Initialize object
     custom_active_learning = ActiveLearningStrategy.ActiveLearningStrategy(features_df=features_df,
                                                                            feature_cols=config.FEATURE_COLS,
